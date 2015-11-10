@@ -36,6 +36,7 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-thymeleaf')
     compile('org.springframework.boot:spring-boot-starter-velocity')
     compile('org.springframework.boot:spring-boot-starter-web')
+    сompile('org.liquibase:liquibase-core:3.4.1')
     runtime('org.postgresql:postgresql:9.4-1201-jdbc41')
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }
