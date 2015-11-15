@@ -36,7 +36,6 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-jdbc'
     compile 'org.springframework.boot:spring-boot-starter-security'
     compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
-    compile 'org.springframework.boot:spring-boot-starter-velocity'
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile 'org.postgresql:postgresql:9.4-1201-jdbc41'
     testCompile 'org.springframework.boot:spring-boot-starter-test'
