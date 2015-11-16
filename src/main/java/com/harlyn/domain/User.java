@@ -1,10 +1,13 @@
 package com.harlyn.domain;
 
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
@@ -15,18 +18,27 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 public class User implements UserDetails {
+    private static final String DEFAULT_ROLE = "ROLE_USER";
+
     @Id
     @SequenceGenerator(name = "user_id_seq", sequenceName = "user_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_id_seq")
     @Column(name = "id", updatable = false)
     private Integer id;
 
+    @NotNull
+    @NotEmpty
+    @Email
     @Column(unique = true, nullable = false)
     private String email;
 
+    @NotNull
+    @NotEmpty
     @Column(nullable = false)
     private String username;
 
+    @NotNull
+    @NotEmpty
     private String password;
 
     @ManyToOne(targetEntity = Team.class)
@@ -100,6 +112,8 @@ public class User implements UserDetails {
                 SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.getName());
                 authorities.add(authority);
             }
+        } else {
+            authorities.add(new SimpleGrantedAuthority(DEFAULT_ROLE));
         }
         return authorities;
     }
