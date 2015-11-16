@@ -3,7 +3,7 @@
 <h2>Hey! Confirm your registration</h2>
 
 <div>
-    <a href="/user/confirm?code=${confirmCode.code}">Click here to confirm</a>
+    <a href="http://localhost:8080/confirm/?code=${confirmCode.code}">Click here to confirm</a>
 </div>
 </body>
 </html>

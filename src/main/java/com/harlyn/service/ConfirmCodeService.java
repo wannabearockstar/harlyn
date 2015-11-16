@@ -2,6 +2,8 @@ package com.harlyn.service;
 
 import com.harlyn.domain.ConfirmCode;
 import com.harlyn.domain.User;
+import com.harlyn.exception.InvalidConfirmCodeException;
+import com.harlyn.repository.UserRepository;
 import com.harlyn.repository.СonfirmCodeRepository;
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
+import javax.transaction.Transactional;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -29,6 +32,8 @@ public class ConfirmCodeService {
     private SimpleMailMessage templateConfirmCodeMessage;
     @Autowired
     private VelocityEngine velocityEngine;
+    @Autowired
+    private UserRepository userRepository;
 
     public ConfirmCode createConfirmCode(final User user) {
         ConfirmCode confirmCode = new ConfirmCode(UUID.randomUUID().toString(), user);
@@ -53,4 +58,14 @@ public class ConfirmCodeService {
         mailSender.send(preparator);
     }
 
+    @Transactional
+    public void confirmUserByCode(String code) {
+        ConfirmCode confirmCode = confirmCodeRepository.findOneByCode(code);
+        if (confirmCode == null) {
+            throw new InvalidConfirmCodeException();
+        }
+        userRepository.enableUserById(confirmCode.getUser().getId());
+        confirmCodeRepository.delete(confirmCode);
+        confirmCodeRepository.flush();
+    }
 }

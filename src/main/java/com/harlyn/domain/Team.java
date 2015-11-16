@@ -21,6 +21,7 @@ public class Team {
     private Set<User> users;
 
     @OneToOne(targetEntity = User.class)
+    @JoinColumn(name = "captain_id")
     private User captain;
 
     public Team(String name) {

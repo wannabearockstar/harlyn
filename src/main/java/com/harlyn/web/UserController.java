@@ -6,7 +6,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * Created by wannabe on 16.11.15.
@@ -18,10 +17,5 @@ public class UserController {
     public String meAction(Model model) {
         model.addAttribute("me", (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         return "user/me";
-    }
-
-    @RequestMapping(value = "/confirm", method = RequestMethod.GET)
-    public String confirmUser(@RequestParam(value ="code", required = true) String code) {
-        //todo confirm user and show template with message. change route of mail
     }
 }

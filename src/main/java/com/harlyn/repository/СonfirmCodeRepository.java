@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface СonfirmCodeRepository extends JpaRepository<ConfirmCode, Long> {
+    ConfirmCode findOneByCode(String code);
 }
