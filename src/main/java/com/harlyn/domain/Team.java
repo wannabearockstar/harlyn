@@ -10,8 +10,8 @@ import java.util.Set;
 @Table(name = "teams")
 public class Team {
     @Id
-    @SequenceGenerator(name = "user_id_seq", sequenceName = "user_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_id_seq")
+    @SequenceGenerator(name = "teams_id_seq", sequenceName = "teams_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "teams_id_seq")
     @Column(name = "id", updatable = false)
     private Integer id;
 

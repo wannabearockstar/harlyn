@@ -21,8 +21,8 @@ public class User implements UserDetails {
     private static final String DEFAULT_ROLE = "ROLE_USER";
 
     @Id
-    @SequenceGenerator(name = "user_id_seq", sequenceName = "user_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_id_seq")
+    @SequenceGenerator(name = "users_id_seq", sequenceName = "users_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_id_seq")
     @Column(name = "id", updatable = false)
     private Integer id;
 
@@ -42,12 +42,17 @@ public class User implements UserDetails {
     private String password;
 
     @ManyToOne(targetEntity = Team.class)
+    @JoinColumn(name = "team_id")
     private Team team;
 
     private boolean enabled = false;
 
-    @ManyToMany
-    @JoinTable(name = "user_roles")
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns={@JoinColumn(name = "user_id", referencedColumnName = "id")},
+            inverseJoinColumns={@JoinColumn(name = "role_id", referencedColumnName = "id")}
+    )
     private Set<Role> roles;
 
     public User() {
@@ -90,17 +95,17 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
