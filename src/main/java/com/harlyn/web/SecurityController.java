@@ -1,8 +1,10 @@
 package com.harlyn.web;
 
 import com.harlyn.domain.User;
+import com.harlyn.event.UserCreatedEvent;
 import com.harlyn.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,6 +21,9 @@ public class SecurityController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     @RequestMapping(value = "/login/form", method = RequestMethod.GET)
     public String loginForm(Model model) {
@@ -38,7 +43,8 @@ public class SecurityController {
             model.addAttribute("user", user);
             return "security/registration";
         }
-        userService.createUser(user);
+        User userCreated = userService.createUser(user);
+        eventPublisher.publishEvent(new UserCreatedEvent(this, userCreated));
         return "redirect:/login/form?register";
     }
 }

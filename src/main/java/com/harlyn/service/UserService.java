@@ -21,8 +21,8 @@ public class UserService {
         return userRepository.findUserByEmail(email);
     }
 
-    public void createUser(User user) {
+    public User createUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.saveAndFlush(user);
+        return userRepository.saveAndFlush(user);
     }
 }
