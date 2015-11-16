@@ -38,6 +38,7 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile 'org.postgresql:postgresql:9.4-1201-jdbc41'
+    compile 'javax.mail:mail:1.4.5'
     testCompile 'org.springframework.boot:spring-boot-starter-test'
 }
 
