@@ -68,4 +68,29 @@ public class ConfirmCodeService {
         confirmCodeRepository.delete(confirmCode);
         confirmCodeRepository.flush();
     }
+
+    public ConfirmCodeService setConfirmCodeRepository(СonfirmCodeRepository confirmCodeRepository) {
+        this.confirmCodeRepository = confirmCodeRepository;
+        return this;
+    }
+
+    public ConfirmCodeService setMailSender(JavaMailSender mailSender) {
+        this.mailSender = mailSender;
+        return this;
+    }
+
+    public ConfirmCodeService setTemplateConfirmCodeMessage(SimpleMailMessage templateConfirmCodeMessage) {
+        this.templateConfirmCodeMessage = templateConfirmCodeMessage;
+        return this;
+    }
+
+    public ConfirmCodeService setVelocityEngine(VelocityEngine velocityEngine) {
+        this.velocityEngine = velocityEngine;
+        return this;
+    }
+
+    public ConfirmCodeService setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+        return this;
+    }
 }

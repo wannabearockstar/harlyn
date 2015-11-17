@@ -36,4 +36,14 @@ public class UserService {
         }
 
     }
+
+    public UserService setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+        return this;
+    }
+
+    public UserService setPasswordEncoder(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+        return this;
+    }
 }
