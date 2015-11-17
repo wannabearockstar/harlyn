@@ -2,16 +2,21 @@ package com.harlyn.web;
 
 import com.harlyn.domain.User;
 import com.harlyn.event.UserCreatedEvent;
+import com.harlyn.exception.NonUniqueUserDataException;
 import com.harlyn.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.util.Collections;
 
 /**
  * Created by wannabe on 15.11.15.
@@ -43,8 +48,18 @@ public class SecurityController {
             model.addAttribute("user", user);
             return "security/registration";
         }
+        userService.validateUniqueData(user);
         User userCreated = userService.createUser(user);
         eventPublisher.publishEvent(new UserCreatedEvent(this, userCreated));
         return "redirect:/login/form?register";
+    }
+
+    @ExceptionHandler(NonUniqueUserDataException.class)
+    public ModelAndView nonUniqueUserDataException(NonUniqueUserDataException e) {
+        ModelAndView mav = new ModelAndView();
+        mav.addObject("errors", Collections.singleton(new ObjectError("User", e.getMessage())));
+        mav.addObject("user", e.getUser());
+        mav.setViewName("security/registration");
+        return mav;
     }
 }

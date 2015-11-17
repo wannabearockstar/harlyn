@@ -18,4 +18,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying
     @Query(value = "update User user set user.enabled = true where user.id = :user_id")
     void enableUserById(@Param("user_id") Integer id);
+
+    @Query(value = "select case when count(user) > 0 then true else false end from User user where user.email = :email")
+    boolean userExistByEmail(@Param("email") String email);
+
+    @Query(value = "select case when count(user) > 0 then true else false end from User user where user.username = :username")
+    boolean userExistByUsername(@Param("username") String username);
 }
