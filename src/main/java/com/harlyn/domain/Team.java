@@ -4,6 +4,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -16,14 +17,14 @@ public class Team {
     @SequenceGenerator(name = "teams_id_seq", sequenceName = "teams_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "teams_id_seq")
     @Column(name = "id", updatable = false)
-    private Integer id;
+    private Long id;
 
     @NotNull
     @NotEmpty
     private String name;
 
     @OneToMany(mappedBy = "team")
-    private Set<User> users;
+    private Set<User> users = new HashSet<>();
 
     @OneToOne(targetEntity = User.class)
     @JoinColumn(name = "captain_id")
@@ -41,7 +42,7 @@ public class Team {
         this.captain = captain;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
@@ -60,6 +61,12 @@ public class Team {
 
     public Team setUsers(Set<User> users) {
         this.users = users;
+        return this;
+    }
+
+    public Team addUser(User user) {
+        this.users.add(user);
+        user.setTeam(this);
         return this;
     }
 }

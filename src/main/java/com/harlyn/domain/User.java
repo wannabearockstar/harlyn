@@ -24,7 +24,7 @@ public class User implements UserDetails {
     @SequenceGenerator(name = "users_id_seq", sequenceName = "users_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_id_seq")
     @Column(name = "id", updatable = false)
-    private Integer id;
+    private Long id;
 
     @NotNull
     @NotEmpty
@@ -71,7 +71,7 @@ public class User implements UserDetails {
         this.team = team;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
