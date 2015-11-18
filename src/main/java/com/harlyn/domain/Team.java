@@ -40,6 +40,7 @@ public class Team {
     public Team(String name, User captain) {
         this(name);
         this.captain = captain;
+        captain.setTeam(this);
     }
 
     public Long getId() {
@@ -67,6 +68,15 @@ public class Team {
     public Team addUser(User user) {
         this.users.add(user);
         user.setTeam(this);
+        return this;
+    }
+
+    public User getCaptain() {
+        return captain;
+    }
+
+    public Team setCaptain(User captain) {
+        this.captain = captain;
         return this;
     }
 }

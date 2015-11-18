@@ -4,9 +4,7 @@ import com.harlyn.HarlynApplication;
 import com.harlyn.domain.Team;
 import com.harlyn.domain.TeamInvite;
 import com.harlyn.domain.User;
-import com.harlyn.exception.NonUniqueTeamNameException;
-import com.harlyn.exception.UserAlreadyInTeamException;
-import com.harlyn.exception.UserAlreadyInvitedException;
+import com.harlyn.exception.*;
 import com.harlyn.repository.TeamInviteRepository;
 import com.harlyn.repository.TeamRepository;
 import com.harlyn.repository.UserRepository;
@@ -131,5 +129,33 @@ public class TeamServiceTest {
 
         assertNull(teamInviteRepository.findOne(teamInvite.getId()));
         assertTrue(team.getUsers().contains(user));
+    }
+
+    @Test
+    public void testSendInviteByUser() throws Exception {
+        User user = userRepository.saveAndFlush(new User("user@cap.cap", "user", "i am user"));
+        User captain = userRepository.saveAndFlush(new User("captain@cap.cap", "captain", "i am captain"));
+        Team team = teamService.createTeam("team1", captain);
+        User another = userRepository.saveAndFlush(new User("another@cap.cap", "another", "i am another"));
+
+        TeamInvite teamInvite = teamService.sendInvite(captain, user);
+
+        assertEquals(teamInvite.getRecipent(), user);
+        assertEquals(teamInvite.getTeam(), captain.getTeam());
+
+        teamRepository.saveAndFlush(team.addUser(user));
+
+        try {
+            teamService.sendInvite(user, another);
+            fail("User sent invite without rights of captain");
+        } catch (UserInvalidTeamRightsException e) {
+            assertTrue(true);
+        }
+        try {
+            teamService.sendInvite(another, user);
+            fail("User sent invite without team");
+        } catch (UserWithoutTeamException e) {
+            assertTrue(true);
+        }
     }
 }

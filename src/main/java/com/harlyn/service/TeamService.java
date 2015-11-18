@@ -3,9 +3,7 @@ package com.harlyn.service;
 import com.harlyn.domain.Team;
 import com.harlyn.domain.TeamInvite;
 import com.harlyn.domain.User;
-import com.harlyn.exception.NonUniqueTeamNameException;
-import com.harlyn.exception.UserAlreadyInTeamException;
-import com.harlyn.exception.UserAlreadyInvitedException;
+import com.harlyn.exception.*;
 import com.harlyn.repository.TeamInviteRepository;
 import com.harlyn.repository.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,5 +58,15 @@ public class TeamService {
         teamInviteRepository.delete(teamInvite);
         teamInviteRepository.flush();
         teamRepository.saveAndFlush(team);
+    }
+
+    public TeamInvite sendInvite(User captain, User recipent) {
+        if (captain.getTeam() == null) {
+            throw new UserWithoutTeamException();
+        }
+        if (captain.getTeam().getCaptain() != captain) {
+            throw new UserInvalidTeamRightsException();
+        }
+        return sendInvite(captain.getTeam(), recipent);
     }
 }

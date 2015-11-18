@@ -55,4 +55,8 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
         return this;
     }
+
+    public User getById(Long id) {
+        return userRepository.findOne(id);
+    }
 }
