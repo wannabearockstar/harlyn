@@ -52,4 +52,13 @@ public class TeamService {
         }
         return teamInviteRepository.saveAndFlush(new TeamInvite(team, user));
     }
+
+    public void confirmInvite(TeamInvite teamInvite) {
+        Team team = teamInvite.getTeam();
+        User recipent = teamInvite.getRecipent();
+        team.addUser(recipent);
+        teamInviteRepository.delete(teamInvite);
+        teamInviteRepository.flush();
+        teamRepository.saveAndFlush(team);
+    }
 }
