@@ -1,6 +1,9 @@
 package com.harlyn.domain;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 /**
@@ -15,6 +18,8 @@ public class Team {
     @Column(name = "id", updatable = false)
     private Integer id;
 
+    @NotNull
+    @NotEmpty
     private String name;
 
     @OneToMany(mappedBy = "team")
@@ -29,6 +34,11 @@ public class Team {
     }
 
     public Team() {
+    }
+
+    public Team(String name, User captain) {
+        this(name);
+        this.captain = captain;
     }
 
     public Integer getId() {

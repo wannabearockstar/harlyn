@@ -21,6 +21,8 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import javax.validation.ConstraintViolationException;
+
 import static org.junit.Assert.*;
 
 /**
@@ -65,6 +67,17 @@ public class TeamServiceTest {
             teamService.createTeam("team1", captain);
             fail("Duplicate team name");
         } catch (NonUniqueTeamNameException name) {
+            assertTrue(true);
+        }
+    }
+
+    @Test
+    public void testCreateTeamWithEmptyName() throws Exception {
+        User captain = userRepository.saveAndFlush(new User("captain@cap.cap", "captain", "i am captain"));
+        try {
+            teamService.createTeam("", captain);
+            fail("Create team with empty name");
+        } catch (ConstraintViolationException e) {
             assertTrue(true);
         }
     }
