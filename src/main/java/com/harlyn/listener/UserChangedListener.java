@@ -17,9 +17,11 @@ import org.springframework.stereotype.Component;
 public class UserChangedListener implements ApplicationListener {
     @Autowired
     private UserService userService;
+
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
         if (event instanceof UserChangedEvent && SecurityContextHolder.getContext().getAuthentication().getPrincipal() != null) {
+            //Reload user for security context from database
             User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             User newUser = userService.getById(currentUser.getId());
             SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(newUser, newUser.getUsername(), newUser.getAuthorities()));
