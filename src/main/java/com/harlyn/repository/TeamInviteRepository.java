@@ -15,4 +15,6 @@ import org.springframework.stereotype.Repository;
 public interface TeamInviteRepository extends JpaRepository<TeamInvite, Long> {
     @Query(value = "select case when count(invite) > 0 then true else false end from TeamInvite invite where invite.team = :team and invite.recipent = :recipent")
     boolean inviteExists(@Param("team") Team team, @Param("recipent") User recipent);
+
+    TeamInvite findOneByRecipentAndTeam(User recipent, Team team);
 }

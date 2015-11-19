@@ -2,9 +2,11 @@ package com.harlyn.web;
 
 import com.harlyn.domain.Team;
 import com.harlyn.domain.User;
+import com.harlyn.event.UserChangedEvent;
 import com.harlyn.exception.TeamNotFoundException;
 import com.harlyn.service.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,7 +22,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping(value = "/team")
 public class TeamController {
     @Autowired
-    TeamService teamService;
+    private TeamService teamService;
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public String createTeam(@RequestParam(value = "name", required = true) String name) {
@@ -36,5 +40,17 @@ public class TeamController {
         }
         model.addAttribute("team", team);
         return "team/show";
+    }
+
+    @RequestMapping(value = "/{id}/invite/accept", method = RequestMethod.POST)
+    public String acceptInvite(@PathVariable(value = "id") Long teamId) {
+        Team team = teamService.getById(teamId);
+        if (team == null) {
+            throw new TeamNotFoundException();
+        }
+        teamService.confirmInvite((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal(), team);
+        eventPublisher.publishEvent(new UserChangedEvent(this));
+
+        return "redirect:/team/" + teamId;
     }
 }

@@ -10,5 +10,15 @@
         <input class="form-control" type="submit" value="Создать" />
     </form>
     <div th:unless="${me.team} == null" th:text="${me.team.name}"></div>
+    <div th:unless="${me.invites.empty}">
+        <span>Приглашения в команду</span>
+        <ul>
+            <li th:each="invite : ${me.invites}">
+                <form th:action="${'/team/' + invite.team.id + '/invite/accept'}" method="post">
+                    <input class="form-control" type="submit" th:value="${invite.team.name}" />
+                </form>
+            </li>
+        </ul>
+    </div>
 </body>
 </html>

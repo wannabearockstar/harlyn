@@ -6,8 +6,11 @@ import com.harlyn.domain.User;
 import com.harlyn.exception.*;
 import com.harlyn.repository.TeamInviteRepository;
 import com.harlyn.repository.TeamRepository;
+import com.harlyn.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
 
 /**
  * Created by wannabe on 18.11.15.
@@ -16,7 +19,8 @@ import org.springframework.stereotype.Service;
 public class TeamService {
     @Autowired
     private TeamRepository teamRepository;
-
+    @Autowired
+    private UserRepository userRepository;
     @Autowired
     private TeamInviteRepository teamInviteRepository;
 
@@ -24,7 +28,9 @@ public class TeamService {
         if (isTeamNameExists(name)) {
             throw new NonUniqueTeamNameException(name);
         }
-        return teamRepository.saveAndFlush(new Team(name, captain));
+        Team team = teamRepository.saveAndFlush(new Team(name, captain));
+        userRepository.saveAndFlush(captain.setTeam(team));
+        return team;
     }
 
     public TeamService setTeamRepository(TeamRepository teamRepository) {
@@ -51,13 +57,15 @@ public class TeamService {
         return teamInviteRepository.saveAndFlush(new TeamInvite(team, user));
     }
 
+    @Transactional
     public void confirmInvite(TeamInvite teamInvite) {
         Team team = teamInvite.getTeam();
         User recipent = teamInvite.getRecipent();
-        team.addUser(recipent);
+        recipent.setTeam(team);
+        recipent.getInvites().remove(teamInvite);
         teamInviteRepository.delete(teamInvite);
         teamInviteRepository.flush();
-        teamRepository.saveAndFlush(team);
+        userRepository.saveAndFlush(recipent);
     }
 
     public TeamInvite sendInvite(User captain, User recipent) {
@@ -72,5 +80,18 @@ public class TeamService {
 
     public Team getById(Long teamId) {
         return teamRepository.findOne(teamId);
+    }
+
+    public TeamService setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+        return this;
+    }
+
+    public void confirmInvite(User recipent, Team team) {
+        TeamInvite invite = teamInviteRepository.findOneByRecipentAndTeam(recipent, team);
+        if (invite == null) {
+            throw new MissingInviteException();
+        }
+        confirmInvite(invite);
     }
 }

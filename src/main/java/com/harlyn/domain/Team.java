@@ -23,7 +23,7 @@ public class Team {
     @NotEmpty
     private String name;
 
-    @OneToMany(mappedBy = "team")
+    @OneToMany(mappedBy = "team", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private Set<User> users = new HashSet<>();
 
     @OneToOne(targetEntity = User.class)
@@ -40,7 +40,6 @@ public class Team {
     public Team(String name, User captain) {
         this(name);
         this.captain = captain;
-        captain.setTeam(this);
     }
 
     public Long getId() {

@@ -55,6 +55,7 @@ public class TeamServiceTest {
         teamService = new TeamService();
         teamService.setTeamRepository(teamRepository)
                 .setTeamInviteRepository(teamInviteRepository)
+                .setUserRepository(userRepository)
                 ;
     }
 
@@ -126,6 +127,7 @@ public class TeamServiceTest {
 
         TeamInvite teamInvite = teamService.sendInvite(team, user);
         teamService.confirmInvite(teamInvite);
+        team = teamService.getById(team.getId());
 
         assertNull(teamInviteRepository.findOne(teamInvite.getId()));
         assertTrue(team.getUsers().contains(user));
@@ -157,5 +159,21 @@ public class TeamServiceTest {
         } catch (UserWithoutTeamException e) {
             assertTrue(true);
         }
+    }
+
+    @Test
+    public void testConfirmInviteByRecipentAndTeam() throws Exception {
+        User user = userRepository.saveAndFlush(new User("user@cap.cap", "user", "i am user"));
+        User captain = userRepository.saveAndFlush(new User("captain@cap.cap", "captain", "i am captain"));
+        Team team = teamService.createTeam("team1", captain);
+
+        assertFalse(team.getUsers().contains(user));
+
+        TeamInvite teamInvite = teamService.sendInvite(team, user);
+        teamService.confirmInvite(teamInvite);
+        team = teamService.getById(team.getId());
+
+        assertNull(teamInviteRepository.findOne(teamInvite.getId()));
+        assertTrue(team.getUsers().contains(user));
     }
 }

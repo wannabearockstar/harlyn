@@ -1,11 +1,13 @@
 package com.harlyn.web;
 
 import com.harlyn.domain.User;
+import com.harlyn.event.UserChangedEvent;
 import com.harlyn.exception.MissingUserExcpetion;
 import com.harlyn.exception.UserNotFoundException;
 import com.harlyn.service.TeamService;
 import com.harlyn.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,6 +25,8 @@ public class UserController {
     private UserService userService;
     @Autowired
     private TeamService teamService;
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     @RequestMapping(value = "/me", method = RequestMethod.GET)
     public String meAction(Model model) {
@@ -50,6 +54,7 @@ public class UserController {
             throw new MissingUserExcpetion();
         }
         teamService.sendInvite(me, user);
+        eventPublisher.publishEvent(new UserChangedEvent(this));
         return "redirect:/users/" + userId;
     }
 }

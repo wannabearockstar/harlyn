@@ -1,6 +1,7 @@
 package com.harlyn.domain;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 /**
  * Created by wannabe on 18.11.15.
@@ -50,5 +51,28 @@ public class TeamInvite {
     public TeamInvite setRecipent(User recipent) {
         this.recipent = recipent;
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || !(o instanceof User))
+            return false;
+
+        User other = (User) o;
+
+        if (id == null) return false;
+        if (Objects.equals(id, other.getId())) return true;
+
+        return id.equals(other.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        if (id != null) {
+            return id.hashCode();
+        } else {
+            return super.hashCode();
+        }
     }
 }
