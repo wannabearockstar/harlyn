@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments/wrapper :: head" lang="en">
+</head>
+<body>
+<div th:text="${user.username}"></div>
+<form th:unless="${me.team} == null" class="form-group" th:action="${'/users/' + user.id + '/invite'}" method="post">
+    <input class="form-control" type="submit" value="Пригласить пользователя в команду" />
+</form>
+</body>
+</html>

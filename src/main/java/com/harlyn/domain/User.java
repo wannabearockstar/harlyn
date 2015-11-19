@@ -8,9 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by wannabe on 11.11.15.
@@ -24,7 +22,7 @@ public class User implements UserDetails {
     @SequenceGenerator(name = "users_id_seq", sequenceName = "users_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_id_seq")
     @Column(name = "id", updatable = false)
-    private Integer id;
+    private Long id;
 
     @NotNull
     @NotEmpty
@@ -55,6 +53,9 @@ public class User implements UserDetails {
     )
     private Set<Role> roles;
 
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "recipent")
+    private Set<TeamInvite> invites = new HashSet<>();
+
     public User() {
     }
 
@@ -71,7 +72,7 @@ public class User implements UserDetails {
         this.team = team;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
@@ -157,5 +158,37 @@ public class User implements UserDetails {
     public User setRoles(Set<Role> roles) {
         this.roles = roles;
         return this;
+    }
+
+    public Set<TeamInvite> getInvites() {
+        return invites;
+    }
+
+    public User setInvites(Set<TeamInvite> invites) {
+        this.invites = invites;
+        return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || !(o instanceof User))
+            return false;
+
+        User other = (User) o;
+
+        if (id == null) return false;
+        if (Objects.equals(id, other.getId())) return true;
+
+        return id.equals(other.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        if (id != null) {
+            return id.hashCode();
+        } else {
+            return super.hashCode();
+        }
     }
 }

@@ -12,7 +12,7 @@ public class ConfirmCode {
     @SequenceGenerator(name = "confirm_codes_id_seq", sequenceName = "confirm_codes_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "confirm_codes_id_seq")
     @Column(name = "id", updatable = false)
-    private Integer id;
+    private Long id;
 
     @Column(unique = true, nullable = false)
     private String code;
@@ -29,7 +29,7 @@ public class ConfirmCode {
         this.user = user;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 

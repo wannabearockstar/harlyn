@@ -7,6 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validation;
+import java.util.Set;
+
 /**
  * Created by wannabe on 15.11.15.
  */
@@ -23,6 +28,10 @@ public class UserService {
     }
 
     public User createUser(User user) {
+        Set<ConstraintViolation<User>> errors = Validation.buildDefaultValidatorFactory().getValidator().validate(user);
+        if (!errors.isEmpty()) {
+            throw new ConstraintViolationException(errors);
+        }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.saveAndFlush(user);
     }
@@ -45,5 +54,9 @@ public class UserService {
     public UserService setPasswordEncoder(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
         return this;
+    }
+
+    public User getById(Long id) {
+        return userRepository.findOne(id);
     }
 }
