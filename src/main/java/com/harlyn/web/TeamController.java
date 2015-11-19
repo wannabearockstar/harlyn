@@ -3,17 +3,17 @@ package com.harlyn.web;
 import com.harlyn.domain.Team;
 import com.harlyn.domain.User;
 import com.harlyn.event.UserChangedEvent;
+import com.harlyn.exception.NonUniqueTeamNameException;
 import com.harlyn.exception.TeamNotFoundException;
 import com.harlyn.service.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Created by wannabe on 18.11.15.
@@ -36,7 +36,7 @@ public class TeamController {
     public String showTeam(@PathVariable(value = "id") Long teamId, Model model) {
         Team team = teamService.getById(teamId);
         if (team == null) {
-            throw new TeamNotFoundException();
+            throw new TeamNotFoundException(teamId);
         }
         model.addAttribute("team", team);
         return "team/show";
@@ -46,11 +46,29 @@ public class TeamController {
     public String acceptInvite(@PathVariable(value = "id") Long teamId) {
         Team team = teamService.getById(teamId);
         if (team == null) {
-            throw new TeamNotFoundException();
+            throw new TeamNotFoundException(teamId);
         }
         teamService.confirmInvite((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal(), team);
         eventPublisher.publishEvent(new UserChangedEvent(this));
 
         return "redirect:/team/" + teamId;
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(TeamNotFoundException.class)
+    public ModelAndView teamNotFoundException(TeamNotFoundException e) {
+        ModelAndView mav = new ModelAndView();
+        mav.addObject("message", e.getMessage());
+        mav.setViewName("utils/errors/default");
+        return mav;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(NonUniqueTeamNameException.class)
+    public ModelAndView nonUniqueTeamNameException(NonUniqueTeamNameException e) {
+        ModelAndView mav = new ModelAndView();
+        mav.addObject("message", e.getMessage());
+        mav.setViewName("utils/errors/default");
+        return mav;
     }
 }
