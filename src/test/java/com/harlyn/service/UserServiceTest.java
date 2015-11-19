@@ -21,6 +21,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import javax.validation.ConstraintViolationException;
 import java.util.Objects;
 
 import static org.junit.Assert.*;
@@ -98,5 +99,36 @@ public class UserServiceTest {
     @After
     public void tearDown() throws Exception {
         flyway.clean();
+    }
+
+    @Test
+    public void testCreateUserWithInvalidData() throws Exception {
+        try {
+            userService.createUser(new User("", "username", "password"));
+            fail("Create user with invalid data");
+        } catch (ConstraintViolationException e) {
+            assertTrue(true);
+        }
+
+        try {
+            userService.createUser(new User("s", "", "password"));
+            fail("Create user with invalid data");
+        } catch (ConstraintViolationException e) {
+            assertTrue(true);
+        }
+
+        try {
+            userService.createUser(new User("d", "username", ""));
+            fail("Create user with invalid data");
+        } catch (ConstraintViolationException e) {
+            assertTrue(true);
+        }
+
+        try {
+            userService.createUser(new User("d", "username", null));
+            fail("Create user with invalid data");
+        } catch (ConstraintViolationException e) {
+            assertTrue(true);
+        }
     }
 }
