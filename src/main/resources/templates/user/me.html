@@ -4,5 +4,11 @@
 </head>
 <body>
     <div th:text="${me.username}"></div>
+    <form th:if="${me.team} == null" class="form-group" th:action="${'/team/'}" method="post">
+        <label for="name">Создать команду</label>
+        <input type="text" name="name" required="required" id="name" />
+        <input class="form-control" type="submit" value="Создать" />
+    </form>
+    <div th:unless="${me.team} == null" th:text="${me.team.name}"></div>
 </body>
 </html>

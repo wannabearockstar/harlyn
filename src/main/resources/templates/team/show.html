@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments/wrapper :: head" lang="en">
+</head>
+<body>
+<div th:text="${team.name}"></div>
+<div>Участники</div>
+<ul>
+    <li th:each="user : ${team.users}" th:text="${user.username}"></li>
+</ul>
+</body>
+</html>

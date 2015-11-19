@@ -69,4 +69,8 @@ public class TeamService {
         }
         return sendInvite(captain.getTeam(), recipent);
     }
+
+    public Team getById(Long teamId) {
+        return teamRepository.findOne(teamId);
+    }
 }

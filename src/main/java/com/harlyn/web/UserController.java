@@ -2,6 +2,7 @@ package com.harlyn.web;
 
 import com.harlyn.domain.User;
 import com.harlyn.exception.MissingUserExcpetion;
+import com.harlyn.exception.UserNotFoundException;
 import com.harlyn.service.TeamService;
 import com.harlyn.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,17 @@ public class UserController {
     public String meAction(Model model) {
         model.addAttribute("me", (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         return "user/me";
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public String userAction(Model model, @PathVariable(value = "id") Long id) {
+        User user = userService.getById(id);
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
+        model.addAttribute(user);
+        model.addAttribute("me", (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        return "user/show";
     }
 
     @RequestMapping(value = "/{id}/invite", method = RequestMethod.POST)
