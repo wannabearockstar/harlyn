@@ -8,9 +8,6 @@ import javax.persistence.*;
 @Entity
 @Table(name = "problems")
 public class Problem {
-    @Enumerated(EnumType.STRING)
-    @Column(name = "problem_type")
-    public ProblemType problemType;
     @Id
     @SequenceGenerator(name = "problems_id_seq", sequenceName = "problems_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "problems_id_seq")
@@ -21,7 +18,18 @@ public class Problem {
     private String answer;
     private Integer points;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "problem_type")
+    private ProblemType problemType;
+
     public Problem() {
+    }
+
+    public Problem(String name, String answer, Integer points, ProblemType problemType) {
+        this.name = name;
+        this.answer = answer;
+        this.points = points;
+        this.problemType = problemType;
     }
 
     public Long getId() {
