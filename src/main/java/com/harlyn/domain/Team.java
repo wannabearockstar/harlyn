@@ -30,6 +30,8 @@ public class Team {
     @JoinColumn(name = "captain_id")
     private User captain;
 
+    private Integer points;
+
     public Team(String name) {
         this.name = name;
     }
@@ -77,5 +79,19 @@ public class Team {
     public Team setCaptain(User captain) {
         this.captain = captain;
         return this;
+    }
+
+    public Integer getPoints() {
+        return points;
+    }
+
+    public Team setPoints(Integer points) {
+        this.points = points;
+        return this;
+    }
+
+    @PrePersist
+    public void initValues() {
+        this.points = 0;
     }
 }
