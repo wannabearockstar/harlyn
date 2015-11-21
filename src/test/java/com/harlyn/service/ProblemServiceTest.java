@@ -7,6 +7,7 @@ import com.harlyn.domain.problems.Problem;
 import com.harlyn.domain.problems.Solution;
 import com.harlyn.domain.problems.SubmitData;
 import com.harlyn.domain.problems.handlers.ProblemHandler;
+import com.harlyn.exception.TeamAlreadySolveProblemException;
 import com.harlyn.repository.ProblemRepository;
 import com.harlyn.repository.SolutionRepository;
 import com.harlyn.repository.TeamRepository;
@@ -76,6 +77,7 @@ public class ProblemServiceTest {
                 .setProblemRepository(problemRepository)
                 .setSolutionRepository(solutionRepository)
                 .setTeamRepository(teamRepository);
+        transactionTemplate = new TransactionTemplate(platformTransactionManager);
     }
 
     @After
@@ -110,6 +112,8 @@ public class ProblemServiceTest {
                 problemService.createSolution(problem, invalidData, solver)
         );
         team = teamRepository.findOne(team.getId());
+        assertFalse(problemRepository.findOne(problem.getId()).getSolverTeams().contains(team));
+
 
         assertTrue(invalidSolution.isChecked());
         assertFalse(invalidSolution.isCorrect());
@@ -123,8 +127,51 @@ public class ProblemServiceTest {
 
             assertTrue(validSolution.isChecked());
             assertTrue(validSolution.isCorrect());
-            assertEquals(new Integer(12), updatedTeam.getPoints());
+            assertTrue(problemRepository.findOne(problem.getId()).getSolverTeams().contains(
+                    teamRepository.findOne(updatedTeam.getId())
+            ));
+            assertTrue(teamRepository.findOne(updatedTeam.getId()).getSolvedProblems().contains(
+                    problemRepository.findOne(problem.getId())
+            ));
+            assertEquals(new Integer(12), teamRepository.findOne(updatedTeam.getId()).getPoints());
             return 1;
         });
+    }
+
+    @Test
+    public void testCreateSolutionTwiceFromTheSameTeam() throws Exception {
+        Problem problem = problemRepository.saveAndFlush(new Problem("name", "answer", 12, Problem.ProblemType.FLAG));
+        Team team = teamRepository.saveAndFlush(new Team("name"));
+        User solver = userRepository.saveAndFlush(new User("user@email.com", "username", "password")
+                        .setTeam(team)
+        );
+        User anotherSolver = userRepository.saveAndFlush(new User("us1er@email.com", "use1rname", "password")
+                        .setTeam(team)
+        );
+        SubmitData validData = new SubmitData("answer", null);
+        final Team updatedTeam = teamRepository.findOne(team.getId());
+        transactionTemplate.execute(status -> {
+            Solution validSolution = solutionRepository.findOne(
+                    problemService.createSolution(problem, validData, solver)
+            );
+
+            assertTrue(validSolution.isChecked());
+            assertTrue(validSolution.isCorrect());
+            assertTrue(problemRepository.findOne(problem.getId()).getSolverTeams().contains(
+                    teamRepository.findOne(updatedTeam.getId())
+            ));
+            assertEquals(new Integer(12), teamRepository.findOne(updatedTeam.getId()).getPoints());
+            return 1;
+        });
+
+        try {
+            transactionTemplate.execute(status -> {
+                problemService.createSolution(problem, validData, anotherSolver);
+                fail("Users from the same team solved same problem");
+                return 1;
+            });
+        } catch (TeamAlreadySolveProblemException e) {
+            assertTrue(true);
+        }
     }
 }

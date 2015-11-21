@@ -1,6 +1,12 @@
 package com.harlyn.domain.problems;
 
+import com.harlyn.domain.Team;
+import com.harlyn.domain.User;
+
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Created by wannabe on 20.11.15.
@@ -21,6 +27,15 @@ public class Problem {
     @Enumerated(EnumType.STRING)
     @Column(name = "problem_type")
     private ProblemType problemType;
+
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "teams_problems_solved",
+            joinColumns = {@JoinColumn(name = "problem_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "team_id", referencedColumnName = "id")}
+    )
+    private Set<Team> solverTeams = new HashSet<>();
 
     public Problem() {
     }
@@ -85,5 +100,41 @@ public class Problem {
         FLAG,
         INFO_WEB,
         INFO_EMAIL;
+    }
+
+    public Set<Team> getSolverTeams() {
+        return solverTeams;
+    }
+
+    public Problem setSolverTeams(Set<Team> solverTeams) {
+        this.solverTeams = solverTeams;
+        return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || !(o instanceof User))
+            return false;
+
+        User other = (User) o;
+
+        if (id == null) return false;
+        if (Objects.equals(id, other.getId())) return true;
+
+        return id.equals(other.getId());
+    }
+
+    public enum ProblemType {
+        FLAG,
+        INFO_WEB,
+        INFO_EMAIL;
+    }    @Override
+    public int hashCode() {
+        if (id != null) {
+            return id.hashCode();
+        } else {
+            return super.hashCode();
+        }
     }
 }

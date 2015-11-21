@@ -1,10 +1,12 @@
 package com.harlyn.service;
 
+import com.harlyn.domain.Team;
 import com.harlyn.domain.User;
 import com.harlyn.domain.problems.Problem;
 import com.harlyn.domain.problems.Solution;
 import com.harlyn.domain.problems.SubmitData;
 import com.harlyn.domain.problems.handlers.ProblemHandler;
+import com.harlyn.exception.TeamAlreadySolveProblemException;
 import com.harlyn.repository.ProblemRepository;
 import com.harlyn.repository.SolutionRepository;
 import com.harlyn.repository.TeamRepository;
@@ -37,6 +39,10 @@ public class ProblemService {
     }
 
     public Long createSolution(Problem problem, SubmitData data, User solver) {
+        if (problem.getSolverTeams().contains(solver.getTeam())) {
+            throw new TeamAlreadySolveProblemException("Team already solved this problem");
+        }
+
         ProblemHandler problemHandler = problemHandlers.get(problem.getProblemType());
         Solution solution = new Solution(problem, solver)
                 .setAnswer(data.getQueryParam());
@@ -63,8 +69,16 @@ public class ProblemService {
     private void solveProblem(Problem problem, Solution solution) {
         solution.setChecked(true);
         solution.setCorrect(true);
+
         teamRepository.incrementTeamPoints(solution.getSolver().getTeam().getId(), problem.getPoints());
         solutionRepository.saveAndFlush(solution);
+
+        problem.getSolverTeams().add(solution.getSolver().getTeam());
+        problemRepository.saveAndFlush(problem);
+
+        Team team = teamRepository.findOne(problem.getId());
+        team.getSolvedProblems().add(problem);
+        teamRepository.saveAndFlush(team);
     }
 
     public ProblemService setProblemRepository(ProblemRepository problemRepository) {

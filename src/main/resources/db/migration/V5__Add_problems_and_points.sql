@@ -19,3 +19,10 @@ CREATE TABLE solutions(
   checked BOOLEAN DEFAULT FALSE,
   answer VARCHAR(1024) DEFAULT NULL
 );
+
+CREATE SEQUENCE teams_problems_solved_id_seq;
+CREATE TABLE teams_problems_solved(
+  id INTEGER PRIMARY KEY DEFAULT nextval('teams_problems_solved_id_seq'),
+  team_id INTEGER REFERENCES teams (id),
+  problem_id INTEGER REFERENCES problems (id)
+);

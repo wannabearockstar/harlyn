@@ -1,10 +1,12 @@
 package com.harlyn.domain;
 
+import com.harlyn.domain.problems.Problem;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -31,6 +33,9 @@ public class Team {
     private User captain;
 
     private Integer points;
+
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "solverTeams")
+    private Set<Problem> solvedProblems = new HashSet<>();
 
     public Team(String name) {
         this.name = name;
@@ -93,5 +98,38 @@ public class Team {
     @PrePersist
     public void initValues() {
         this.points = 0;
+    }
+
+    public Set<Problem> getSolvedProblems() {
+        return solvedProblems;
+    }
+
+    public Team setSolvedProblems(Set<Problem> solvedProblems) {
+        this.solvedProblems = solvedProblems;
+        return this;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || !(o instanceof User))
+            return false;
+
+        User other = (User) o;
+
+        if (id == null) return false;
+        if (Objects.equals(id, other.getId())) return true;
+
+        return id.equals(other.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        if (id != null) {
+            return id.hashCode();
+        } else {
+            return super.hashCode();
+        }
     }
 }
