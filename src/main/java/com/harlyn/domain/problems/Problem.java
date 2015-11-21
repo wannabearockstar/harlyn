@@ -1,7 +1,6 @@
 package com.harlyn.domain.problems;
 
 import com.harlyn.domain.Team;
-import com.harlyn.domain.User;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -96,12 +95,6 @@ public class Problem {
         return this;
     }
 
-    public enum ProblemType {
-        FLAG,
-        INFO_WEB,
-        INFO_EMAIL;
-    }
-
     public Set<Team> getSolverTeams() {
         return solverTeams;
     }
@@ -114,10 +107,10 @@ public class Problem {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || !(o instanceof User))
+        if (o == null || !(o instanceof Problem))
             return false;
 
-        User other = (User) o;
+        Problem other = (Problem) o;
 
         if (id == null) return false;
         if (Objects.equals(id, other.getId())) return true;
@@ -125,16 +118,18 @@ public class Problem {
         return id.equals(other.getId());
     }
 
-    public enum ProblemType {
-        FLAG,
-        INFO_WEB,
-        INFO_EMAIL;
-    }    @Override
+    @Override
     public int hashCode() {
         if (id != null) {
             return id.hashCode();
         } else {
             return super.hashCode();
         }
+    }
+
+    public enum ProblemType {
+        FLAG,
+        INFO_WEB,
+        INFO_EMAIL;
     }
 }

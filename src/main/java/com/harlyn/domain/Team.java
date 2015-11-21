@@ -113,10 +113,10 @@ public class Team {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || !(o instanceof User))
+        if (o == null || !(o instanceof Team))
             return false;
 
-        User other = (User) o;
+        Team other = (Team) o;
 
         if (id == null) return false;
         if (Objects.equals(id, other.getId())) return true;
