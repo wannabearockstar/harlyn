@@ -12,9 +12,9 @@ import com.harlyn.repository.SolutionRepository;
 import com.harlyn.repository.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import javax.transaction.Transactional;
 import java.util.Map;
 
 /**
@@ -71,14 +71,18 @@ public class ProblemService {
         solution.setCorrect(true);
 
         teamRepository.incrementTeamPoints(solution.getSolver().getTeam().getId(), problem.getPoints());
-        solutionRepository.saveAndFlush(solution);
+        solutionRepository.save(solution);
 
         problem.getSolverTeams().add(solution.getSolver().getTeam());
-        problemRepository.saveAndFlush(problem);
+        problemRepository.save(problem);
 
         Team team = teamRepository.findOne(problem.getId());
         team.getSolvedProblems().add(problem);
-        teamRepository.saveAndFlush(team);
+        teamRepository.save(team);
+
+        teamRepository.flush();
+        solutionRepository.flush();
+        problemRepository.flush();
     }
 
     public ProblemService setProblemRepository(ProblemRepository problemRepository) {

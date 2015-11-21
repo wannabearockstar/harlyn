@@ -4,7 +4,8 @@
 </head>
 <body>
 <div th:text="${team.name}"></div>
-<div>Участники</div>
+<div th:text="${'Points: ' + team.points}"></div>
+<div>Members</div>
 <ul>
     <li th:each="user : ${team.users}" th:text="${user.username}"></li>
 </ul>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments/wrapper :: head" lang="en">
+</head>
+<body>
+<h2 th:text="${problem.name}"></h2>
+<div th:text="${problem.info}"></div>
+<form th:unless="${me.team.solvedProblems.contains(problem)}" class="form-group" th:action="${'/problem/' + problem.id + '/submit'}" method="post" enctype="multipart/form-data">
+    <input type="text" name="query" placeholder="Input answer" />
+    <input type="file" name="file" value="Attach file" />
+    <input class="form-control" type="submit" value="Submit answer" />
+</form>
+<div th:if="${me.team.solvedProblems.contains(problem)}" class="alert alert-success">
+    Your team already solved this problem
+</div>
+</body>
+</html>
