@@ -16,6 +16,11 @@ import java.util.Map;
 /**
  * Created by wannabe on 20.11.15.
  */
+
+/**
+ * Email implementation of {@link ProblemHandler}
+ * Do not providing final answer about solution status, just pass solution query param by email
+ */
 public class InfoEmailProblemHandler implements ProblemHandler {
     private JavaMailSender mailSender;
     private SimpleMailMessage templateMessage;

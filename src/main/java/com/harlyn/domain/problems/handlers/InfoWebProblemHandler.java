@@ -7,6 +7,11 @@ import com.harlyn.domain.problems.SubmitData;
 /**
  * Created by wannabe on 20.11.15.
  */
+
+/**
+ * InfoWeb implementation of {@link ProblemHandler}
+ * Do nothing, letting overlying service just save solution query param to persistence layer.
+ */
 public class InfoWebProblemHandler implements ProblemHandler {
     @Override
     public boolean isManual() {
