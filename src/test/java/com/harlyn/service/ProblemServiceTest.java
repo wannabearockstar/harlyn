@@ -115,12 +115,16 @@ public class ProblemServiceTest {
         assertFalse(invalidSolution.isCorrect());
         assertEquals(new Integer(0), team.getPoints());
 
-        Solution validSolution = solutionRepository.findOne(
-                problemService.createSolution(problem, validData, solver)
-        );
+        final Team updatedTeam = teamRepository.findOne(team.getId());
+        transactionTemplate.execute(status -> {
+            Solution validSolution = solutionRepository.findOne(
+                    problemService.createSolution(problem, validData, solver)
+            );
 
-        assertTrue(validSolution.isChecked());
-        assertTrue(validSolution.isCorrect());
-        assertEquals(new Integer(12), team.getPoints());
+            assertTrue(validSolution.isChecked());
+            assertTrue(validSolution.isCorrect());
+            assertEquals(new Integer(12), updatedTeam.getPoints());
+            return 1;
+        });
     }
 }
