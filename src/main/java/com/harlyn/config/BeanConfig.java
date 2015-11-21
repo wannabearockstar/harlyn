@@ -40,6 +40,17 @@ public class BeanConfig {
         return mailMessage;
     }
 
+    @Bean(name = "templateMailProblemMessage")
+    public SimpleMailMessage templateMailProblemMessage(@Value("${mail.problem.from}") String from,
+                                             @Value("${mail.problem.to}") String to
+    ) throws UnsupportedEncodingException {
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setFrom(from);
+        mailMessage.setTo(to);
+
+        return mailMessage;
+    }
+
     @Bean(name = "velocityEngine")
     public VelocityEngine velocityEngine() {
         VelocityEngine velocityEngine = new VelocityEngine();

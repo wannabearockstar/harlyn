@@ -46,27 +46,29 @@ public class ProblemService {
         ProblemHandler problemHandler = problemHandlers.get(problem.getProblemType());
         Solution solution = new Solution(problem, solver)
                 .setAnswer(data.getQueryParam());
-        boolean success = problemHandler.checkSolution(problem, data);
+        boolean success = problemHandler.checkSolution(problem, data, solver);
         if (!problemHandler.isManual()) {
             if (success) {
                 solveProblem(problem, solution);
             } else {
                 failSolution(solution);
             }
+        } else {
+            solutionRepository.saveAndFlush(solution);
         }
         return solution.getId();
 
     }
 
     @Transactional
-    private void failSolution(Solution solution) {
+    public void failSolution(Solution solution) {
         solution.setChecked(true);
         solution.setCorrect(false);
         solutionRepository.saveAndFlush(solution);
     }
 
     @Transactional
-    private void solveProblem(Problem problem, Solution solution) {
+    public void solveProblem(Problem problem, Solution solution) {
         solution.setChecked(true);
         solution.setCorrect(true);
 

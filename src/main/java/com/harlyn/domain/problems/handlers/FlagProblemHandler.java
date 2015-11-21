@@ -1,5 +1,6 @@
 package com.harlyn.domain.problems.handlers;
 
+import com.harlyn.domain.User;
 import com.harlyn.domain.problems.Problem;
 import com.harlyn.domain.problems.SubmitData;
 
@@ -15,7 +16,7 @@ public class FlagProblemHandler implements ProblemHandler {
     }
 
     @Override
-    public boolean checkSolution(Problem problem, SubmitData submitData) {
-        return Objects.equals(problem.getAnswer(), submitData.getQueryParam());
+    public boolean checkSolution(Problem problem, SubmitData solution, User solver) {
+        return Objects.equals(problem.getAnswer(), solution.getQueryParam());
     }
 }

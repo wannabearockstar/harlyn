@@ -5,8 +5,12 @@ import com.harlyn.domain.problems.handlers.FlagProblemHandler;
 import com.harlyn.domain.problems.handlers.InfoEmailProblemHandler;
 import com.harlyn.domain.problems.handlers.InfoWebProblemHandler;
 import com.harlyn.domain.problems.handlers.ProblemHandler;
+import org.apache.velocity.app.VelocityEngine;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,6 +20,13 @@ import java.util.Map;
  */
 @Configuration
 public class ProblemConfig {
+    @Autowired
+    private JavaMailSender mailSender;
+    @Autowired
+    private SimpleMailMessage templateMailProblemMessage;
+    @Autowired
+    private VelocityEngine velocityEngine;
+
     @Bean
     public ProblemHandler flagProblemHandler() {
         return new FlagProblemHandler();
@@ -23,7 +34,11 @@ public class ProblemConfig {
 
     @Bean
     public ProblemHandler infoEmailProblemHandler() {
-        return new InfoEmailProblemHandler();
+        return new InfoEmailProblemHandler(
+                mailSender,
+                templateMailProblemMessage,
+                velocityEngine
+        );
     }
 
     @Bean

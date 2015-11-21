@@ -16,6 +16,6 @@ mail.password=password
 mail.confirm.from=from@smtp.com
 mail.confirm.subject=Confirm you user!
 
-flyway.url=jdbc:postgresql://localhost:5432/harlyn_test
-flyway.user=postgres
-flyway.baseline-on-migrate=true
+
+mail.problem.from=fromo@mail.com
+mail.problem.to=to@mail.com

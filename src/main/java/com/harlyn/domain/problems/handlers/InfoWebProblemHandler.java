@@ -1,5 +1,6 @@
 package com.harlyn.domain.problems.handlers;
 
+import com.harlyn.domain.User;
 import com.harlyn.domain.problems.Problem;
 import com.harlyn.domain.problems.SubmitData;
 
@@ -13,7 +14,7 @@ public class InfoWebProblemHandler implements ProblemHandler {
     }
 
     @Override
-    public boolean checkSolution(Problem problem, SubmitData solution) {
+    public boolean checkSolution(Problem problem, SubmitData solution, User solver) {
         return false;
     }
 }
