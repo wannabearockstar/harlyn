@@ -1,0 +1,5 @@
+<html>
+<body>
+<div>${solution.getQueryParam()}</div>
+</body>
+</html>

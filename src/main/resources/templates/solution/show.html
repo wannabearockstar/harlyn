@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments/wrapper :: head" lang="en">
+</head>
+<body>
+    <h2 th:text="${'Solution #' + solution.id}"></h2>
+    <div th:if="${solution.checked}">
+        <div class="alert alert-success" th:if="${solution.correct}">
+            Yay! Correct answer!
+        </div>
+        <div class="alert alert-danger" th:unless="${solution.correct}">
+            Wrong answer :(
+        </div>
+    </div>
+    <div th:unless="${solution.checked}" class="alert alert-info">
+        Solution has not been reviewed yet.
+    </div>
+</body>
+</html>
