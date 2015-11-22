@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -122,5 +123,9 @@ public class ProblemService {
                 .setPoints(updateData.getPoints())
                 .setProblemType(updateData.getProblemType());
         return problemRepository.saveAndFlush(problem).getId();
+    }
+
+    public List<Problem> getAllProblems() {
+        return problemRepository.findAll();
     }
 }

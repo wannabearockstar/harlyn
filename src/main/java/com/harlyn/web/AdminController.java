@@ -76,4 +76,10 @@ public class AdminController {
                         .setInfo(info)
         );
     }
+
+    @RequestMapping(value = "/problem/list", method = RequestMethod.GET)
+    public String listProblemPage(Model model) {
+        model.addAttribute("problems", problemService.getAllProblems());
+        return "admin/problem/list";
+    }
 }
