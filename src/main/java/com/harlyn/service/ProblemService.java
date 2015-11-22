@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -78,7 +79,7 @@ public class ProblemService {
         problem.getSolverTeams().add(solution.getSolver().getTeam());
         problemRepository.save(problem);
 
-        Team team = teamRepository.findOne(problem.getId());
+        Team team = teamRepository.findOne(solution.getSolver().getTeam().getId());
         team.getSolvedProblems().add(problem);
         teamRepository.save(team);
 
@@ -105,5 +106,26 @@ public class ProblemService {
     public ProblemService setProblemHandlers(Map<Problem.ProblemType, ProblemHandler> problemHandlers) {
         this.problemHandlers = problemHandlers;
         return this;
+    }
+
+    /**
+     * @param problem
+     * @return id of problem
+     */
+    public Long createProblem(Problem problem) {
+        return problemRepository.saveAndFlush(problem).getId();
+    }
+
+    public Long updateProblem(Problem problem, Problem updateData) {
+        problem.setName(updateData.getName())
+                .setAnswer(updateData.getAnswer())
+                .setInfo(updateData.getInfo())
+                .setPoints(updateData.getPoints())
+                .setProblemType(updateData.getProblemType());
+        return problemRepository.saveAndFlush(problem).getId();
+    }
+
+    public List<Problem> getAllProblems() {
+        return problemRepository.findAll();
     }
 }

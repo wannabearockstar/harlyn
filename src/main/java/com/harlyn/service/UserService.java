@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -58,5 +59,9 @@ public class UserService {
 
     public User getById(Long id) {
         return userRepository.findOne(id);
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 }

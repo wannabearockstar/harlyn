@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments/wrapper :: head" lang="en">
+</head>
+<body>
+    <form action="/admin/problem/" method="post">
+        <div class="form-group">
+            <label for="name" class="form-control">Name of problem</label>
+            <input class="form-control" type="text" name="name" id="name" placeholder="Name of problem" />
+        </div>
+        <div class="form-group">
+            <label for="answer" class="form-control">Answer of problem</label>
+            <input class="form-control" type="text" name="answer" id="answer" placeholder="Answer of problem" />
+        </div>
+        <div class="form-group">
+            <label for="points" class="form-control">Points for solving</label>
+            <input class="form-control" type="number" name="points" id="points" />
+        </div>
+        <div class="form-group">
+            <label class="form-control" for="info">Info</label>
+            <textarea class="form-control" name="info" id="info"></textarea>
+        </div>
+        <div class="form-group">
+            <label class="form-control" for="problem_type">Problem type</label>
+            <select name="problem_type" id="problem_type">
+                <option th:each="problem_type : ${problem_handlers_keys}" th:value="${problem_type.name()}" th:text="${problem_type.name()}"></option>
+            </select>
+        </div>
+        <div class="form-group">
+            <input type="submit" class="btn btn-primary form-control" value="Create" />
+        </div>
+    </form>
+</body>
+</html>

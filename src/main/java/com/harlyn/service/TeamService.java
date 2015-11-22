@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 /**
  * Created by wannabe on 18.11.15.
@@ -93,5 +94,9 @@ public class TeamService {
             throw new MissingInviteException();
         }
         confirmInvite(invite);
+    }
+
+    public List<Team> getAllTeams() {
+        return teamRepository.findAll();
     }
 }
