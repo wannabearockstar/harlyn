@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments/wrapper :: head" lang="en">
+</head>
+<body>
+<ul>
+    <li th:each="solution : ${solutions}">
+        <a th:href="${'/admin/solution/' + solution.id}" th:text="${'Solution #' + solution.id}"></a>
+    </li>
+</ul>
+</body>
+</html>
