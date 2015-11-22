@@ -4,6 +4,7 @@ import com.harlyn.domain.problems.Problem;
 import com.harlyn.domain.problems.handlers.ProblemHandler;
 import com.harlyn.exception.ProblemNotFoundException;
 import com.harlyn.service.ProblemService;
+import com.harlyn.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,6 +26,8 @@ public class AdminController {
     private ProblemService problemService;
     @Resource
     private Map<Problem.ProblemType, ProblemHandler> problemHandlers;
+    @Autowired
+    private UserService userService;
 
     @RequestMapping(value = "/problem/", method = RequestMethod.GET)
     public String newProblemPage(Model model) {
@@ -81,5 +84,11 @@ public class AdminController {
     public String listProblemPage(Model model) {
         model.addAttribute("problems", problemService.getAllProblems());
         return "admin/problem/list";
+    }
+
+    @RequestMapping(value = "/user/list", method = RequestMethod.GET)
+    public String listUsersPage(Model model) {
+        model.addAttribute("users", userService.getAllUsers());
+        return "admin/user/list";
     }
 }

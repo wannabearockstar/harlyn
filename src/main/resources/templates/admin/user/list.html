@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments/wrapper :: head" lang="en">
+</head>
+<body>
+<ul>
+    <li th:each="user : ${users}">
+        <a th:href="${'/admin/user/' + user.id}" th:text="${user.username}"></a>
+    </li>
+</ul>
+</body>
+</html>
