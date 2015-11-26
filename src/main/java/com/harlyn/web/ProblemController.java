@@ -52,6 +52,16 @@ public class ProblemController {
         return "problem/show";
     }
 
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public String allProblemsPage(Model model) {
+        User me = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        model.addAttribute("problems", problemService.getAllProblems());
+        model.addAttribute("me", me);
+
+        return "problem/list";
+    }
+
     @ExceptionHandler(ProblemNotFoundException.class)
     public ModelAndView ProblemNotFoundException(ProblemNotFoundException e) {
         ModelAndView mav = new ModelAndView();
