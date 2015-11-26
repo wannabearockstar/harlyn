@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * Created by wannabe on 18.11.15.
  */
@@ -20,4 +22,6 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
     @Modifying
     @Query(value = "update Team team set team.points = team.points + :points where team.id = :team_id")
     void incrementTeamPoints(@Param("team_id") Long teamId, @Param("points") Integer points);
+
+    List<Team> findAllByOrderByPointsDesc();
 }

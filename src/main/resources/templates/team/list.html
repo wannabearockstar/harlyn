@@ -7,11 +7,12 @@
 </head>
 <body>
 <div layout:fragment="content" class="container">
-    <div th:text="${team.name}"></div>
-    <div th:text="${'Points: ' + team.points}"></div>
-    <div>Members</div>
+    <h3>Team list</h3>
     <ul>
-        <li th:each="user : ${team.users}" th:text="${user.username}"></li>
+        <li th:each="team : ${teams}">
+            <a th:href="${'/admin/team/' + team.id}" th:text="${team.name}"></a>
+            <span th:text="${': ' + team.points}"></span>
+        </li>
     </ul>
 </div>
 </body>

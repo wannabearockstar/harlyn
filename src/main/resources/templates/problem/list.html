@@ -3,13 +3,16 @@
       xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
       layout:decorator="fragments/wrapper">
 <head>
-    <title>Harlyn - admin - teams</title>
+    <title>Harlyn - problem</title>
 </head>
 <body>
+
 <div layout:fragment="content" class="container">
+    <h3>Problem list</h3>
     <ul>
-        <li th:each="team : ${teams}">
-            <a th:href="${'/admin/team/' + team.id}" th:text="${team.name}"></a>
+        <li th:each="problem : ${problems}">
+            <a th:href="${'/problem/' + problem.id}" th:text="${problem.name}"></a>
+            <span th:if="${me.team.solvedProblems.contains(problem)}"> (SOLVED)</span>
         </li>
     </ul>
 </div>
