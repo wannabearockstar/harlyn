@@ -9,9 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 import java.util.Map;
@@ -37,5 +39,13 @@ public class SolutionController {
         model.addAttribute("problemHandlers", problemHandlers);
         model.addAttribute("me", (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         return "solution/show";
+    }
+
+    @ExceptionHandler(SolutionNotFoundException.class)
+    public ModelAndView ProblemNotFoundException(SolutionNotFoundException e) {
+        ModelAndView mav = new ModelAndView();
+        mav.addObject("message", e.getMessage());
+        mav.setViewName("utils/errors/default");
+        return mav;
     }
 }
