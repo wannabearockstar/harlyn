@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments/wrapper :: head" lang="en">
+</head>
+<body>
+<h2 th:text="${'Solution #' + solution.id}"></h2>
+<div th:if="${solution.answer}">
+    Solution data: <span th:text="${solution.answer}"></span>
+</div>
+<div th:unless="${solution.answer}">Solution has no data or it was send via email</div>
+<div th:if="${solution.checked}">
+    <div>
+        Solution already checked. Status:
+        <span class="alert alert-success" th:if="${solution.correct}">
+            Correct
+        </span>
+        <span class="alert alert-danger" th:unless="${solution.correct}">
+            Wrong
+        </span>
+    </div>
+
+</div>
+<div th:unless="${solution.checked}">
+    Solution has not been reviewed yet.
+    <form method="post" th:action="${'/admin/solution/' + solution.id + '/check'}">
+        <label for="correct">Decision</label>
+        <select id="correct" name="correct">
+            <option value="0">Wrong</option>
+            <option value="1">Correct</option>
+        </select>
+        <input type="submit" value="Review" />
+    </form>
+</div>
+</body>
+</html>

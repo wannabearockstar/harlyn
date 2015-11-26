@@ -6,6 +6,7 @@
 <ul>
     <li th:each="solution : ${solutions}">
         <a th:href="${'/admin/solution/' + solution.id}" th:text="${'Solution #' + solution.id}"></a>
+        <span th:unless="${solution.checked}" class="alert alert-warning">UNCHECKED</span>
     </li>
 </ul>
 </body>
