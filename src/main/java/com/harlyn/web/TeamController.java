@@ -55,6 +55,13 @@ public class TeamController {
         return "redirect:/team/" + teamId;
     }
 
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public String teamsListPage(Model model) {
+        model.addAttribute("teams", teamService.getAllTeams());
+        model.addAttribute("me", (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        return "team/list";
+    }
+
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(TeamNotFoundException.class)
     public ModelAndView teamNotFoundException(TeamNotFoundException e) {
