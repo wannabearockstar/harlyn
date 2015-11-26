@@ -10,7 +10,8 @@
     <h3>Team list</h3>
     <ul>
         <li th:each="team : ${teams}">
-            <a th:href="${'/admin/team/' + team.id}" th:text="${team.name + ' : ' + team.points}"></a>
+            <a th:href="${'/admin/team/' + team.id}" th:text="${team.name}"></a>
+            <span th:text="${': ' + team.points}"></span>
         </li>
     </ul>
 </div>
