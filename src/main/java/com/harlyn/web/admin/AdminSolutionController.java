@@ -55,7 +55,7 @@ public class AdminSolutionController {
         return "redirect:/admin/solution/" + id;
     }
 
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/", method = RequestMethod.GET)
     public String listSolutionPage(Model model) {
         model.addAttribute("solutions", solutionService.getAllSolutions());
         model.addAttribute("me", (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
