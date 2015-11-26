@@ -1,12 +1,17 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:include="fragments/wrapper :: head" lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="fragments/wrapper">
+<head>
+    <title>Harlyn - admin - solutions</title>
 </head>
 <body>
-<ul>
-    <li th:each="user : ${users}">
-        <a th:href="${'/admin/user/' + user.id}" th:text="${user.username}"></a>
-    </li>
-</ul>
+<div layout:fragment="content" class="container">
+    <ul>
+        <li th:each="user : ${users}">
+            <a th:href="${'/admin/user/' + user.id}" th:text="${user.username}"></a>
+        </li>
+    </ul>
+</div>
 </body>
 </html>

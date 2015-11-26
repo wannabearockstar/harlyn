@@ -1,8 +1,12 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:include="fragments/wrapper :: head" lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="fragments/wrapper">
+<head>
+    <title>Harlyn - admin - new problem</title>
 </head>
 <body>
+<div layout:fragment="content" class="container">
     <form action="/admin/problem/" method="post">
         <div class="form-group">
             <label for="name" class="form-control">Name of problem</label>
@@ -30,5 +34,6 @@
             <input type="submit" class="btn btn-primary form-control" value="Create" />
         </div>
     </form>
+</div>
 </body>
 </html>

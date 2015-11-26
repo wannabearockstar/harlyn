@@ -1,13 +1,18 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:include="fragments/wrapper :: head" lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="fragments/wrapper">
+<head>
+    <title>Harlyn - teams</title>
 </head>
 <body>
-<div th:text="${team.name}"></div>
-<div th:text="${'Points: ' + team.points}"></div>
-<div>Members</div>
-<ul>
-    <li th:each="user : ${team.users}" th:text="${user.username}"></li>
-</ul>
+<div layout:fragment="content" class="container">
+    <div th:text="${team.name}"></div>
+    <div th:text="${'Points: ' + team.points}"></div>
+    <div>Members</div>
+    <ul>
+        <li th:each="user : ${team.users}" th:text="${user.username}"></li>
+    </ul>
+</div>
 </body>
 </html>
