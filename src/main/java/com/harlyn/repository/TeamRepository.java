@@ -23,5 +23,5 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
     @Query(value = "update Team team set team.points = team.points + :points where team.id = :team_id")
     void incrementTeamPoints(@Param("team_id") Long teamId, @Param("points") Integer points);
 
-    List<Team> findAllOrderByPointsDesc();
+    List<Team> findAllByOrderByPointsDesc();
 }
