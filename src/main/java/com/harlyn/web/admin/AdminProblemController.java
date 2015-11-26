@@ -1,10 +1,12 @@
 package com.harlyn.web.admin;
 
+import com.harlyn.domain.User;
 import com.harlyn.domain.problems.Problem;
 import com.harlyn.domain.problems.handlers.ProblemHandler;
 import com.harlyn.exception.ProblemNotFoundException;
 import com.harlyn.service.ProblemService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +31,7 @@ public class AdminProblemController {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String newProblemPage(Model model) {
         model.addAttribute("problem_handlers_keys", problemHandlers.keySet());
+        model.addAttribute("me", (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         return "admin/problem/new";
     }
 
@@ -54,6 +57,7 @@ public class AdminProblemController {
         }
         model.addAttribute("problem_handlers_keys", problemHandlers.keySet());
         model.addAttribute("problem", problem);
+        model.addAttribute("me", (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         return "admin/problem/edit";
     }
 
@@ -80,6 +84,7 @@ public class AdminProblemController {
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public String listProblemPage(Model model) {
         model.addAttribute("problems", problemService.getAllProblems());
+        model.addAttribute("me", (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         return "admin/problem/list";
     }
 }

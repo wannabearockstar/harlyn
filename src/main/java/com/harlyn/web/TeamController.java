@@ -39,6 +39,7 @@ public class TeamController {
             throw new TeamNotFoundException(teamId);
         }
         model.addAttribute("team", team);
+        model.addAttribute("me", (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         return "team/show";
     }
 

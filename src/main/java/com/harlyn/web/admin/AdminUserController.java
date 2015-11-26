@@ -1,7 +1,9 @@
 package com.harlyn.web.admin;
 
+import com.harlyn.domain.User;
 import com.harlyn.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +21,7 @@ public class AdminUserController {
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public String listUsersPage(Model model) {
         model.addAttribute("users", userService.getAllUsers());
+        model.addAttribute("me", (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         return "admin/user/list";
     }
 }
