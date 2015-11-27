@@ -49,7 +49,7 @@ public class UserController {
             throw new MissingUserExcpetion();
         }
         teamService.sendInvite((User) model.asMap().get("me"), user);
-        eventPublisher.publishEvent(new UserChangedEvent(this));
+        eventPublisher.publishEvent(new UserChangedEvent(this, user));
         return "redirect:/users/" + userId;
     }
 

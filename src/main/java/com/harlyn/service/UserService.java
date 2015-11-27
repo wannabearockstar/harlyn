@@ -4,6 +4,7 @@ import com.harlyn.domain.User;
 import com.harlyn.exception.NonUniqueUserDataException;
 import com.harlyn.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -69,5 +70,9 @@ public class UserService {
     @Cacheable(value = "me", key = "#id")
     public User cacheGetById(Long id) {
         return userRepository.findOne(id);
+    }
+
+    @CacheEvict(value = "me", key = "#id")
+    public void bust(long id) {
     }
 }

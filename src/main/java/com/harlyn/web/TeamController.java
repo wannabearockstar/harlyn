@@ -27,8 +27,9 @@ public class TeamController {
     private ApplicationEventPublisher eventPublisher;
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    public String createTeam(@RequestParam(value = "name", required = true) String name) {
-        Team team = teamService.createTeam(name, (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+    public String createTeam(@RequestParam(value = "name", required = true) String name, Model model) {
+        Team team = teamService.createTeam(name, (User) model.asMap().get("me"));
+        eventPublisher.publishEvent(new UserChangedEvent(this, (User) model.asMap().get("me")));
         return "redirect:/team/" + team.getId();
     }
 
@@ -43,13 +44,13 @@ public class TeamController {
     }
 
     @RequestMapping(value = "/{id}/invite/accept", method = RequestMethod.POST)
-    public String acceptInvite(@PathVariable(value = "id") Long teamId) {
+    public String acceptInvite(@PathVariable(value = "id") Long teamId, Model model) {
         Team team = teamService.getById(teamId);
         if (team == null) {
             throw new TeamNotFoundException(teamId);
         }
         teamService.confirmInvite((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal(), team);
-        eventPublisher.publishEvent(new UserChangedEvent(this));
+        eventPublisher.publishEvent(new UserChangedEvent(this, (User) model.asMap().get("me")));
 
         return "redirect:/team/" + teamId;
     }

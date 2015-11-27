@@ -1,11 +1,13 @@
 package com.harlyn.web.admin;
 
 import com.harlyn.domain.problems.Solution;
+import com.harlyn.event.UserChangedEvent;
 import com.harlyn.exception.MissingSolutionException;
 import com.harlyn.exception.SolutionAlreadyCheckedException;
 import com.harlyn.service.ProblemService;
 import com.harlyn.service.SolutionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +23,8 @@ public class AdminSolutionController {
     private SolutionService solutionService;
     @Autowired
     private ProblemService problemService;
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String solutionPage(@PathVariable(value = "id") Long id, Model model) {
@@ -49,6 +53,7 @@ public class AdminSolutionController {
         } else {
             problemService.failSolution(solution);
         }
+        eventPublisher.publishEvent(new UserChangedEvent(this, solution.getSolver()));
         return "redirect:/admin/solution/" + id;
     }
 

@@ -3,9 +3,11 @@ package com.harlyn.web;
 import com.harlyn.domain.User;
 import com.harlyn.domain.problems.Problem;
 import com.harlyn.domain.problems.SubmitData;
+import com.harlyn.event.UserChangedEvent;
 import com.harlyn.exception.ProblemNotFoundException;
 import com.harlyn.service.ProblemService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -21,6 +23,8 @@ import org.springframework.web.servlet.ModelAndView;
 public class ProblemController {
     @Autowired
     private ProblemService problemService;
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     @Transactional
     @RequestMapping(value = "/{id}/submit", method = RequestMethod.POST)
@@ -34,6 +38,7 @@ public class ProblemController {
             throw new ProblemNotFoundException();
         }
         Long solutionId = problemService.createSolution(problem, new SubmitData(queryParam, fileParam), (User) model.asMap().get("me"));
+        eventPublisher.publishEvent(new UserChangedEvent(this, (User) model.asMap().get("me")));
         return "redirect:/solution/" + solutionId;
     }
 
