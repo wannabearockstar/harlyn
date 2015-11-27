@@ -3,6 +3,7 @@ package com.harlyn.web;
 import com.harlyn.domain.User;
 import com.harlyn.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
@@ -16,6 +17,10 @@ public class LoadGlobalData {
 
     @ModelAttribute("me")
     public User getCurrentUser() {
-        return userService.getLoggedUser();
+        Object userInMemory = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (userInMemory == null || !(userInMemory instanceof User)) {
+            return null;
+        }
+        return userService.cacheGetById(((User) userInMemory).getId());
     }
 }

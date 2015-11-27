@@ -4,7 +4,7 @@ import com.harlyn.domain.User;
 import com.harlyn.exception.NonUniqueUserDataException;
 import com.harlyn.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -66,19 +66,8 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User getLoggedUser() {
-        Object userInMemory = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (userInMemory == null || !(userInMemory instanceof User)) {
-            return null;
-        }
-        return cacheGetById(((User) userInMemory).getId());
-    }
-
-    private User cacheGetById(Long id) {
+    @Cacheable(value = "me", key = "#id")
+    public User cacheGetById(Long id) {
         return userRepository.findOne(id);
-    }
-
-    public void bust(long id) {
-
     }
 }
