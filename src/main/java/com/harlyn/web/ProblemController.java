@@ -6,7 +6,6 @@ import com.harlyn.domain.problems.SubmitData;
 import com.harlyn.exception.ProblemNotFoundException;
 import com.harlyn.service.ProblemService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -27,14 +26,14 @@ public class ProblemController {
     @RequestMapping(value = "/{id}/submit", method = RequestMethod.POST)
     public String submitSolution(@PathVariable(value = "id") Long id,
                                  @RequestParam(value = "query", required = false) String queryParam,
-                                 @RequestParam(value = "file", required = false) MultipartFile fileParam
+                                 @RequestParam(value = "file", required = false) MultipartFile fileParam,
+                                 Model model
     ) {
         Problem problem = problemService.getById(id);
         if (problem == null) {
             throw new ProblemNotFoundException();
         }
-        User solver = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Long solutionId = problemService.createSolution(problem, new SubmitData(queryParam, fileParam), solver);
+        Long solutionId = problemService.createSolution(problem, new SubmitData(queryParam, fileParam), (User) model.asMap().get("me"));
         return "redirect:/solution/" + solutionId;
     }
 
@@ -44,21 +43,14 @@ public class ProblemController {
         if (problem == null) {
             throw new ProblemNotFoundException();
         }
-        User me = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
         model.addAttribute("problem", problem);
-        model.addAttribute("me", me);
 
         return "problem/show";
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String allProblemsPage(Model model) {
-        User me = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
         model.addAttribute("problems", problemService.getAllProblems());
-        model.addAttribute("me", me);
-
         return "problem/list";
     }
 

@@ -8,7 +8,6 @@ import com.harlyn.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +28,6 @@ public class UserController {
 
     @RequestMapping(value = "/me", method = RequestMethod.GET)
     public String meAction(Model model) {
-        model.addAttribute("me", (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         return "user/me";
     }
 
@@ -40,19 +38,17 @@ public class UserController {
             throw new UserNotFoundException();
         }
         model.addAttribute(user);
-        model.addAttribute("me", (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         return "user/show";
     }
 
     @RequestMapping(value = "/{id}/invite", method = RequestMethod.POST)
-    public String inviteAction(@PathVariable(value = "id") Long userId) {
-        User me = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public String inviteAction(@PathVariable(value = "id") Long userId, Model model) {
         User user = userService.getById(userId);
 
         if (user == null) {
             throw new MissingUserExcpetion();
         }
-        teamService.sendInvite(me, user);
+        teamService.sendInvite((User) model.asMap().get("me"), user);
         eventPublisher.publishEvent(new UserChangedEvent(this));
         return "redirect:/users/" + userId;
     }

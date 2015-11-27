@@ -1,13 +1,11 @@
 package com.harlyn.web.admin;
 
-import com.harlyn.domain.User;
 import com.harlyn.domain.problems.Solution;
 import com.harlyn.exception.MissingSolutionException;
 import com.harlyn.exception.SolutionAlreadyCheckedException;
 import com.harlyn.service.ProblemService;
 import com.harlyn.service.SolutionService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +29,6 @@ public class AdminSolutionController {
             throw new MissingSolutionException();
         }
         model.addAttribute("solution", solution);
-        model.addAttribute("me", (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         return "admin/solution/show";
     }
 
@@ -58,7 +55,6 @@ public class AdminSolutionController {
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public String listSolutionPage(Model model) {
         model.addAttribute("solutions", solutionService.getAllSolutions());
-        model.addAttribute("me", (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         return "admin/solution/list";
     }
 
