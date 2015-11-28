@@ -29,7 +29,7 @@
             <select name="problem_type" id="problem_type">
                 <option th:each="problem_type : ${problem_handlers_keys}"
                         th:value="${problem_type.name()}"
-                        th:text="${problem_type.name()}"
+                        th:text="${problem_type.localeName}"
                         th:selected="${problem_type == problem.problemType}"
                         ></option>
             </select>
