@@ -128,8 +128,18 @@ public class Problem {
     }
 
     public enum ProblemType {
-        FLAG,
-        INFO_WEB,
-        INFO_EMAIL;
+        FLAG("Flag compare"),
+        INFO_WEB("Manual checking of text info"),
+        INFO_EMAIL("Manual checking of text info via email");
+
+        private String localeName;
+
+        ProblemType(String localeName) {
+            this.localeName = localeName;
+        }
+
+        public String getLocaleName() {
+            return localeName;
+        }
     }
 }

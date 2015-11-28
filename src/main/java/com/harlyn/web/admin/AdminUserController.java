@@ -16,7 +16,7 @@ public class AdminUserController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/", method = RequestMethod.GET)
     public String listUsersPage(Model model) {
         model.addAttribute("users", userService.getAllUsers());
         return "admin/user/list";

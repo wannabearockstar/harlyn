@@ -28,11 +28,19 @@
                 <ul class="nav navbar-nav">
                     <li><a href="/problem/">Problems</a></li>
                     <li><a href="/team/">Teams rank</a></li>
+                    <li th:if="${me.hasRole('ROLE_ADMIN')}" class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/admin/problem/list">Problems</a></li>
+                            <li><a href="/admin/team/">Teams</a></li>
+                            <li><a href="/admin/user/">Users</a></li>
+                            <li><a href="/admin/solution/">Solutions</a></li>
+                        </ul>
+                    </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li th:if="${me != null}"><a href="/users/me" th:text="${me.username}"></a></li>
-                    <li th:if="${me != null}"><a href="/login/form">Login</a></li>
-                    <li th:unless="${me == null}"><a href="/logout">Logout</a></li>
+                    <li th:if="${me != null}"><a href="/logout">Logout</a></li>
                 </ul>
             </div><!--/.nav-collapse -->
         </div>

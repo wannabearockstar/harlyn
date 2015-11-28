@@ -16,7 +16,7 @@ public class AdminTeamController {
     @Autowired
     private TeamService teamService;
 
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/", method = RequestMethod.GET)
     public String listTeamPage(Model model) {
         model.addAttribute("teams", teamService.getAllTeams());
         return "admin/team/list";

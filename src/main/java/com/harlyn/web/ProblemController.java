@@ -11,9 +11,11 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Created by wannabe on 20.11.15.
@@ -57,13 +59,5 @@ public class ProblemController {
     public String allProblemsPage(Model model) {
         model.addAttribute("problems", problemService.getAllProblems());
         return "problem/list";
-    }
-
-    @ExceptionHandler(ProblemNotFoundException.class)
-    public ModelAndView ProblemNotFoundException(ProblemNotFoundException e) {
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("message", e.getMessage());
-        mav.setViewName("utils/errors/default");
-        return mav;
     }
 }

@@ -3,6 +3,7 @@ package com.harlyn.service;
 import com.harlyn.HarlynApplication;
 import com.harlyn.domain.User;
 import com.harlyn.exception.NonUniqueUserDataException;
+import com.harlyn.repository.RoleRepository;
 import com.harlyn.repository.UserRepository;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.test.annotation.FlywayTest;
@@ -45,6 +46,9 @@ public class UserServiceTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private RoleRepository roleRepository;
+
     private UserService userService;
 
     @Before
@@ -53,7 +57,9 @@ public class UserServiceTest {
         flyway.migrate();
         userService = new UserService();
         userService.setUserRepository(userRepository)
-                .setPasswordEncoder(passwordEncoder);
+                .setPasswordEncoder(passwordEncoder)
+                .setRoleRepository(roleRepository)
+                ;
     }
 
     @Test
@@ -68,7 +74,7 @@ public class UserServiceTest {
     @Test
     @FlywayTest
     public void testCreateUser() throws Exception {
-        userService.createUser(new User("test@email.com", "username", "password"));
+        userService.createUser(new User("test@email.com", "username", "password"), false);
         assertEquals("username", userRepository.findUserByEmail("test@email.com").getUsername());
         assertTrue(passwordEncoder.matches("password", userRepository.findUserByEmail("test@email.com").getPassword()));
     }
@@ -76,7 +82,7 @@ public class UserServiceTest {
     @Test
     @FlywayTest
     public void testValidateUniqueData() throws Exception {
-        userService.createUser(new User("test@email.com", "username", "password"));
+        userService.createUser(new User("test@email.com", "username", "password"), false);
         try {
             userService.validateUniqueData(new User("test@email.com", "username1", "password"));
         } catch (NonUniqueUserDataException e) {
@@ -104,31 +110,40 @@ public class UserServiceTest {
     @Test
     public void testCreateUserWithInvalidData() throws Exception {
         try {
-            userService.createUser(new User("", "username", "password"));
+            userService.createUser(new User("", "username", "password"), false);
             fail("Create user with invalid data");
         } catch (ConstraintViolationException e) {
             assertTrue(true);
         }
 
         try {
-            userService.createUser(new User("s", "", "password"));
+            userService.createUser(new User("s", "", "password"), false);
             fail("Create user with invalid data");
         } catch (ConstraintViolationException e) {
             assertTrue(true);
         }
 
         try {
-            userService.createUser(new User("d", "username", ""));
+            userService.createUser(new User("d", "username", ""), false);
             fail("Create user with invalid data");
         } catch (ConstraintViolationException e) {
             assertTrue(true);
         }
 
         try {
-            userService.createUser(new User("d", "username", null));
+            userService.createUser(new User("d", "username", null), false);
             fail("Create user with invalid data");
         } catch (ConstraintViolationException e) {
             assertTrue(true);
         }
+    }
+
+    @Test
+    public void testCreateAdmin() throws Exception {
+        userService.createUser(new User("test@email.com", "username", "password"), false);
+        assertFalse(userRepository.findUserByEmail("test@email.com").hasRole("ROLE_ADMIN"));
+
+        userService.createUser(new User("admin@email.com", "admin", "password"), true);
+        assertTrue(userRepository.findUserByEmail("admin@email.com").hasRole("ROLE_ADMIN"));
     }
 }
