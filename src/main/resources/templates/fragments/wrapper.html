@@ -40,8 +40,7 @@
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li th:if="${me != null}"><a href="/users/me" th:text="${me.username}"></a></li>
-                    <li th:if="${me != null}"><a href="/login/form">Login</a></li>
-                    <li th:unless="${me == null}"><a href="/logout">Logout</a></li>
+                    <li th:unless="${me != null}"><a href="/logout">Logout</a></li>
                 </ul>
             </div><!--/.nav-collapse -->
         </div>
