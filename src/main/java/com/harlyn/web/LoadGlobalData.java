@@ -21,6 +21,6 @@ public class LoadGlobalData {
         if (userInMemory == null || !(userInMemory instanceof User)) {
             return null;
         }
-        return userService.cacheGetById(((User) userInMemory).getId());
+        return userService.getById(((User) userInMemory).getId());
     }
 }
