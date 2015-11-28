@@ -46,7 +46,7 @@ public class SecurityController {
     public String registration(Model model,
                                @Valid User user,
                                BindingResult bindingResult,
-                               @RequestParam(value = "admin") boolean isAdmin
+                               @RequestParam(value = "admin", defaultValue = "false") boolean isAdmin
     ) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("errors", bindingResult.getAllErrors());
