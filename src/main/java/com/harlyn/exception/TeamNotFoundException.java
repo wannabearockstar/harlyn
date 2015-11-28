@@ -5,6 +5,6 @@ package com.harlyn.exception;
  */
 public class TeamNotFoundException extends RuntimeException {
     public TeamNotFoundException(Long teamId) {
-        super("Team with id " + teamId + "not found");
+        super("Team with id " + teamId + " not found");
     }
 }

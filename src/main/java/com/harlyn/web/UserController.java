@@ -2,17 +2,17 @@ package com.harlyn.web;
 
 import com.harlyn.domain.User;
 import com.harlyn.event.UserChangedEvent;
-import com.harlyn.exception.*;
+import com.harlyn.exception.MissingUserExcpetion;
+import com.harlyn.exception.UserNotFoundException;
 import com.harlyn.service.TeamService;
 import com.harlyn.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * Created by wannabe on 16.11.15.
@@ -29,7 +29,6 @@ public class UserController {
 
     @RequestMapping(value = "/me", method = RequestMethod.GET)
     public String meAction(Model model) {
-        model.addAttribute("me", (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         return "user/me";
     }
 
@@ -40,56 +39,18 @@ public class UserController {
             throw new UserNotFoundException();
         }
         model.addAttribute(user);
-        model.addAttribute("me", (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         return "user/show";
     }
 
     @RequestMapping(value = "/{id}/invite", method = RequestMethod.POST)
-    public String inviteAction(@PathVariable(value = "id") Long userId) {
-        User me = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public String inviteAction(@PathVariable(value = "id") Long userId, Model model) {
         User user = userService.getById(userId);
 
         if (user == null) {
             throw new MissingUserExcpetion();
         }
-        teamService.sendInvite(me, user);
-        eventPublisher.publishEvent(new UserChangedEvent(this));
+        teamService.sendInvite((User) model.asMap().get("me"), user);
+        eventPublisher.publishEvent(new UserChangedEvent(this, user));
         return "redirect:/users/" + userId;
-    }
-
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(MissingUserExcpetion.class)
-    public ModelAndView TeamNotFoundException(TeamNotFoundException e) {
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("message", e.getMessage());
-        mav.setViewName("utils/errors/default");
-        return mav;
-    }
-
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(MissingUserExcpetion.class)
-    public ModelAndView UserNotFoundException(UserNotFoundException e) {
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("message", e.getMessage());
-        mav.setViewName("utils/errors/default");
-        return mav;
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(UserWithoutTeamException.class)
-    public ModelAndView UserWithoutTeamException(UserWithoutTeamException e) {
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("message", e.getMessage());
-        mav.setViewName("utils/errors/default");
-        return mav;
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(UserInvalidTeamRightsException.class)
-    public ModelAndView UserInvalidTeamRightsException(UserInvalidTeamRightsException e) {
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("message", e.getMessage());
-        mav.setViewName("utils/errors/default");
-        return mav;
     }
 }

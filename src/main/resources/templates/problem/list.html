@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="fragments/wrapper">
+<head>
+    <title>Harlyn - problem</title>
+</head>
+<body>
+
+<div layout:fragment="content" class="container">
+    <h3>Problem list</h3>
+    <ul>
+        <li th:each="problem : ${problems}">
+            <a th:href="${'/problem/' + problem.id}" th:text="${problem.name}"></a>
+            <span th:if="${me.team.solvedProblems.contains(problem)}"> (SOLVED)</span>
+        </li>
+    </ul>
+</div>
+</body>
+</html>

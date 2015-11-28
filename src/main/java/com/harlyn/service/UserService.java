@@ -2,6 +2,7 @@ package com.harlyn.service;
 
 import com.harlyn.domain.User;
 import com.harlyn.exception.NonUniqueUserDataException;
+import com.harlyn.repository.RoleRepository;
 import com.harlyn.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -19,20 +21,24 @@ import java.util.Set;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private RoleRepository roleRepository;
 
     public User findUserByEmail(String email) {
         return userRepository.findUserByEmail(email);
     }
 
-    public User createUser(User user) {
+    public User createUser(User user, boolean isAdmin) {
         Set<ConstraintViolation<User>> errors = Validation.buildDefaultValidatorFactory().getValidator().validate(user);
         if (!errors.isEmpty()) {
             throw new ConstraintViolationException(errors);
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (isAdmin) {
+            user.getRoles().add(roleRepository.findOneByName("ROLE_ADMIN"));
+        }
         return userRepository.saveAndFlush(user);
     }
 
@@ -56,7 +62,17 @@ public class UserService {
         return this;
     }
 
+    public UserService setRoleRepository(RoleRepository roleRepository) {
+        this.roleRepository = roleRepository;
+        return this;
+    }
+
     public User getById(Long id) {
         return userRepository.findOne(id);
     }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
 }

@@ -1,17 +1,21 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:include="fragments/wrapper :: head" lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="fragments/wrapper">
+<head>
+    <title>Harlyn - me</title>
 </head>
 <body>
+<div layout:fragment="content" class="container">
     <div th:text="${me.username}"></div>
     <form th:if="${me.team} == null" class="form-group" th:action="${'/team/'}" method="post">
-        <label for="name">Создать команду</label>
+        <label for="name">Create teame</label>
         <input type="text" name="name" required="required" id="name" />
         <input class="form-control" type="submit" value="Создать" />
     </form>
     <div th:unless="${me.team} == null" th:text="${me.team.name}"></div>
     <div th:unless="${me.invites.empty}">
-        <span>Приглашения в команду</span>
+        <span>Team invites</span>
         <ul>
             <li th:each="invite : ${me.invites}">
                 <form th:action="${'/team/' + invite.team.id + '/invite/accept'}" method="post">
@@ -20,5 +24,6 @@
             </li>
         </ul>
     </div>
+</div>
 </body>
 </html>
