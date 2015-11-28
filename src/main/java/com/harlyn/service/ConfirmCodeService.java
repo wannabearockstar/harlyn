@@ -34,6 +34,8 @@ public class ConfirmCodeService {
     private VelocityEngine velocityEngine;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private String currentHost;
 
     public ConfirmCode createConfirmCode(final User user) {
         ConfirmCode confirmCode = new ConfirmCode(UUID.randomUUID().toString(), user);
@@ -46,6 +48,7 @@ public class ConfirmCodeService {
         MimeMessagePreparator preparator = mimeMessage -> {
             Map<String, Object> model = new HashMap<>();
             model.put("confirmCode", confirmCode);
+            model.put("currentHost", currentHost);
             String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, "templates/mail/confirm_code.vm", "UTF-8", model);
             mimeMessage.setContent(text, "text/html; charset=utf-8");
             mimeMessage.setHeader("Content-Type", "text/html; charset=UTF-8");

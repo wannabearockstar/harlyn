@@ -42,7 +42,7 @@ public class BeanConfig {
 
     @Bean(name = "templateMailProblemMessage")
     public SimpleMailMessage templateMailProblemMessage(@Value("${mail.problem.from}") String from,
-                                             @Value("${mail.problem.to}") String to
+                                                        @Value("${mail.problem.to}") String to
     ) throws UnsupportedEncodingException {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setFrom(from);
@@ -58,5 +58,13 @@ public class BeanConfig {
         velocityEngine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
 
         return velocityEngine;
+    }
+
+    @Bean(name = "currentHost")
+    public String currentHost(
+            @Value("${inet.host}") String host,
+            @Value("${inet.port}") String port
+    ) {
+        return host + ":" + port;
     }
 }
