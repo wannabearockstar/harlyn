@@ -51,7 +51,7 @@ public class User implements UserDetails {
             joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")}
     )
-    private Set<Role> roles;
+    private Set<Role> roles = new HashSet<>();
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "recipent")
     private Set<TeamInvite> invites = new HashSet<>();
