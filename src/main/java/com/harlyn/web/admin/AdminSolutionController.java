@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * Created by wannabe on 22.11.15.
@@ -61,21 +63,5 @@ public class AdminSolutionController {
     public String listSolutionPage(Model model) {
         model.addAttribute("solutions", solutionService.getAllSolutions());
         return "admin/solution/list";
-    }
-
-    @ExceptionHandler(MissingSolutionException.class)
-    public ModelAndView missingSolution(MissingSolutionException e) {
-        ModelAndView mav = new ModelAndView();
-        mav.getModelMap().addAttribute("message", "Missing solution");
-        mav.setViewName("utils/error/default");
-        return mav;
-    }
-
-    @ExceptionHandler(SolutionAlreadyCheckedException.class)
-    public ModelAndView solutionAlreadyCheckedException(SolutionAlreadyCheckedException e) {
-        ModelAndView mav = new ModelAndView();
-        mav.getModelMap().addAttribute("message", "Solution already checked");
-        mav.setViewName("utils/error/default");
-        return mav;
     }
 }
