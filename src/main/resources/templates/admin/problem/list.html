@@ -8,6 +8,7 @@
 <body>
 
 <div layout:fragment="content" class="container">
+    <a href="/admin/problem/">New problem</a>
 <ul>
     <li th:each="problem : ${problems}">
         <a th:href="${'/admin/problem/' + problem.id}" th:text="${problem.name}"></a>
