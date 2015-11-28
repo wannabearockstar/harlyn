@@ -1,12 +1,10 @@
 package com.harlyn.web;
 
-import com.harlyn.domain.User;
 import com.harlyn.domain.problems.Problem;
 import com.harlyn.domain.problems.Solution;
 import com.harlyn.exception.SolutionNotFoundException;
 import com.harlyn.service.SolutionService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -37,7 +35,6 @@ public class SolutionController {
         }
         model.addAttribute("solution", solution);
         model.addAttribute("problemHandlers", problemHandlers);
-        model.addAttribute("me", (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         return "solution/show";
     }
 
