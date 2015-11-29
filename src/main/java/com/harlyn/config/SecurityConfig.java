@@ -1,5 +1,7 @@
 package com.harlyn.config;
 
+import com.harlyn.security.EmptyTeamFilter;
+import com.harlyn.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +12,12 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
+
+import javax.servlet.Filter;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by wannabe on 15.11.15.
@@ -19,6 +27,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
+    @Autowired
+    private UserService userService;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -49,6 +59,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .defaultSuccessUrl("/users/me")
                 .failureUrl("/login/form?error")
                 .permitAll()
+            .and()
+            .addFilterAfter(emptyTeamFilter(), AnonymousAuthenticationFilter.class)
         ;
     }
 
@@ -63,5 +75,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean(name = "passwordEncoder")
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder(10);
+    }
+
+    @Bean
+    public Filter emptyTeamFilter() {
+        Set<String> allowedUrls = new HashSet<>(Arrays.asList(
+                "/",
+                "/logout"
+        ));
+        return new EmptyTeamFilter(userService, allowedUrls);
     }
 }
