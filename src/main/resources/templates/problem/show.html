@@ -3,16 +3,17 @@
       xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
       layout:decorator="fragments/wrapper">
 <head>
-    <title>Harlyn - admin - solutions</title>
+    <title>Harlyn - problem</title>
 </head>
 <body>
-<div th:text="${problem.info}" th:value="${problem.info}"></div>
 <div layout:fragment="content" class="container">
-        <form th:unless="${problem.getSolverTeams().contains(me.getTeam())}" class="form-group" th:action="${'/problem/' + problem.id + '/submit'}" method="post" enctype="multipart/form-data">
-            <input type="text" name="query" placeholder="Input answer" />
-            <input type="file" name="file" value="Attach file" />
-            <input class="form-control" type="submit" value="Submit answer" />
-        </form>
+    <div th:text="${problem.info}"></div>
+    <form th:unless="${problem.getSolverTeams().contains(me.getTeam())}" class="form-group"
+          th:action="${'/problem/' + problem.id + '/submit'}" method="post" enctype="multipart/form-data">
+        <input type="text" name="query" placeholder="Input answer"/>
+        <input type="file" name="file" value="Attach file"/>
+        <input class="form-control" type="submit" value="Submit answer"/>
+    </form>
     <div th:if="${problem.getSolverTeams().contains(me.getTeam())}" class="alert alert-success">
         Your team already solved this problem
     </div>
