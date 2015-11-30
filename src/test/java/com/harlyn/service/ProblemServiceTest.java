@@ -104,7 +104,7 @@ public class ProblemServiceTest {
         Problem problem = problemRepository.saveAndFlush(new Problem("name", "answer", 12, Problem.ProblemType.FLAG));
         Team team = teamRepository.saveAndFlush(new Team("name"));
         User solver = userRepository.saveAndFlush(new User("user@email.com", "username", "password")
-                .setTeam(team)
+                        .setTeam(team)
         );
 
         assertEquals(new Integer(0), team.getPoints());
@@ -217,5 +217,35 @@ public class ProblemServiceTest {
         assertEquals(2, aviableProblems.size());
         assertEquals("name2", aviableProblems.get(0).getName());
         assertEquals("name1", aviableProblems.get(1).getName());
+    }
+
+    @Test
+    public void testIsProblemAvailable() throws Exception {
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
+        Date currentDate = formatter.parseDateTime("12/10/2015 14:10:30").toDate();
+
+        Problem problem = new Problem("name1", "answer", 12, Problem.ProblemType.FLAG)
+                .setStartDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate())
+                .setEndDate(formatter.parseDateTime("12/10/2015 15:00:30").toDate());
+
+        Problem problem1 = new Problem("name2", "answer", 12, Problem.ProblemType.FLAG)
+                .setStartDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate());
+
+        Problem earlyProblem = new Problem("name3", "answer", 12, Problem.ProblemType.FLAG)
+                .setStartDate(formatter.parseDateTime("12/10/2015 13:00:30").toDate())
+                .setEndDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate());
+
+        Problem earlyProblem1 = new Problem("name4", "answer", 12, Problem.ProblemType.FLAG)
+                .setEndDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate());
+
+        Problem lateProblem = new Problem("name5", "answer", 12, Problem.ProblemType.FLAG)
+                .setStartDate(formatter.parseDateTime("12/10/2015 15:00:30").toDate())
+                .setEndDate(formatter.parseDateTime("12/10/2015 16:00:30").toDate());
+
+        assertTrue(problemService.isProblemAvailable(problem, currentDate));
+        assertTrue(problemService.isProblemAvailable(problem1, currentDate));
+        assertFalse(problemService.isProblemAvailable(earlyProblem, currentDate));
+        assertFalse(problemService.isProblemAvailable(earlyProblem1, currentDate));
+        assertFalse(problemService.isProblemAvailable(lateProblem, currentDate));
     }
 }

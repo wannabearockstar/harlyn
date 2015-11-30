@@ -133,4 +133,17 @@ public class ProblemService {
     public List<Problem> getAviableProblems(Date currentDate) {
         return problemRepository.findAllByCurrentDate(currentDate);
     }
+
+    public boolean isProblemAvailable(final Problem problem, Date currentDate) {
+        if (problem.getEndDate() == null && problem.getStartDate() == null) {
+            return true;
+        }
+        if (problem.getEndDate() == null) {
+            return problem.getStartDate().before(currentDate);
+        }
+        if (problem.getStartDate() == null) {
+            return problem.getEndDate().after(currentDate);
+        }
+        return problem.getStartDate().before(currentDate) && problem.getEndDate().after(currentDate);
+    }
 }
