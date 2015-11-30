@@ -14,6 +14,8 @@ import com.harlyn.repository.TeamRepository;
 import com.harlyn.repository.UserRepository;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.test.junit.FlywayTestExecutionListener;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,6 +32,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Resource;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -173,5 +177,45 @@ public class ProblemServiceTest {
         } catch (TeamAlreadySolveProblemException e) {
             assertTrue(true);
         }
+    }
+
+    @Test
+    public void testGetAviableProblems() throws Exception {
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
+        Date currentDate = formatter.parseDateTime("12/10/2015 14:10:30").toDate();
+
+        Problem problem = problemRepository.saveAndFlush(
+                new Problem("name1", "answer", 12, Problem.ProblemType.FLAG)
+                        .setStartDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate())
+                        .setEndDate(formatter.parseDateTime("12/10/2015 15:00:30").toDate())
+        );
+
+        Problem problem1 = problemRepository.saveAndFlush(
+                new Problem("name2", "answer", 12, Problem.ProblemType.FLAG)
+                        .setStartDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate())
+        );
+
+        Problem earlyProblem = problemRepository.saveAndFlush(
+                new Problem("name3", "answer", 12, Problem.ProblemType.FLAG)
+                        .setStartDate(formatter.parseDateTime("12/10/2015 13:00:30").toDate())
+                        .setEndDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate())
+        );
+
+        Problem earlyProblem1 = problemRepository.saveAndFlush(
+                new Problem("name4", "answer", 12, Problem.ProblemType.FLAG)
+                        .setEndDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate())
+        );
+
+        Problem lateProblem = problemRepository.saveAndFlush(
+                new Problem("name5", "answer", 12, Problem.ProblemType.FLAG)
+                        .setStartDate(formatter.parseDateTime("12/10/2015 15:00:30").toDate())
+                        .setEndDate(formatter.parseDateTime("12/10/2015 16:00:30").toDate())
+        );
+
+        List<Problem> aviableProblems = problemService.getAviableProblems(currentDate);
+
+        assertEquals(2, aviableProblems.size());
+        assertEquals("name2", aviableProblems.get(0).getName());
+        assertEquals("name1", aviableProblems.get(1).getName());
     }
 }

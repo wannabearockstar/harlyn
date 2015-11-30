@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -127,5 +128,9 @@ public class ProblemService {
 
     public List<Problem> getAllProblems() {
         return problemRepository.findAll();
+    }
+
+    public List<Problem> getAviableProblems(Date currentDate) {
+        return problemRepository.findAllByCurrentDate(currentDate);
     }
 }
