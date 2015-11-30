@@ -3,6 +3,7 @@ package com.harlyn.domain.problems;
 import com.harlyn.domain.Team;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -22,6 +23,11 @@ public class Problem {
     private String info;
     private String answer;
     private Integer points;
+
+    @Column(name = "start_date", nullable = true)
+    private Date startDate;
+    @Column(name = "end_date", nullable = true)
+    private Date endDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "problem_type")
@@ -125,6 +131,24 @@ public class Problem {
         } else {
             return super.hashCode();
         }
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public Problem setStartDate(Date startDate) {
+        this.startDate = startDate;
+        return this;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public Problem setEndDate(Date endDate) {
+        this.endDate = endDate;
+        return this;
     }
 
     public enum ProblemType {
