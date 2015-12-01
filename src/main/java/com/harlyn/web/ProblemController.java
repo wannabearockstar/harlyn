@@ -4,6 +4,7 @@ import com.harlyn.domain.User;
 import com.harlyn.domain.problems.Problem;
 import com.harlyn.domain.problems.SubmitData;
 import com.harlyn.event.UserChangedEvent;
+import com.harlyn.exception.OutdatedProblemException;
 import com.harlyn.exception.ProblemNotFoundException;
 import com.harlyn.service.ProblemService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Date;
 
 /**
  * Created by wannabe on 20.11.15.
@@ -39,6 +42,9 @@ public class ProblemController {
         if (problem == null) {
             throw new ProblemNotFoundException();
         }
+        if (!problemService.isProblemAvailable(problem, new Date())) {
+            throw new OutdatedProblemException(problem);
+        }
         Long solutionId = problemService.createSolution(problem, new SubmitData(queryParam, fileParam), (User) model.asMap().get("me"));
         eventPublisher.publishEvent(new UserChangedEvent(this, (User) model.asMap().get("me")));
         return "redirect:/solution/" + solutionId;
@@ -50,6 +56,9 @@ public class ProblemController {
         if (problem == null) {
             throw new ProblemNotFoundException();
         }
+        if (!problemService.isProblemAvailable(problem, new Date())) {
+            throw new OutdatedProblemException(problem);
+        }
         model.addAttribute("problem", problem);
 
         return "problem/show";
@@ -57,7 +66,7 @@ public class ProblemController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String allProblemsPage(Model model) {
-        model.addAttribute("problems", problemService.getAllProblems());
+        model.addAttribute("problems", problemService.getAviableProblems(new Date()));
         return "problem/list";
     }
 }

@@ -27,7 +27,8 @@ public class EmptyTeamFilter implements Filter {
         internalUrls = new HashSet<>(Arrays.asList(
                 "/team",
                 "/users",
-                "/admin"
+                "/admin",
+                "/static"
         ));
     }
 

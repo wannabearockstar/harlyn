@@ -5,6 +5,7 @@ import com.harlyn.domain.problems.handlers.ProblemHandler;
 import com.harlyn.exception.ProblemNotFoundException;
 import com.harlyn.service.ProblemService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Created by wannabe on 22.11.15.
@@ -38,12 +41,19 @@ public class AdminProblemController {
             @RequestParam(value = "answer") String answer,
             @RequestParam(value = "points") Integer points,
             @RequestParam(value = "problem_type") Problem.ProblemType problemType,
-            @RequestParam(value = "info", required = false, defaultValue = "") String info
+            @RequestParam(value = "info", required = false, defaultValue = "") String info,
+            @RequestParam(value = "start_date", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss") Optional<Date> startDate,
+            @RequestParam(value = "end_date", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss") Optional<Date> endDate
     ) {
-        return "redirect:/admin/problem/" + problemService.createProblem(
-                new Problem(name, answer, points, problemType)
-                        .setInfo(info)
-        );
+        Problem problemData = new Problem(name, answer, points, problemType);
+        if (startDate.isPresent()) {
+            problemData.setStartDate(startDate.get());
+        }
+        if (endDate.isPresent()) {
+            problemData.setEndDate(endDate.get());
+        }
+        problemData.setInfo(info);
+        return "redirect:/admin/problem/" + problemService.createProblem(problemData);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
@@ -61,20 +71,23 @@ public class AdminProblemController {
     public String editProblemAction(
             @PathVariable(value = "id") Long id,
             @RequestParam(value = "name") String name,
-            @RequestParam(value = "answer") String answer,
-            @RequestParam(value = "points") Integer points,
-            @RequestParam(value = "problem_type") Problem.ProblemType problemType,
-            @RequestParam(value = "info", required = false, defaultValue = "") String info
+            @RequestParam(value = "info", required = false, defaultValue = "") String info,
+            @RequestParam(value = "start_date", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss") Optional<Date> startDate,
+            @RequestParam(value = "end_date", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss") Optional<Date> endDate
     ) {
         Problem problem = problemService.getById(id);
         if (problem == null) {
             throw new ProblemNotFoundException();
         }
-        return "redirect:/admin/problem/" + problemService.updateProblem(
-                problem,
-                new Problem(name, answer, points, problemType)
-                        .setInfo(info)
-        );
+        Problem problemData = new Problem(name, problem.getAnswer(), problem.getPoints(), problem.getProblemType());
+        if (startDate.isPresent()) {
+            problemData.setStartDate(startDate.get());
+        }
+        if (endDate.isPresent()) {
+            problemData.setEndDate(endDate.get());
+        }
+        problemData.setInfo(info);
+        return "redirect:/admin/problem/" + problemService.updateProblem(problem, problemData);
     }
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)

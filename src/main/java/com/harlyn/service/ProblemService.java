@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -121,11 +122,30 @@ public class ProblemService {
                 .setAnswer(updateData.getAnswer())
                 .setInfo(updateData.getInfo())
                 .setPoints(updateData.getPoints())
-                .setProblemType(updateData.getProblemType());
+                .setProblemType(updateData.getProblemType())
+                .setStartDate(updateData.getStartDate())
+                .setEndDate(updateData.getEndDate());
         return problemRepository.saveAndFlush(problem).getId();
     }
 
     public List<Problem> getAllProblems() {
         return problemRepository.findAll();
+    }
+
+    public List<Problem> getAviableProblems(Date currentDate) {
+        return problemRepository.findAllByCurrentDate(currentDate);
+    }
+
+    public boolean isProblemAvailable(final Problem problem, Date currentDate) {
+        if (problem.getEndDate() == null && problem.getStartDate() == null) {
+            return true;
+        }
+        if (problem.getEndDate() == null) {
+            return problem.getStartDate().before(currentDate);
+        }
+        if (problem.getStartDate() == null) {
+            return problem.getEndDate().after(currentDate);
+        }
+        return problem.getStartDate().before(currentDate) && problem.getEndDate().after(currentDate);
     }
 }

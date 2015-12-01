@@ -3,6 +3,7 @@ package com.harlyn.domain.problems;
 import com.harlyn.domain.Team;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -13,6 +14,7 @@ import java.util.Set;
 @Entity
 @Table(name = "problems")
 public class Problem {
+    public static final String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
     @Id
     @SequenceGenerator(name = "problems_id_seq", sequenceName = "problems_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "problems_id_seq")
@@ -22,6 +24,11 @@ public class Problem {
     private String info;
     private String answer;
     private Integer points;
+
+    @Column(name = "start_date", nullable = true)
+    private Date startDate;
+    @Column(name = "end_date", nullable = true)
+    private Date endDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "problem_type")
@@ -125,6 +132,24 @@ public class Problem {
         } else {
             return super.hashCode();
         }
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public Problem setStartDate(Date startDate) {
+        this.startDate = startDate;
+        return this;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public Problem setEndDate(Date endDate) {
+        this.endDate = endDate;
+        return this;
     }
 
     public enum ProblemType {
