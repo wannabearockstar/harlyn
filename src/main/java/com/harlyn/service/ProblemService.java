@@ -122,7 +122,9 @@ public class ProblemService {
                 .setAnswer(updateData.getAnswer())
                 .setInfo(updateData.getInfo())
                 .setPoints(updateData.getPoints())
-                .setProblemType(updateData.getProblemType());
+                .setProblemType(updateData.getProblemType())
+                .setStartDate(updateData.getStartDate())
+                .setEndDate(updateData.getEndDate());
         return problemRepository.saveAndFlush(problem).getId();
     }
 

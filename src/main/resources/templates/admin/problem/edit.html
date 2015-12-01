@@ -10,23 +10,46 @@
     <form th:action="${'/admin/problem/' + problem.id }" method="post">
         <div class="form-group">
             <label for="name" class="form-control">Name of problem</label>
-            <input th:value="${problem.name}" class="form-control" type="text" name="name" id="name" placeholder="Name of problem" />
+            <input th:value="${problem.name}" class="form-control" type="text" name="name" id="name"
+                   placeholder="Name of problem"/>
         </div>
         <div class="form-group">
             <label for="answer" class="form-control">Answer of problem</label>
-            <input th:value="${problem.answer}" class="form-control" type="text" name="answer" id="answer" placeholder="Answer of problem" />
+            <input disabled="disabled" th:value="${problem.answer}" class="form-control" type="text" name="answer" id="answer"
+                   placeholder="Answer of problem"/>
         </div>
         <div class="form-group">
             <label for="points" class="form-control">Points for solving</label>
-            <input disabled="disabled" th:value="${problem.points}" class="form-control" type="number" name="points" id="points" />
+            <input disabled="disabled" th:value="${problem.points}" class="form-control" type="number" name="points"
+                   id="points"/>
         </div>
         <div class="form-group">
             <label class="form-control" for="info">Info</label>
             <textarea th:text="${problem.info}" class="form-control" name="info" id="info"></textarea>
         </div>
         <div class="form-group">
+            <label class="form-control" for="start_date">Start date</label>
+            <div id="datetimepicker_start" class="input-group date">
+                <input class="form-control" th:value="${problem.startDate != null}? ${#dates.format(problem.startDate, T(com.harlyn.domain.problems.Problem).DATE_FORMAT)} : ''" type="text"
+                       name="start_date" id="start_date"/>
+              <span class="input-group-addon">
+                  <span class="glyphicon glyphicon-calendar"></span>
+              </span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-control" for="end_date">End date</label>
+            <div id="datetimepicker_end" class="input-group date">
+                <input class="form-control" th:value="${problem.endDate != null}? ${#dates.format(problem.endDate, T(com.harlyn.domain.problems.Problem).DATE_FORMAT)} : ''" type="text"
+                       name="end_date" id="end_date"/>
+              <span class="input-group-addon">
+                  <span class="glyphicon glyphicon-calendar"></span>
+              </span>
+            </div>
+        </div>
+        <div class="form-group">
             <label class="form-control" for="problem_type">Problem type</label>
-            <select name="problem_type" id="problem_type">
+            <select disabled="disabled" name="problem_type" id="problem_type">
                 <option th:each="problem_type : ${problem_handlers_keys}"
                         th:value="${problem_type.name()}"
                         th:text="${problem_type.localeName}"
@@ -35,7 +58,7 @@
             </select>
         </div>
         <div class="form-group">
-            <input type="submit" class="btn btn-primary form-control" value="Edit" />
+            <input type="submit" class="btn btn-primary form-control" value="Edit"/>
         </div>
     </form>
 </div>

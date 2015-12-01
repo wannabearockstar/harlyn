@@ -14,6 +14,7 @@ import java.util.Set;
 @Entity
 @Table(name = "problems")
 public class Problem {
+    public static final String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
     @Id
     @SequenceGenerator(name = "problems_id_seq", sequenceName = "problems_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "problems_id_seq")

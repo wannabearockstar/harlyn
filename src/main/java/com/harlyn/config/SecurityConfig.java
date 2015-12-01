@@ -46,7 +46,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/registration/form**",
                         "/logout",
                         "/confirm/",
-                        "/confirm/**"
+                        "/confirm/**",
+                        "/static/**"
                 ).permitAll()
                 .antMatchers("/admin","/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
