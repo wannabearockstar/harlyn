@@ -10,6 +10,7 @@ import com.harlyn.repository.RegisteredTeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -49,5 +50,9 @@ public class CompetitionService {
 
     public List<Competition> findAllForAdmin() {
         return competitionRepository.findAll();
+    }
+
+    public List<Competition> findAllAvailableCompetitions(Date currentDate) {
+        return competitionRepository.findAllByCurrentDate(currentDate);
     }
 }

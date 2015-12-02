@@ -13,6 +13,8 @@ import com.harlyn.repository.TeamRepository;
 import com.harlyn.repository.UserRepository;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.test.junit.FlywayTestExecutionListener;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,6 +26,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
+
+import java.util.Date;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -93,5 +98,36 @@ public class CompetitionServiceTest {
         } catch (TeamAlreadyRegisteredException e) {
             assertTrue(true);
         }
+    }
+
+    @Test
+    public void testFindAllAvailableCompetitions() throws Exception {
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
+        Date currentDate = formatter.parseDateTime("12/10/2015 14:10:30").toDate();
+        Competition competition = competitionRepository.saveAndFlush(new Competition("name")
+                        .setStartDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate())
+                        .setEndDate(formatter.parseDateTime("12/10/2015 15:00:30").toDate())
+        );
+
+        Competition earlyCompetition = competitionRepository.saveAndFlush(new Competition("early")
+                        .setStartDate(formatter.parseDateTime("12/10/2015 13:00:30").toDate())
+                        .setEndDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate())
+        );
+
+        Competition lateCompetition = competitionRepository.saveAndFlush(new Competition("late")
+                        .setStartDate(formatter.parseDateTime("12/10/2015 15:00:30").toDate())
+                        .setEndDate(formatter.parseDateTime("12/10/2015 16:00:30").toDate())
+        );
+        List<Competition> availableCompetitions = competitionService.findAllAvailableCompetitions(currentDate);
+
+        assertEquals(1, availableCompetitions.size());
+        assertEquals("name", availableCompetitions.get(0).getName());
+
+        earlyCompetition = competitionRepository.saveAndFlush(earlyCompetition.setEndDate(null));
+        availableCompetitions = competitionService.findAllAvailableCompetitions(currentDate);
+
+        assertEquals(2, availableCompetitions.size());
+        assertEquals("early", availableCompetitions.get(0).getName());
+        assertEquals("name", availableCompetitions.get(1).getName());
     }
 }
