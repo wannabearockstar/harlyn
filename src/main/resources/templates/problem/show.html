@@ -8,12 +8,15 @@
 <body>
 <div layout:fragment="content" class="container">
     <div th:text="${problem.info}"></div>
-    <form th:unless="${problem.getSolverTeams().contains(me.getTeam())}" class="form-group"
-          th:action="${'/problem/' + problem.id + '/submit'}" method="post" enctype="multipart/form-data">
-        <input type="text" name="query" placeholder="Input answer"/>
-        <input type="file" name="file" value="Attach file"/>
-        <input class="form-control" type="submit" value="Submit answer"/>
-    </form>
+    <div th:if="${available}">
+        <form th:unless="${problem.getSolverTeams().contains(me.getTeam())}" class="form-group"
+              th:action="${'/problem/' + problem.id + '/submit'}" method="post" enctype="multipart/form-data">
+            <input type="text" name="query" placeholder="Input answer"/>
+            <input type="file" name="file" value="Attach file"/>
+            <input class="form-control" type="submit" value="Submit answer"/>
+        </form>
+    </div>
+    <div th:unless="${available}" class="alert alert-warning">Problem do not available anymore</div>
     <div th:if="${problem.getSolverTeams().contains(me.getTeam())}" class="alert alert-success">
         Your team already solved this problem
     </div>

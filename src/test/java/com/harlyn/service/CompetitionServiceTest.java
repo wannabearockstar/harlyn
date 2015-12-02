@@ -12,6 +12,7 @@ import com.harlyn.repository.RegisteredTeamRepository;
 import com.harlyn.repository.TeamRepository;
 import com.harlyn.repository.UserRepository;
 import org.flywaydb.core.Flyway;
+import org.flywaydb.test.annotation.FlywayTest;
 import org.flywaydb.test.junit.FlywayTestExecutionListener;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -129,5 +130,48 @@ public class CompetitionServiceTest {
         assertEquals(2, availableCompetitions.size());
         assertEquals("early", availableCompetitions.get(0).getName());
         assertEquals("name", availableCompetitions.get(1).getName());
+    }
+
+    @Test
+    public void testIsProblemAvailable() throws Exception {
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
+        Date currentDate = formatter.parseDateTime("12/10/2015 14:10:30").toDate();
+
+        Competition competition = new Competition("name1")
+                .setStartDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate())
+                .setEndDate(formatter.parseDateTime("12/10/2015 15:00:30").toDate());
+
+        Competition competition1 = new Competition("name2")
+                .setStartDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate());
+
+        Competition earlyCompetition = new Competition("name3")
+                .setStartDate(formatter.parseDateTime("12/10/2015 13:00:30").toDate())
+                .setEndDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate());
+
+        Competition earlyCompetition1 = new Competition("name4")
+                .setEndDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate());
+
+        Competition lateCompetition = new Competition("name5")
+                .setStartDate(formatter.parseDateTime("12/10/2015 15:00:30").toDate())
+                .setEndDate(formatter.parseDateTime("12/10/2015 16:00:30").toDate());
+
+        assertTrue(competitionService.isCompetitionAvailable(competition, currentDate));
+        assertTrue(competitionService.isCompetitionAvailable(competition1, currentDate));
+        assertFalse(competitionService.isCompetitionAvailable(earlyCompetition, currentDate));
+        assertFalse(competitionService.isCompetitionAvailable(earlyCompetition1, currentDate));
+        assertFalse(competitionService.isCompetitionAvailable(lateCompetition, currentDate));
+    }
+
+    @Test
+    @FlywayTest
+    public void testIsTeamRegistered() throws Exception {
+        Competition competition = competitionRepository.saveAndFlush(new Competition("name1"));
+        User captain = userRepository.saveAndFlush(new User("captain@email.com", "captain", "captain"));
+        Team team = teamRepository.saveAndFlush(new Team("name", captain));
+
+        assertFalse(competitionService.isTeamRegistered(competition, team));
+        registeredTeamRepository.saveAndFlush(new RegisteredTeam(competition, team));
+
+        assertTrue(competitionService.isTeamRegistered(competition, team));
     }
 }

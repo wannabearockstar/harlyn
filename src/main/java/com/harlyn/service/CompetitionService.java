@@ -1,5 +1,6 @@
 package com.harlyn.service;
 
+import com.harlyn.domain.Team;
 import com.harlyn.domain.User;
 import com.harlyn.domain.competitions.Competition;
 import com.harlyn.domain.competitions.RegisteredTeam;
@@ -54,5 +55,22 @@ public class CompetitionService {
 
     public List<Competition> findAllAvailableCompetitions(Date currentDate) {
         return competitionRepository.findAllByCurrentDate(currentDate);
+    }
+
+    public boolean isCompetitionAvailable(final Competition competition, Date currentDate) {
+        if (competition.getEndDate() == null && competition.getStartDate() == null) {
+            return true;
+        }
+        if (competition.getEndDate() == null) {
+            return competition.getStartDate().before(currentDate);
+        }
+        if (competition.getStartDate() == null) {
+            return competition.getEndDate().after(currentDate);
+        }
+        return competition.getStartDate().before(currentDate) && competition.getEndDate().after(currentDate);
+    }
+
+    public boolean isTeamRegistered(Competition competition, Team team) {
+        return registeredTeamRepository.existsByCompetitionAndTeam(competition, team);
     }
 }

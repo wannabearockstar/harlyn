@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="fragments/wrapper">
+<head>
+    <title>Harlyn - competitions - teams</title>
+</head>
+<body>
+<div layout:fragment="content" class="container">
+    <h3>Team list</h3>
+    <h2 th:text="${competition.name}"></h2>
+    <ul>
+        <li th:each="registredTeam : ${competition.registeredTeams}">
+            <a th:href="${'/team/' + registredTeam.team.id}" th:text="${registredTeam.team.name}"></a>
+            <span th:text="${': ' + registredTeam.points}"></span>
+        </li>
+    </ul>
+</div>
+</body>
+</html>

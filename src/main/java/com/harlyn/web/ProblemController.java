@@ -4,8 +4,10 @@ import com.harlyn.domain.User;
 import com.harlyn.domain.problems.Problem;
 import com.harlyn.domain.problems.SubmitData;
 import com.harlyn.event.UserChangedEvent;
+import com.harlyn.exception.OutdatedCompetitionException;
 import com.harlyn.exception.OutdatedProblemException;
 import com.harlyn.exception.ProblemNotFoundException;
+import com.harlyn.service.CompetitionService;
 import com.harlyn.service.ProblemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -30,6 +32,8 @@ public class ProblemController {
     private ProblemService problemService;
     @Autowired
     private ApplicationEventPublisher eventPublisher;
+    @Autowired
+    private CompetitionService competitionService;
 
     @Transactional
     @RequestMapping(value = "/{id}/submit", method = RequestMethod.POST)
@@ -42,9 +46,14 @@ public class ProblemController {
         if (problem == null) {
             throw new ProblemNotFoundException();
         }
-        if (!problemService.isProblemAvailable(problem, new Date())) {
+        Date currentDate = new Date();
+        if (!problemService.isProblemAvailable(problem, currentDate)) {
             throw new OutdatedProblemException(problem);
         }
+        if (!competitionService.isCompetitionAvailable(problem.getCompetition(), currentDate)) {
+            throw new OutdatedCompetitionException();
+        }
+
         Long solutionId = problemService.createSolution(problem, new SubmitData(queryParam, fileParam), (User) model.asMap().get("me"));
         eventPublisher.publishEvent(new UserChangedEvent(this, (User) model.asMap().get("me")));
         return "redirect:/solution/" + solutionId;
@@ -56,17 +65,12 @@ public class ProblemController {
         if (problem == null) {
             throw new ProblemNotFoundException();
         }
-        if (!problemService.isProblemAvailable(problem, new Date())) {
-            throw new OutdatedProblemException(problem);
-        }
+        Date currentDate = new Date();
         model.addAttribute("problem", problem);
+        model.addAttribute("available", competitionService.isCompetitionAvailable(problem.getCompetition(), currentDate)
+                        || problemService.isProblemAvailable(problem, currentDate)
+        );
 
         return "problem/show";
-    }
-
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String allProblemsPage(Model model) {
-        model.addAttribute("problems", problemService.getAviableProblems(new Date()));
-        return "problem/list";
     }
 }

@@ -1,5 +1,7 @@
 package com.harlyn.domain.competitions;
 
+import com.harlyn.domain.problems.Problem;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.HashSet;
@@ -29,6 +31,10 @@ public class Competition {
     @OneToMany(mappedBy = "competition", fetch = FetchType.EAGER)
     @OrderBy(value = "points DESC")
     private Set<RegisteredTeam> registeredTeams = new HashSet<>();
+
+    @OneToMany(mappedBy = "competition", fetch = FetchType.EAGER)
+    @OrderBy("id DESC")
+    private Set<Problem> problems;
 
     public Competition() {
     }
@@ -74,6 +80,15 @@ public class Competition {
 
     public Competition setRegisteredTeams(Set<RegisteredTeam> registeredTeams) {
         this.registeredTeams = registeredTeams;
+        return this;
+    }
+
+    public Set<Problem> getProblems() {
+        return problems;
+    }
+
+    public Competition setProblems(Set<Problem> problems) {
+        this.problems = problems;
         return this;
     }
 
