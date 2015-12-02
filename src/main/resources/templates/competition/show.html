@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="fragments/wrapper">
+<head>
+    <title>Harlyn - competition</title>
+</head>
+<body>
+<div layout:fragment="content" class="container">
+    <h2 th:text="${competition.name}"></h2>
+    <div th:unless="${comeptition.registeredTeams.contains(me.team)}">
+        <form th:if="${me.equals(me.team.captain)}" method="post" th:action="${'/competition/' + competition.id + '/register'}">
+            <input class="form-control" type="submit" value="Register your team" />
+        </form>
+        <div th:unless="${me.equals(me.team.captain)}" class="alert alert-danger">
+            Only captain can register teams on competitions
+        </div>
+    </div>
+    <div th:if="${comeptition.registeredTeams.contains(me.team)}">
+        You already register for this competition
+    </div>
+</div>
+</body>
+</html>

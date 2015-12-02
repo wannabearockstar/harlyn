@@ -2,12 +2,15 @@ package com.harlyn.service;
 
 import com.harlyn.domain.Team;
 import com.harlyn.domain.User;
+import com.harlyn.domain.competitions.RegisteredTeam;
 import com.harlyn.domain.problems.Problem;
 import com.harlyn.domain.problems.Solution;
 import com.harlyn.domain.problems.SubmitData;
 import com.harlyn.domain.problems.handlers.ProblemHandler;
 import com.harlyn.exception.TeamAlreadySolveProblemException;
+import com.harlyn.exception.TeamNotRegisteredForCompetitionException;
 import com.harlyn.repository.ProblemRepository;
+import com.harlyn.repository.RegisteredTeamRepository;
 import com.harlyn.repository.SolutionRepository;
 import com.harlyn.repository.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +35,9 @@ public class ProblemService {
 
     @Autowired
     private TeamRepository teamRepository;
+
+    @Autowired
+    private RegisteredTeamRepository registeredTeamRepository;
 
     @Resource
     private Map<Problem.ProblemType, ProblemHandler> problemHandlers;
@@ -71,10 +77,15 @@ public class ProblemService {
 
     @Transactional
     public void solveProblem(Problem problem, Solution solution) {
+        RegisteredTeam registeredTeam = registeredTeamRepository.findOneByCompetitionAndTeam(problem.getCompetition(), solution.getSolver().getTeam());
+        if (registeredTeam == null) {
+            throw new TeamNotRegisteredForCompetitionException();
+        }
+
         solution.setChecked(true);
         solution.setCorrect(true);
 
-        teamRepository.incrementTeamPoints(solution.getSolver().getTeam().getId(), problem.getPoints());
+        registeredTeamRepository.incrementTeamPoints(registeredTeam.getId(), problem.getPoints());
         solutionRepository.save(solution);
 
         problem.getSolverTeams().add(solution.getSolver().getTeam());
@@ -147,5 +158,10 @@ public class ProblemService {
             return problem.getEndDate().after(currentDate);
         }
         return problem.getStartDate().before(currentDate) && problem.getEndDate().after(currentDate);
+    }
+
+    public ProblemService setRegisteredTeamRepository(RegisteredTeamRepository registeredTeamRepository) {
+        this.registeredTeamRepository = registeredTeamRepository;
+        return this;
     }
 }

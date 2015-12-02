@@ -1,8 +1,10 @@
 package com.harlyn.web.admin;
 
+import com.harlyn.domain.competitions.Competition;
 import com.harlyn.domain.problems.Problem;
 import com.harlyn.domain.problems.handlers.ProblemHandler;
 import com.harlyn.exception.ProblemNotFoundException;
+import com.harlyn.service.CompetitionService;
 import com.harlyn.service.ProblemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -28,10 +30,13 @@ public class AdminProblemController {
     private ProblemService problemService;
     @Resource
     private Map<Problem.ProblemType, ProblemHandler> problemHandlers;
+    @Autowired
+    private CompetitionService competitionService;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String newProblemPage(Model model) {
         model.addAttribute("problem_handlers_keys", problemHandlers.keySet());
+        model.addAttribute("competitions", competitionService.findAllForAdmin());
         return "admin/problem/new";
     }
 
@@ -43,9 +48,11 @@ public class AdminProblemController {
             @RequestParam(value = "problem_type") Problem.ProblemType problemType,
             @RequestParam(value = "info", required = false, defaultValue = "") String info,
             @RequestParam(value = "start_date", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss") Optional<Date> startDate,
-            @RequestParam(value = "end_date", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss") Optional<Date> endDate
+            @RequestParam(value = "end_date", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss") Optional<Date> endDate,
+            @RequestParam(value = "competition") Long competitionId
     ) {
-        Problem problemData = new Problem(name, answer, points, problemType);
+        Competition competition = competitionService.findById(competitionId);
+        Problem problemData = new Problem(name, answer, points, problemType, competition);
         if (startDate.isPresent()) {
             problemData.setStartDate(startDate.get());
         }
@@ -79,7 +86,7 @@ public class AdminProblemController {
         if (problem == null) {
             throw new ProblemNotFoundException();
         }
-        Problem problemData = new Problem(name, problem.getAnswer(), problem.getPoints(), problem.getProblemType());
+        Problem problemData = new Problem(name, problem.getAnswer(), problem.getPoints(), problem.getProblemType(), problem.getCompetition());
         if (startDate.isPresent()) {
             problemData.setStartDate(startDate.get());
         }

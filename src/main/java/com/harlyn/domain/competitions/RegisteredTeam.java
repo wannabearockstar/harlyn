@@ -12,24 +12,26 @@ import java.util.Objects;
 @Entity
 @Table(name = "registered_teams")
 public class RegisteredTeam {
+    @ManyToOne
+    @JoinColumn(name = "competition_id")
+    private final Competition competition;
+    @ManyToOne
+    @JoinColumn(name = "team_id")
+    private final Team team;
     @Id
     @SequenceGenerator(name = "registered_teams_id_seq", sequenceName = "registered_teams_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "registered_teams_id_seq")
     @Column(name = "id", updatable = false)
     private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "competition_id")
-    private Competition competition;
-
-    @ManyToOne
-    @JoinColumn(name = "team_id")
-    private Team team;
-
-    private Integer points = 0;
+    private Integer points;
 
     @Column(name = "register_date")
     private Date registerDate;
+
+    RegisteredTeam() {
+        competition = null;
+        team = null;
+    }
 
     public RegisteredTeam(Competition competition, Team team) {
         this.competition = competition;
@@ -44,18 +46,8 @@ public class RegisteredTeam {
         return competition;
     }
 
-    public RegisteredTeam setCompetition(Competition competition) {
-        this.competition = competition;
-        return this;
-    }
-
     public Team getTeam() {
         return team;
-    }
-
-    public RegisteredTeam setTeam(Team team) {
-        this.team = team;
-        return this;
     }
 
     public Integer getPoints() {

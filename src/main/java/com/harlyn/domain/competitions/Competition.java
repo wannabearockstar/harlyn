@@ -26,7 +26,7 @@ public class Competition {
     @Column(name = "end_date", nullable = true)
     private Date endDate;
 
-    @OneToMany(mappedBy = "competition")
+    @OneToMany(mappedBy = "competition", fetch = FetchType.EAGER)
     @OrderBy(value = "points DESC")
     private Set<RegisteredTeam> registeredTeams = new HashSet<>();
 

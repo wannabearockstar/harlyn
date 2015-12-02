@@ -51,11 +51,12 @@ public class Problem {
     public Problem() {
     }
 
-    public Problem(String name, String answer, Integer points, ProblemType problemType) {
+    public Problem(String name, String answer, Integer points, ProblemType problemType, Competition competition) {
         this.name = name;
         this.answer = answer;
         this.points = points;
         this.problemType = problemType;
+        this.competition = competition;
     }
 
     public Long getId() {
