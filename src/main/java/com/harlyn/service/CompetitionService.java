@@ -48,7 +48,7 @@ public class CompetitionService {
         registeredTeamRepository.saveAndFlush(new RegisteredTeam(competition, user.getTeam()));
     }
 
-    public List<Competition> findAllForAdmin() {
+    public List<Competition> findAll() {
         return competitionRepository.findAll();
     }
 

@@ -36,7 +36,7 @@ public class AdminProblemController {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String newProblemPage(Model model) {
         model.addAttribute("problem_handlers_keys", problemHandlers.keySet());
-        model.addAttribute("competitions", competitionService.findAllForAdmin());
+        model.addAttribute("competitions", competitionService.findAll());
         return "admin/problem/new";
     }
 
