@@ -73,4 +73,15 @@ public class CompetitionService {
     public boolean isTeamRegistered(Competition competition, Team team) {
         return registeredTeamRepository.existsByCompetitionAndTeam(competition, team);
     }
+
+    public Long createCompetition(Competition competitionDate) {
+        return competitionRepository.saveAndFlush(competitionDate).getId();
+    }
+
+    public Long updateCompetition(Competition competition, Competition competitionData) {
+        competition.setName(competitionData.getName())
+                .setStartDate(competitionData.getStartDate())
+                .setEndDate(competitionData.getEndDate());
+        return competitionRepository.saveAndFlush(competition).getId();
+    }
 }

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="fragments/wrapper">
+<head>
+    <title>Harlyn - admin - competition</title>
+</head>
+<body>
+
+<div layout:fragment="content" class="container">
+    <a href="/admin/competition/">New competition</a>
+    <ul>
+        <li th:each="competition : ${competitions}">
+            <a th:href="${'/admin/competition/' + competition.id}" th:text="${competition.name}"></a>
+        </li>
+    </ul>
+</div>
+</body>
+</html>
