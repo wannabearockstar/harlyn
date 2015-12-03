@@ -3,15 +3,14 @@ package com.harlyn.service;
 import com.harlyn.HarlynApplication;
 import com.harlyn.domain.Team;
 import com.harlyn.domain.User;
+import com.harlyn.domain.competitions.Competition;
+import com.harlyn.domain.competitions.RegisteredTeam;
 import com.harlyn.domain.problems.Problem;
 import com.harlyn.domain.problems.Solution;
 import com.harlyn.domain.problems.SubmitData;
 import com.harlyn.domain.problems.handlers.ProblemHandler;
 import com.harlyn.exception.TeamAlreadySolveProblemException;
-import com.harlyn.repository.ProblemRepository;
-import com.harlyn.repository.SolutionRepository;
-import com.harlyn.repository.TeamRepository;
-import com.harlyn.repository.UserRepository;
+import com.harlyn.repository.*;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.test.junit.FlywayTestExecutionListener;
 import org.joda.time.format.DateTimeFormat;
@@ -66,6 +65,12 @@ public class ProblemServiceTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private CompetitionRepository competitionRepository;
+
+    @Autowired
+    private RegisteredTeamRepository registeredTeamRepository;
+
     @Resource
     private Map<Problem.ProblemType, ProblemHandler> problemHandlers;
 
@@ -80,7 +85,8 @@ public class ProblemServiceTest {
         problemService.setProblemHandlers(problemHandlers)
                 .setProblemRepository(problemRepository)
                 .setSolutionRepository(solutionRepository)
-                .setTeamRepository(teamRepository);
+                .setTeamRepository(teamRepository)
+                .setRegisteredTeamRepository(registeredTeamRepository);
         transactionTemplate = new TransactionTemplate(platformTransactionManager);
     }
 
@@ -91,7 +97,8 @@ public class ProblemServiceTest {
 
     @Test
     public void testGetById() throws Exception {
-        Problem problem = problemRepository.saveAndFlush(new Problem("name", "answer", 12, Problem.ProblemType.FLAG));
+        Competition competition = competitionRepository.saveAndFlush(new Competition("competition1"));
+        Problem problem = problemRepository.saveAndFlush(new Problem("name", "answer", 12, Problem.ProblemType.FLAG, competition));
 
         assertEquals("name", problemService.getById(problem.getId()).getName());
         assertEquals("answer", problemService.getById(problem.getId()).getAnswer());
@@ -101,13 +108,15 @@ public class ProblemServiceTest {
 
     @Test
     public void testCreateSolution() throws Exception {
-        Problem problem = problemRepository.saveAndFlush(new Problem("name", "answer", 12, Problem.ProblemType.FLAG));
+        Competition competition = competitionRepository.saveAndFlush(new Competition("competition1"));
+        Problem problem = problemRepository.saveAndFlush(new Problem("name", "answer", 12, Problem.ProblemType.FLAG, competition));
         Team team = teamRepository.saveAndFlush(new Team("name"));
         User solver = userRepository.saveAndFlush(new User("user@email.com", "username", "password")
                         .setTeam(team)
         );
+        RegisteredTeam registeredTeam = registeredTeamRepository.saveAndFlush(new RegisteredTeam(competition, team));
 
-        assertEquals(new Integer(0), team.getPoints());
+        assertEquals(new Integer(0), registeredTeam.getPoints());
 
         SubmitData invalidData = new SubmitData("wrong", null);
         SubmitData validData = new SubmitData("answer", null);
@@ -121,7 +130,7 @@ public class ProblemServiceTest {
 
         assertTrue(invalidSolution.isChecked());
         assertFalse(invalidSolution.isCorrect());
-        assertEquals(new Integer(0), team.getPoints());
+        assertEquals(new Integer(0), registeredTeam.getPoints());
 
         final Team updatedTeam = teamRepository.findOne(team.getId());
         transactionTemplate.execute(status -> {
@@ -137,14 +146,15 @@ public class ProblemServiceTest {
             assertTrue(teamRepository.findOne(updatedTeam.getId()).getSolvedProblems().contains(
                     problemRepository.findOne(problem.getId())
             ));
-            assertEquals(new Integer(12), teamRepository.findOne(updatedTeam.getId()).getPoints());
+            assertEquals(new Integer(12), registeredTeamRepository.findOne(registeredTeam.getId()).getPoints());
             return 1;
         });
     }
 
     @Test
     public void testCreateSolutionTwiceFromTheSameTeam() throws Exception {
-        Problem problem = problemRepository.saveAndFlush(new Problem("name", "answer", 12, Problem.ProblemType.FLAG));
+        Competition competition = competitionRepository.saveAndFlush(new Competition("competition1"));
+        Problem problem = problemRepository.saveAndFlush(new Problem("name", "answer", 12, Problem.ProblemType.FLAG, competition));
         Team team = teamRepository.saveAndFlush(new Team("name"));
         User solver = userRepository.saveAndFlush(new User("user@email.com", "username", "password")
                         .setTeam(team)
@@ -152,6 +162,7 @@ public class ProblemServiceTest {
         User anotherSolver = userRepository.saveAndFlush(new User("us1er@email.com", "use1rname", "password")
                         .setTeam(team)
         );
+        RegisteredTeam registeredTeam = registeredTeamRepository.saveAndFlush(new RegisteredTeam(competition, team));
         SubmitData validData = new SubmitData("answer", null);
         final Team updatedTeam = teamRepository.findOne(team.getId());
         transactionTemplate.execute(status -> {
@@ -164,7 +175,7 @@ public class ProblemServiceTest {
             assertTrue(problemRepository.findOne(problem.getId()).getSolverTeams().contains(
                     teamRepository.findOne(updatedTeam.getId())
             ));
-            assertEquals(new Integer(12), teamRepository.findOne(updatedTeam.getId()).getPoints());
+            assertEquals(new Integer(12), registeredTeamRepository.findOne(registeredTeam.getId()).getPoints());
             return 1;
         });
 
@@ -183,31 +194,32 @@ public class ProblemServiceTest {
     public void testGetAviableProblems() throws Exception {
         DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
         Date currentDate = formatter.parseDateTime("12/10/2015 14:10:30").toDate();
+        Competition competition = competitionRepository.saveAndFlush(new Competition("competition1"));
 
         Problem problem = problemRepository.saveAndFlush(
-                new Problem("name1", "answer", 12, Problem.ProblemType.FLAG)
+                new Problem("name1", "answer", 12, Problem.ProblemType.FLAG, competition)
                         .setStartDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate())
                         .setEndDate(formatter.parseDateTime("12/10/2015 15:00:30").toDate())
         );
 
         Problem problem1 = problemRepository.saveAndFlush(
-                new Problem("name2", "answer", 12, Problem.ProblemType.FLAG)
+                new Problem("name2", "answer", 12, Problem.ProblemType.FLAG, competition)
                         .setStartDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate())
         );
 
         Problem earlyProblem = problemRepository.saveAndFlush(
-                new Problem("name3", "answer", 12, Problem.ProblemType.FLAG)
+                new Problem("name3", "answer", 12, Problem.ProblemType.FLAG, competition)
                         .setStartDate(formatter.parseDateTime("12/10/2015 13:00:30").toDate())
                         .setEndDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate())
         );
 
         Problem earlyProblem1 = problemRepository.saveAndFlush(
-                new Problem("name4", "answer", 12, Problem.ProblemType.FLAG)
+                new Problem("name4", "answer", 12, Problem.ProblemType.FLAG, competition)
                         .setEndDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate())
         );
 
         Problem lateProblem = problemRepository.saveAndFlush(
-                new Problem("name5", "answer", 12, Problem.ProblemType.FLAG)
+                new Problem("name5", "answer", 12, Problem.ProblemType.FLAG, competition)
                         .setStartDate(formatter.parseDateTime("12/10/2015 15:00:30").toDate())
                         .setEndDate(formatter.parseDateTime("12/10/2015 16:00:30").toDate())
         );
@@ -223,22 +235,23 @@ public class ProblemServiceTest {
     public void testIsProblemAvailable() throws Exception {
         DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
         Date currentDate = formatter.parseDateTime("12/10/2015 14:10:30").toDate();
+        Competition competition = competitionRepository.saveAndFlush(new Competition("competition1"));
 
-        Problem problem = new Problem("name1", "answer", 12, Problem.ProblemType.FLAG)
+        Problem problem = new Problem("name1", "answer", 12, Problem.ProblemType.FLAG, competition)
                 .setStartDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate())
                 .setEndDate(formatter.parseDateTime("12/10/2015 15:00:30").toDate());
 
-        Problem problem1 = new Problem("name2", "answer", 12, Problem.ProblemType.FLAG)
+        Problem problem1 = new Problem("name2", "answer", 12, Problem.ProblemType.FLAG, competition)
                 .setStartDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate());
 
-        Problem earlyProblem = new Problem("name3", "answer", 12, Problem.ProblemType.FLAG)
+        Problem earlyProblem = new Problem("name3", "answer", 12, Problem.ProblemType.FLAG, competition)
                 .setStartDate(formatter.parseDateTime("12/10/2015 13:00:30").toDate())
                 .setEndDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate());
 
-        Problem earlyProblem1 = new Problem("name4", "answer", 12, Problem.ProblemType.FLAG)
+        Problem earlyProblem1 = new Problem("name4", "answer", 12, Problem.ProblemType.FLAG, competition)
                 .setEndDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate());
 
-        Problem lateProblem = new Problem("name5", "answer", 12, Problem.ProblemType.FLAG)
+        Problem lateProblem = new Problem("name5", "answer", 12, Problem.ProblemType.FLAG, competition)
                 .setStartDate(formatter.parseDateTime("12/10/2015 15:00:30").toDate())
                 .setEndDate(formatter.parseDateTime("12/10/2015 16:00:30").toDate());
 

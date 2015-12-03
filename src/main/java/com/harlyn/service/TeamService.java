@@ -97,6 +97,6 @@ public class TeamService {
     }
 
     public List<Team> getAllTeams() {
-        return teamRepository.findAllByOrderByPointsDesc();
+        return teamRepository.findAllByOrderByIdDesc();
     }
 }
