@@ -7,6 +7,7 @@ import com.harlyn.event.UserChangedEvent;
 import com.harlyn.exception.OutdatedCompetitionException;
 import com.harlyn.exception.OutdatedProblemException;
 import com.harlyn.exception.ProblemNotFoundException;
+import com.harlyn.exception.TeamNotRegisteredForCompetitionException;
 import com.harlyn.service.CompetitionService;
 import com.harlyn.service.ProblemService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +65,9 @@ public class ProblemController {
         Problem problem = problemService.getById(id);
         if (problem == null) {
             throw new ProblemNotFoundException();
+        }
+        if (!competitionService.isTeamRegistered(problem.getCompetition(), ((User) model.asMap().get("me")).getTeam())) {
+            throw new TeamNotRegisteredForCompetitionException();
         }
         Date currentDate = new Date();
         model.addAttribute("problem", problem);

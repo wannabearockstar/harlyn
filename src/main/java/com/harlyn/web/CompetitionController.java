@@ -4,6 +4,7 @@ import com.harlyn.domain.User;
 import com.harlyn.domain.competitions.Competition;
 import com.harlyn.exception.CompetitionNotFoundException;
 import com.harlyn.exception.OutdatedCompetitionException;
+import com.harlyn.exception.TeamNotRegisteredForCompetitionException;
 import com.harlyn.service.CompetitionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -64,6 +65,9 @@ public class CompetitionController {
         Competition competition = competitionService.findById(id);
         if (competition == null) {
             throw new CompetitionNotFoundException(id);
+        }
+        if (!competitionService.isTeamRegistered(competition, ((User) model.asMap().get("me")).getTeam())) {
+            throw new TeamNotRegisteredForCompetitionException();
         }
         model.addAttribute("competition", competition);
         return "competition/problems";
