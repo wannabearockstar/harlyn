@@ -9,11 +9,24 @@
 
 <div layout:fragment="content" class="container">
     <h3>Competition list</h3>
-    <ul>
-        <li th:each="competition : ${competitions}">
-            <a th:href="${'/competition/' + competition.id}" th:text="${competition.name}"></a>
-        </li>
-    </ul>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Start date</th>
+            <th>End date</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="competition : ${competitions}">
+            <td>
+                <a th:href="@{'/competition/' + ${competition.id}}" th:text="${competition.name}"></a>
+            </td>
+            <td th:text="${competition.startDate != null}? ${#dates.format(competition.startDate, T(com.harlyn.domain.problems.Problem).DATE_FORMAT)} : 'Unbounded'"></td>
+            <td th:text="${competition.endDate != null}? ${#dates.format(competition.endDate, T(com.harlyn.domain.problems.Problem).DATE_FORMAT)} : 'Unbounded'"></td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 </body>
 </html>
