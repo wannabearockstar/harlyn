@@ -64,4 +64,10 @@ public class AdminSolutionController {
         model.addAttribute("solutions", solutionService.getAllSolutions());
         return "admin/solution/list";
     }
+
+    @RequestMapping(value = "/unchecked", method = RequestMethod.GET)
+    public String listUncheckedSolutionPage(Model model) {
+        model.addAttribute("solutions", solutionService.getAllUncheckedSolutions());
+        return "admin/solution/list_unchecked";
+    }
 }
