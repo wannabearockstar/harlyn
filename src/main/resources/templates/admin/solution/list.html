@@ -7,12 +7,30 @@
 </head>
 <body>
 <div layout:fragment="content" class="container">
-    <ul>
-        <li th:each="solution : ${solutions}">
-            <a th:href="${'/admin/solution/' + solution.id}" th:text="${'Solution #' + solution.id}"></a>
-            <span th:unless="${solution.checked}" class="alert alert-warning">UNCHECKED</span>
-        </li>
-    </ul>
+    <h3>Solutions</h3>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>Problem</th>
+            <th>Competition</th>
+            <th>Team</th>
+            <th>Checked?</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="solution : ${solutions}">
+            <td th:text="${solution.problem.name}"></td>
+            <td th:text="${solution.problem.competition.name}"></td>
+            <td th:text="${solution.solver.team.name}"></td>
+            <td th:if="${solution.checked}">
+                <a th:href="@{'/admin/solution/' + ${solution.id}}">Checked</a>
+            </td>
+            <td class="alert alert-warning" th:unless="${solution.checked}">
+                <a th:href="@{'/admin/solution/' + ${solution.id}}">Unchecked! Check</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 </body>
 </html>
