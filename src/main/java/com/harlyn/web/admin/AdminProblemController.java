@@ -5,6 +5,7 @@ import com.harlyn.domain.problems.Problem;
 import com.harlyn.domain.problems.handlers.ProblemHandler;
 import com.harlyn.exception.ProblemNotFoundException;
 import com.harlyn.service.CompetitionService;
+import com.harlyn.service.FileService;
 import com.harlyn.service.ProblemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -32,6 +35,8 @@ public class AdminProblemController {
     private Map<Problem.ProblemType, ProblemHandler> problemHandlers;
     @Autowired
     private CompetitionService competitionService;
+    @Autowired
+    private FileService fileService;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String newProblemPage(Model model) {
@@ -80,7 +85,9 @@ public class AdminProblemController {
             @RequestParam(value = "name") String name,
             @RequestParam(value = "info", required = false, defaultValue = "") String info,
             @RequestParam(value = "start_date", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss") Optional<Date> startDate,
-            @RequestParam(value = "end_date", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss") Optional<Date> endDate
+            @RequestParam(value = "end_date", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss") Optional<Date> endDate,
+            @RequestParam(value = "file", required = false) Optional<MultipartFile> file,
+            MultipartHttpServletRequest request
     ) {
         Problem problem = problemService.getById(id);
         if (problem == null) {
@@ -92,6 +99,9 @@ public class AdminProblemController {
         }
         if (endDate.isPresent()) {
             problemData.setEndDate(endDate.get());
+        }
+        if (file.isPresent()) {
+            problemData.setFile(fileService.uploadProblemFile(file.get()));
         }
         problemData.setInfo(info);
         return "redirect:/admin/problem/" + problemService.updateProblem(problem, problemData);
