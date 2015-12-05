@@ -7,14 +7,36 @@
 </head>
 <body>
 <div layout:fragment="content" class="container">
-    <h3>Problem list</h3>
-    <h2 th:text="${competition.name}"></h2>
-    <ul>
-        <li th:each="problem : ${competition.problems}">
-            <a th:href="${'/problem/' + problem.id}" th:text="${problem.name}"></a>
-            <span th:if="${me.team.solvedProblems.contains(problem)}"> (SOLVED)</span>
-        </li>
-    </ul>
+    <h3 th:text="${competition.name + ': problem list'}">Problem list</h3>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Points</th>
+            <th>Start date</th>
+            <th>End date</th>
+            <th>Solved by your team?</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="problem : ${competition.problems}">
+            <td>
+                <a th:href="@{'/problem/' + ${problem.id}}" th:text="${problem.name}"></a>
+            </td>
+            <td th:text="${problem.points}"></td>
+            <td th:text="${problem.startDate != null}? ${#dates.format(problem.startDate, T(com.harlyn.domain.problems.Problem).DATE_FORMAT)} : 'Unbounded'"></td>
+            <td th:text="${problem.endDate != null}? ${#dates.format(problem.endDate, T(com.harlyn.domain.problems.Problem).DATE_FORMAT)} : 'Unbounded'"></td>
+            <td th:if="${me.team.solvedProblems.contains(problem)}"
+                th:text="Solved"
+                class="alert alert-success"
+                    ></td>
+            <td th:unless="${me.team.solvedProblems.contains(problem)}"
+                class="alert alert-info"
+                    >Not yet
+            </td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 </body>
 </html>
