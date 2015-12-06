@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -100,10 +99,20 @@ public class ProblemController {
     }
 
     @RequestMapping(value = "/{id}/file", method = RequestMethod.GET)
-    public ResponseEntity<InputStreamResource> problemFileAction(@PathVariable(value = "id") Long id, HttpServletResponse response) {
+    public ResponseEntity<InputStreamResource> problemFileAction(@PathVariable(value = "id") Long id, Model model) {
         Problem problem = problemService.getById(id);
         if (problem == null) {
             throw new ProblemNotFoundException();
+        }
+        Date currentDate = new Date();
+        if (!problemService.isProblemAvailable(problem, currentDate)) {
+            throw new OutdatedProblemException(problem);
+        }
+        if (!competitionService.isCompetitionAvailable(problem.getCompetition(), currentDate)) {
+            throw new OutdatedCompetitionException();
+        }
+        if (!competitionService.isTeamRegistered(problem.getCompetition(), ((User) model.asMap().get("me")).getTeam())) {
+            throw new TeamNotRegisteredForCompetitionException();
         }
         if (problem.getFile() == null) {
             throw new ProblemFileNoutFoundException();
