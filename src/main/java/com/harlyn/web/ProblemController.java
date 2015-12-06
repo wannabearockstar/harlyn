@@ -67,6 +67,9 @@ public class ProblemController {
         if (!competitionService.isCompetitionAvailable(problem.getCompetition(), currentDate)) {
             throw new OutdatedCompetitionException();
         }
+        if (!competitionService.isTeamRegistered(problem.getCompetition(), ((User) model.asMap().get("me")).getTeam())) {
+            throw new TeamNotRegisteredForCompetitionException();
+        }
 
         try {
             Long solutionId = problemService.createSolution(problem, new SubmitData(queryParam, fileParam), (User) model.asMap().get("me"));
