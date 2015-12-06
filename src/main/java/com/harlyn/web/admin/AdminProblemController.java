@@ -56,7 +56,7 @@ public class AdminProblemController {
             @RequestParam(value = "end_date", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss") Optional<Date> endDate,
             @RequestParam(value = "competition") Long competitionId,
             @RequestParam(value = "file", required = false) Optional<MultipartFile> file,
-            @RequestParam(value = "file_name", required = false) Optional<String> filename
+            @RequestParam(value = "file_name", required = false, defaultValue = "") String filename
     ) throws IOException {
         Competition competition = competitionService.findById(competitionId);
         Problem problemData = new Problem(name, answer, points, problemType, competition);
@@ -67,7 +67,8 @@ public class AdminProblemController {
             problemData.setEndDate(endDate.get());
         }
         if (file.isPresent()) {
-            problemData.setFile(fileService.uploadProblemFile(file.get(), problemData, filename.orElse(file.get().getOriginalFilename())));
+            filename = filename.length() == 0 ? file.get().getOriginalFilename() : filename;
+            problemData.setFile(fileService.uploadProblemFile(file.get(), problemData, filename));;
         }
         problemData.setInfo(info);
         return "redirect:/admin/problem/" + problemService.createProblem(problemData);
@@ -92,7 +93,7 @@ public class AdminProblemController {
             @RequestParam(value = "start_date", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss") Optional<Date> startDate,
             @RequestParam(value = "end_date", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss") Optional<Date> endDate,
             @RequestParam(value = "file", required = false) Optional<MultipartFile> file,
-            @RequestParam(value = "file_name", required = false) Optional<String> filename
+            @RequestParam(value = "file_name", required = false, defaultValue = "") String filename
     ) throws IOException {
         Problem problem = problemService.getById(id);
         if (problem == null) {
@@ -106,7 +107,8 @@ public class AdminProblemController {
             problemData.setEndDate(endDate.get());
         }
         if (file.isPresent()) {
-            problemData.setFile(fileService.uploadProblemFile(file.get(), problem, filename.orElse(file.get().getOriginalFilename())));
+            filename = filename.length() == 0 ? file.get().getOriginalFilename() : filename;
+            problemData.setFile(fileService.uploadProblemFile(file.get(), problem, filename));
         }
         problemData.setInfo(info);
         return "redirect:/admin/problem/" + problemService.updateProblem(problem, problemData);
