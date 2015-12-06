@@ -10,11 +10,12 @@
     <div class="jumbotron">
         <h2 th:text="${problem.name}"></h2>
 
-        <p th:if="${available}" th:text="${problem.info}"></p>
-        <a th:if="${available}"
-           th:href="${'/problem/' + problem.id + '/file'}"
-           th:text="${problem.file.name}"
-                ></a>
+        <div th:if="${available}">
+            <p th:text="${problem.info}"></p>
+            <a th:if="${problem.file != null}" th:href="${'/problem/' + problem.id + '/file'}"
+               th:text="${problem.file.name}"
+                    ></a>
+        </div>
 
         <div th:unless="${available}" class="alert alert-warning">Problem do not available anymore</div>
     </div>
