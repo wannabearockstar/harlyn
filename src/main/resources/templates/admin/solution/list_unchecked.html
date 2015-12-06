@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="fragments/wrapper">
+<head>
+    <title>Harlyn - admin - solutions</title>
+</head>
+<body>
+<div layout:fragment="content" class="container">
+    <h3>Solutions</h3>
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>Problem</th>
+            <th>Competition</th>
+            <th>Team</th>
+            <th>Checked?</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="solution : ${solutions}">
+            <td th:text="${solution.problem.name}"></td>
+            <td th:text="${solution.problem.competition.name}"></td>
+            <td th:text="${solution.solver.team.name}"></td>
+            <td th:if="${solution.checked}">
+                <a th:href="@{'/admin/solution/' + ${solution.id}}">Checked</a>
+            </td>
+            <td class="alert alert-warning" th:unless="${solution.checked}">
+                <a th:href="@{'/admin/solution/' + ${solution.id}}">Unchecked! Check</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <a th:href="@{/admin/solution/}">See all</a>
+</div>
+</body>
+</html>

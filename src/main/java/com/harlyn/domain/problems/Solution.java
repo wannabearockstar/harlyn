@@ -30,6 +30,9 @@ public class Solution {
 
     private String answer;
 
+    @OneToOne(mappedBy = "solution", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private SolutionFile file;
+
     public Solution() {
     }
 
@@ -88,6 +91,15 @@ public class Solution {
 
     public Solution setAnswer(String answer) {
         this.answer = answer;
+        return this;
+    }
+
+    public SolutionFile getFile() {
+        return file;
+    }
+
+    public Solution setFile(SolutionFile file) {
+        this.file = file;
         return this;
     }
 }

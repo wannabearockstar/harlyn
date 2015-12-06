@@ -22,4 +22,8 @@ public class SolutionService {
     public List<Solution> getAllSolutions() {
         return solutionRepository.findAll();
     }
+
+    public List<Solution> getAllUncheckedSolutions() {
+        return solutionRepository.findByCheckedFalse();
+    }
 }

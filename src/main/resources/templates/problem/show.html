@@ -7,13 +7,32 @@
 </head>
 <body>
 <div layout:fragment="content" class="container">
-    <div th:text="${problem.info}"></div>
-    <form th:unless="${problem.getSolverTeams().contains(me.getTeam())}" class="form-group"
-          th:action="${'/problem/' + problem.id + '/submit'}" method="post" enctype="multipart/form-data">
-        <input type="text" name="query" placeholder="Input answer"/>
-        <input type="file" name="file" value="Attach file"/>
-        <input class="form-control" type="submit" value="Submit answer"/>
-    </form>
+    <div class="jumbotron">
+        <h2 th:text="${problem.name}"></h2>
+
+        <div th:if="${available}">
+            <p th:text="${problem.info}"></p>
+            <a th:if="${problem.file != null}" th:href="${'/problem/' + problem.id + '/file'}"
+               th:text="${problem.file.name}"
+                    ></a>
+        </div>
+
+        <div th:unless="${available}" class="alert alert-warning">Problem do not available anymore</div>
+    </div>
+    <div th:if="${available}">
+        <form th:unless="${problem.getSolverTeams().contains(me.getTeam())}" class="form-group"
+              th:action="${'/problem/' + problem.id + '/submit'}" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="query">Input answer</label>
+                <textarea class="form-control" rows="4" name="query" placeholder="Input answer" id="query"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="file">If required, attach file</label>
+                <input class="form-control" id="file" type="file" name="file" value="Attach file"/>
+            </div>
+            <input class="form-control btn btn-primary" type="submit" value="Submit answer"/>
+        </form>
+    </div>
     <div th:if="${problem.getSolverTeams().contains(me.getTeam())}" class="alert alert-success">
         Your team already solved this problem
     </div>

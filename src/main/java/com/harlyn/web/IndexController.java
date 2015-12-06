@@ -11,6 +11,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class IndexController {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String indexPage() {
-        return "redirect:/problem/";
+        return "redirect:/competition/list";
     }
 }
