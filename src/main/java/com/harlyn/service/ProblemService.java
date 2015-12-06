@@ -4,6 +4,7 @@ import com.harlyn.domain.Team;
 import com.harlyn.domain.User;
 import com.harlyn.domain.competitions.RegisteredTeam;
 import com.harlyn.domain.problems.Problem;
+import com.harlyn.domain.problems.ProblemFile;
 import com.harlyn.domain.problems.Solution;
 import com.harlyn.domain.problems.SubmitData;
 import com.harlyn.domain.problems.handlers.ProblemHandler;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -29,24 +31,22 @@ import java.util.Map;
 public class ProblemService {
     @Autowired
     private ProblemRepository problemRepository;
-
     @Autowired
     private SolutionRepository solutionRepository;
-
     @Autowired
     private TeamRepository teamRepository;
-
     @Autowired
     private RegisteredTeamRepository registeredTeamRepository;
-
     @Resource
     private Map<Problem.ProblemType, ProblemHandler> problemHandlers;
+    @Autowired
+    private FileService fileService;
 
     public Problem getById(Long id) {
         return problemRepository.findOne(id);
     }
 
-    public Long createSolution(Problem problem, SubmitData data, User solver) {
+    public Long createSolution(Problem problem, SubmitData data, User solver) throws IOException {
         if (problem.getSolverTeams().contains(solver.getTeam())) {
             throw new TeamAlreadySolveProblemException("Team already solved this problem");
         }
@@ -54,6 +54,12 @@ public class ProblemService {
         ProblemHandler problemHandler = problemHandlers.get(problem.getProblemType());
         Solution solution = new Solution(problem, solver)
                 .setAnswer(data.getQueryParam());
+        if (data.getFileParam() != null) {
+            solution.setFile(fileService.uploadSolutionFile(
+                    data.getFileParam(),
+                    solution
+            ));
+        }
         boolean success = problemHandler.checkSolution(problem, data, solver);
         if (!problemHandler.isManual()) {
             if (success) {
@@ -136,6 +142,17 @@ public class ProblemService {
                 .setProblemType(updateData.getProblemType())
                 .setStartDate(updateData.getStartDate())
                 .setEndDate(updateData.getEndDate());
+        if (updateData.getFile() != null) {
+            ProblemFile problemFile = problem.getFile();
+            if (problemFile != null) {
+                problemFile.setName(updateData.getFile().getName());
+                problemFile.setPath(updateData.getFile().getPath());
+                problemFile.setContentLength(updateData.getFile().getContentLength());
+                problemFile.setContentType(updateData.getFile().getContentType());
+            } else {
+                problem.setFile(updateData.getFile());
+            }
+        }
         return problemRepository.saveAndFlush(problem).getId();
     }
 

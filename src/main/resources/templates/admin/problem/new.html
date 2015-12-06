@@ -7,7 +7,7 @@
 </head>
 <body>
 <div layout:fragment="content" class="container">
-    <form action="/admin/problem/" method="post">
+    <form action="/admin/problem/" method="post" enctype="multipart/form-data" >
         <div class="form-group">
             <label for="name" class="form-control">Name of problem</label>
             <input class="form-control" type="text" name="name" id="name" placeholder="Name of problem" />
@@ -61,6 +61,11 @@
                         th:text="${competition.name}"
                         ></option>
             </select>
+        </div>
+        <div class="form-group">
+            <label class="form-control" for="file">File</label>
+            <input class="form-control" name="file_name" />
+            <input class="form-control" type="file" name="file" id="file" />
         </div>
         <div class="form-group">
             <input type="submit" class="btn btn-primary form-control" value="Create" />

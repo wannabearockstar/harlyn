@@ -45,7 +45,7 @@ dependencies {
     compile 'javax.mail:mail:1.4.5'
     compile 'joda-time:joda-time:2.9.1'
     compile 'org.springframework.boot:spring-boot-devtools'
-
+    compile 'commons-io:commons-io:2.4'
 
     testCompile "junit:junit:4.12"
     testCompile "org.mockito:mockito-all:1.9.5"

@@ -31,6 +31,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -134,9 +135,14 @@ public class ProblemServiceTest {
 
         final Team updatedTeam = teamRepository.findOne(team.getId());
         transactionTemplate.execute(status -> {
-            Solution validSolution = solutionRepository.findOne(
-                    problemService.createSolution(problem, validData, solver)
-            );
+            Solution validSolution = null;
+            try {
+                validSolution = solutionRepository.findOne(
+                        problemService.createSolution(problem, validData, solver)
+                );
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             assertTrue(validSolution.isChecked());
             assertTrue(validSolution.isCorrect());
@@ -166,9 +172,14 @@ public class ProblemServiceTest {
         SubmitData validData = new SubmitData("answer", null);
         final Team updatedTeam = teamRepository.findOne(team.getId());
         transactionTemplate.execute(status -> {
-            Solution validSolution = solutionRepository.findOne(
-                    problemService.createSolution(problem, validData, solver)
-            );
+            Solution validSolution = null;
+            try {
+                validSolution = solutionRepository.findOne(
+                        problemService.createSolution(problem, validData, solver)
+                );
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             assertTrue(validSolution.isChecked());
             assertTrue(validSolution.isCorrect());
@@ -181,7 +192,11 @@ public class ProblemServiceTest {
 
         try {
             transactionTemplate.execute(status -> {
-                problemService.createSolution(problem, validData, anotherSolver);
+                try {
+                    problemService.createSolution(problem, validData, anotherSolver);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 fail("Users from the same team solved same problem");
                 return 1;
             });

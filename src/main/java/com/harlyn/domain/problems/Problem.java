@@ -48,6 +48,9 @@ public class Problem {
     )
     private Set<Team> solverTeams = new HashSet<>();
 
+    @OneToOne(mappedBy = "problem", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private ProblemFile file;
+
     public Problem() {
     }
 
@@ -164,6 +167,15 @@ public class Problem {
 
     public Problem setCompetition(Competition competition) {
         this.competition = competition;
+        return this;
+    }
+
+    public ProblemFile getFile() {
+        return file;
+    }
+
+    public Problem setFile(ProblemFile file) {
+        this.file = file;
         return this;
     }
 
