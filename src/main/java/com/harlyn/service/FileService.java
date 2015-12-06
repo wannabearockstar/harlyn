@@ -35,7 +35,7 @@ public class FileService {
         String randomFilename = RandomStringUtils.randomAlphanumeric(8) + "_" + file.getOriginalFilename();
         File uploadedFile = new File(problemFilesFolder + randomFilename);
         FileUtils.writeByteArrayToFile(uploadedFile, file.getBytes());
-        return new ProblemFile(randomFilename, problem, name);
+        return new ProblemFile(randomFilename, problem, name, file.getContentType(), file.getSize());
     }
 
 

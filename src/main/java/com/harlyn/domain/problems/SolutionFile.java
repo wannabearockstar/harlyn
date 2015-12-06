@@ -18,6 +18,12 @@ public class SolutionFile {
 
     private String name;
 
+    @Column(name = "content_type")
+    private String contentType;
+
+    @Column(name = "content_length")
+    private Long contentLength;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "solution_id")
     private Solution solution;
@@ -25,9 +31,12 @@ public class SolutionFile {
     public SolutionFile() {
     }
 
-    public SolutionFile(String path, Solution solution) {
+    public SolutionFile(String path, Solution solution, String name, String contentType, Long contentLength) {
         this.path = path;
         this.solution = solution;
+        this.name = name;
+        this.contentType = contentType;
+        this.contentLength = contentLength;
     }
 
     public Long getId() {

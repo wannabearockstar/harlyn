@@ -138,6 +138,8 @@ public class ProblemService {
             if (problemFile != null) {
                 problemFile.setName(updateData.getFile().getName());
                 problemFile.setPath(updateData.getFile().getPath());
+                problemFile.setContentLength(updateData.getFile().getContentLength());
+                problemFile.setContentType(updateData.getFile().getContentType());
             } else {
                 problem.setFile(updateData.getFile());
             }

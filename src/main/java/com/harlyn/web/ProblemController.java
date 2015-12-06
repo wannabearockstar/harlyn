@@ -8,11 +8,16 @@ import com.harlyn.exception.*;
 import com.harlyn.service.CompetitionService;
 import com.harlyn.service.FileService;
 import com.harlyn.service.ProblemService;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -25,7 +30,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.Date;
 
 /**
@@ -87,7 +91,7 @@ public class ProblemController {
     }
 
     @RequestMapping(value = "/{id}/file", method = RequestMethod.GET)
-    public void problemFileAcrion(@PathVariable(value = "id") Long id, HttpServletResponse response) {
+    public ResponseEntity<InputStreamResource> problemFileAction(@PathVariable(value = "id") Long id, HttpServletResponse response) {
         Problem problem = problemService.getById(id);
         if (problem == null) {
             throw new ProblemNotFoundException();
@@ -96,12 +100,19 @@ public class ProblemController {
             throw new ProblemFileNoutFoundException();
         }
         File problemFile = fileService.getFileForProblem(problem);
-        try (InputStream inputStream = new FileInputStream(problemFile)) {
-            response.setContentType("application/force-download");
-            response.setHeader("Content-Disposition", "attachment; filename="+problem.getFile().getPath());
-            IOUtils.copy(inputStream, response.getOutputStream());
-            response.flushBuffer();
-            inputStream.close();
+        try {
+            HttpHeaders respHeaders = new HttpHeaders();
+            respHeaders.setContentType(MediaType.valueOf(problem.getFile().getContentType()));
+            respHeaders.setContentLength(problem.getFile().getContentLength());
+            respHeaders.setContentDispositionFormData("attachment",
+                    problem.getFile().getName()
+                            + "."
+                            + FilenameUtils.getExtension(
+                            problemFile.getName()
+                    ));
+
+            InputStreamResource isr = new InputStreamResource(new FileInputStream(problemFile));
+            return new ResponseEntity<>(isr, respHeaders, HttpStatus.OK);
         } catch (Exception e) {
             logger.warn("Cant get file for problem: {}", e.getMessage());
             throw new ProblemNotFoundException();

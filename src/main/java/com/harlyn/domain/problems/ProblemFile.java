@@ -22,13 +22,21 @@ public class ProblemFile {
     @JoinColumn(name = "problem_id")
     private Problem problem;
 
+    @Column(name = "content_type")
+    private String contentType;
+
+    @Column(name = "content_length")
+    private Long contentLength;
+
     public ProblemFile() {
     }
 
-    public ProblemFile(String path, Problem problem, String name) {
+    public ProblemFile(String path, Problem problem, String name, String contentType, Long contentLength) {
         this.path = path;
-        this.name = name;
         this.problem = problem;
+        this.name = name;
+        this.contentType = contentType;
+        this.contentLength = contentLength;
     }
 
     public Long getId() {
@@ -59,6 +67,24 @@ public class ProblemFile {
 
     public ProblemFile setName(String name) {
         this.name = name;
+        return this;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public ProblemFile setContentType(String contentType) {
+        this.contentType = contentType;
+        return this;
+    }
+
+    public Long getContentLength() {
+        return contentLength;
+    }
+
+    public ProblemFile setContentLength(Long contentLength) {
+        this.contentLength = contentLength;
         return this;
     }
 }
