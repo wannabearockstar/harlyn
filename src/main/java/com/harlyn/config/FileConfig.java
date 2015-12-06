@@ -21,20 +21,16 @@ public class FileConfig {
     public Set<String> acceptableTypes() {
         Set<String> acceptableTypes = new HashSet<>();
         acceptableTypes.add("image/jpeg");
+        acceptableTypes.add("image/png");
         return acceptableTypes;
     }
 
     /**
-     * Ends with '/' !!!
-     * @return
+     * @return Folder for problems files, ends with '/'
      */
     @Bean(name = "problemFilesFolder")
     public String problemFilesFolder() {
-        return servletContext.getRealPath("/")
-                + File.separator
-                + "resources"
-                + File.separator
-                + "files"
+        return "files"
                 + File.separator
                 + "problems"
                 + File.separator;

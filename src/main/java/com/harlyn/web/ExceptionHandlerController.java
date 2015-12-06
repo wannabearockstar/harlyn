@@ -17,6 +17,7 @@ public class ExceptionHandlerController {
     @ExceptionHandler(value = {Exception.class, RuntimeException.class})
     public ModelAndView defaultErrorHandler(Exception e) {
         logger.error("Error: {}", e.getMessage());
+        e.printStackTrace();
         ModelAndView mav = new ModelAndView(DEFAULT_ERROR_VIEW);
         mav.addObject("message", e.getMessage());
         return mav;

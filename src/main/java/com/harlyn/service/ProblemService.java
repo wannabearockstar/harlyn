@@ -4,6 +4,7 @@ import com.harlyn.domain.Team;
 import com.harlyn.domain.User;
 import com.harlyn.domain.competitions.RegisteredTeam;
 import com.harlyn.domain.problems.Problem;
+import com.harlyn.domain.problems.ProblemFile;
 import com.harlyn.domain.problems.Solution;
 import com.harlyn.domain.problems.SubmitData;
 import com.harlyn.domain.problems.handlers.ProblemHandler;
@@ -29,16 +30,12 @@ import java.util.Map;
 public class ProblemService {
     @Autowired
     private ProblemRepository problemRepository;
-
     @Autowired
     private SolutionRepository solutionRepository;
-
     @Autowired
     private TeamRepository teamRepository;
-
     @Autowired
     private RegisteredTeamRepository registeredTeamRepository;
-
     @Resource
     private Map<Problem.ProblemType, ProblemHandler> problemHandlers;
 
@@ -136,6 +133,15 @@ public class ProblemService {
                 .setProblemType(updateData.getProblemType())
                 .setStartDate(updateData.getStartDate())
                 .setEndDate(updateData.getEndDate());
+        if (updateData.getFile() != null) {
+            ProblemFile problemFile = problem.getFile();
+            if (problemFile != null) {
+                problemFile.setName(updateData.getFile().getName());
+                problemFile.setPath(updateData.getFile().getPath());
+            } else {
+                problem.setFile(updateData.getFile());
+            }
+        }
         return problemRepository.saveAndFlush(problem).getId();
     }
 

@@ -25,8 +25,9 @@ public class ProblemFile {
     public ProblemFile() {
     }
 
-    public ProblemFile(String path, Problem problem) {
+    public ProblemFile(String path, Problem problem, String name) {
         this.path = path;
+        this.name = name;
         this.problem = problem;
     }
 

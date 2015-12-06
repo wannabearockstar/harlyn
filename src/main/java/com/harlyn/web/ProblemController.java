@@ -4,12 +4,13 @@ import com.harlyn.domain.User;
 import com.harlyn.domain.problems.Problem;
 import com.harlyn.domain.problems.SubmitData;
 import com.harlyn.event.UserChangedEvent;
-import com.harlyn.exception.OutdatedCompetitionException;
-import com.harlyn.exception.OutdatedProblemException;
-import com.harlyn.exception.ProblemNotFoundException;
-import com.harlyn.exception.TeamNotRegisteredForCompetitionException;
+import com.harlyn.exception.*;
 import com.harlyn.service.CompetitionService;
+import com.harlyn.service.FileService;
 import com.harlyn.service.ProblemService;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Controller;
@@ -21,6 +22,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.Date;
 
 /**
@@ -29,12 +34,15 @@ import java.util.Date;
 @Controller
 @RequestMapping("/problem")
 public class ProblemController {
+    public static final Logger logger = LoggerFactory.getLogger(ProblemController.class);
     @Autowired
     private ProblemService problemService;
     @Autowired
     private ApplicationEventPublisher eventPublisher;
     @Autowired
     private CompetitionService competitionService;
+    @Autowired
+    private FileService fileService;
 
     @Transactional
     @RequestMapping(value = "/{id}/submit", method = RequestMethod.POST)
@@ -76,5 +84,27 @@ public class ProblemController {
         );
 
         return "problem/show";
+    }
+
+    @RequestMapping(value = "/{id}/file", method = RequestMethod.GET)
+    public void problemFileAcrion(@PathVariable(value = "id") Long id, HttpServletResponse response) {
+        Problem problem = problemService.getById(id);
+        if (problem == null) {
+            throw new ProblemNotFoundException();
+        }
+        if (problem.getFile() == null) {
+            throw new ProblemFileNoutFoundException();
+        }
+        File problemFile = fileService.getFileForProblem(problem);
+        try (InputStream inputStream = new FileInputStream(problemFile)) {
+            response.setContentType("application/force-download");
+            response.setHeader("Content-Disposition", "attachment; filename="+problem.getFile().getPath());
+            IOUtils.copy(inputStream, response.getOutputStream());
+            response.flushBuffer();
+            inputStream.close();
+        } catch (Exception e) {
+            logger.warn("Cant get file for problem: {}", e.getMessage());
+            throw new ProblemNotFoundException();
+        }
     }
 }

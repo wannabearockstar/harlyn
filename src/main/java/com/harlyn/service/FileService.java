@@ -1,12 +1,17 @@
 package com.harlyn.service;
 
+import com.harlyn.domain.problems.Problem;
 import com.harlyn.domain.problems.ProblemFile;
 import com.harlyn.exception.InvalidFileException;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.File;
+import java.io.IOException;
 import java.util.Set;
 
 /**
@@ -25,10 +30,19 @@ public class FileService {
         }
     }
 
-    public ProblemFile uploadProblemFile(MultipartFile file) {
+    public ProblemFile uploadProblemFile(MultipartFile file, final Problem problem, String name) throws IOException {
         validateImage(file);
-//        File uploadedFile = problemFilesFolder + file.getOriginalFilename();
-        //todo implement
-        return null;
+        String randomFilename = RandomStringUtils.randomAlphanumeric(8) + "_" + file.getOriginalFilename();
+        File uploadedFile = new File(problemFilesFolder + randomFilename);
+        FileUtils.writeByteArrayToFile(uploadedFile, file.getBytes());
+        return new ProblemFile(randomFilename, problem, name);
     }
+
+
+    public File getFileForProblem(Problem problem) {
+        return new File(
+                problemFilesFolder + problem.getFile().getPath()
+        );
+    }
+
 }
