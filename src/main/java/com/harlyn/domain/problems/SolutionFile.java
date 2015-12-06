@@ -70,4 +70,21 @@ public class SolutionFile {
         return this;
     }
 
+    public String getContentType() {
+        return contentType;
+    }
+
+    public SolutionFile setContentType(String contentType) {
+        this.contentType = contentType;
+        return this;
+    }
+
+    public Long getContentLength() {
+        return contentLength;
+    }
+
+    public SolutionFile setContentLength(Long contentLength) {
+        this.contentLength = contentLength;
+        return this;
+    }
 }

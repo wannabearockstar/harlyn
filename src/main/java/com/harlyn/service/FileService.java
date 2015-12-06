@@ -2,6 +2,8 @@ package com.harlyn.service;
 
 import com.harlyn.domain.problems.Problem;
 import com.harlyn.domain.problems.ProblemFile;
+import com.harlyn.domain.problems.Solution;
+import com.harlyn.domain.problems.SolutionFile;
 import com.harlyn.exception.InvalidFileException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.RandomStringUtils;
@@ -23,6 +25,8 @@ public class FileService {
     private Set<String> acceptableTypes;
     @Autowired
     private String problemFilesFolder;
+    @Autowired
+    private String solutionFilesFolder;
 
     public void validateImage(MultipartFile file) {
         if (!acceptableTypes.contains(file.getContentType())) {
@@ -45,4 +49,18 @@ public class FileService {
         );
     }
 
+    public SolutionFile uploadSolutionFile(MultipartFile file, Solution solution) throws IOException {
+        validateImage(file);
+        String randomFilename = RandomStringUtils.randomAlphanumeric(8) + "_" + file.getOriginalFilename();
+        File uploadedFile = new File(solutionFilesFolder + randomFilename);
+        FileUtils.writeByteArrayToFile(uploadedFile, file.getBytes());
+        return new SolutionFile(randomFilename, solution, randomFilename, file.getContentType(), file.getSize());
+    }
+
+    public File getFileForSolution(Solution solution) {
+        return new File(
+                solutionFilesFolder + solution.getFile().getPath()
+        );
+
+    }
 }

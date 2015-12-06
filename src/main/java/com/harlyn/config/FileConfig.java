@@ -40,4 +40,15 @@ public class FileConfig {
                 + "problems"
                 + File.separator;
     }
+
+    /**
+     * @return Folder for problems files, ends with '/'
+     */
+    @Bean(name = "solutionFilesFolder")
+    public String solutionFilesFolder() {
+        return "files"
+                + File.separator
+                + "solutions"
+                + File.separator;
+    }
 }

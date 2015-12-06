@@ -30,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Date;
 
 /**
@@ -67,9 +68,14 @@ public class ProblemController {
             throw new OutdatedCompetitionException();
         }
 
-        Long solutionId = problemService.createSolution(problem, new SubmitData(queryParam, fileParam), (User) model.asMap().get("me"));
-        eventPublisher.publishEvent(new UserChangedEvent(this, (User) model.asMap().get("me")));
-        return "redirect:/solution/" + solutionId;
+        try {
+            Long solutionId = problemService.createSolution(problem, new SubmitData(queryParam, fileParam), (User) model.asMap().get("me"));
+            eventPublisher.publishEvent(new UserChangedEvent(this, (User) model.asMap().get("me")));
+            return "redirect:/solution/" + solutionId;
+        } catch (IOException e) {
+            logger.error("Error while uploading file: {}", e.getMessage());
+            throw new InvalidFileException();
+        }
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
