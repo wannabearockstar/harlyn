@@ -55,6 +55,10 @@ public class Problem {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @ManyToOne
+    @JoinColumn(name = "prev_problem_id")
+    private Problem prevProblem;
+
     public Problem() {
     }
 
@@ -189,6 +193,15 @@ public class Problem {
 
     public Problem setCategory(Category category) {
         this.category = category;
+        return this;
+    }
+
+    public Problem getPrevProblem() {
+        return prevProblem;
+    }
+
+    public Problem setPrevProblem(Problem prevProblem) {
+        this.prevProblem = prevProblem;
         return this;
     }
 
