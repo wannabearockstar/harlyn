@@ -63,7 +63,18 @@
                 <option th:each="competition : ${competitions}"
                         th:value="${competition.id}"
                         th:text="${competition.name}"
-                        th:selected="${competition.equals(problem.competition}"
+                        th:selected="${competition.equals(problem.competition)}"
+                        ></option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-control" for="category">Category</label>
+            <select name="category" id="category">
+                <option selected="selected" value="0">None</option>
+                <option th:each="category : ${categories}"
+                        th:value="${category.id}"
+                        th:text="${category.name}"
+                        th:selected="${category.equals(problem.category)}"
                         ></option>
             </select>
         </div>

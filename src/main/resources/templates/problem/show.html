@@ -9,6 +9,7 @@
 <div layout:fragment="content" class="container">
     <div class="jumbotron">
         <h2 th:text="${problem.name}"></h2>
+        <h3 th:if="${problem.category != null}" th:text="${problem.category.name}"></h3>
 
         <div th:if="${available}">
             <p th:text="${problem.info}"></p>
