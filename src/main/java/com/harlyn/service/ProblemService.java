@@ -178,6 +178,13 @@ public class ProblemService {
         return problem.getStartDate().before(currentDate) && problem.getEndDate().after(currentDate);
     }
 
+    public boolean isTeamSolvedPreviousProblem(Problem problem, Team team) {
+        if (problem.getPrevProblem() == null) {
+            return true;
+        }
+        return team.getSolvedProblems().contains(problem.getPrevProblem());
+    }
+
     public ProblemService setRegisteredTeamRepository(RegisteredTeamRepository registeredTeamRepository) {
         this.registeredTeamRepository = registeredTeamRepository;
         return this;

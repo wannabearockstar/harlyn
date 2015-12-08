@@ -276,4 +276,26 @@ public class ProblemServiceTest {
         assertFalse(problemService.isProblemAvailable(earlyProblem1, currentDate));
         assertFalse(problemService.isProblemAvailable(lateProblem, currentDate));
     }
+
+    @Test
+    public void testIsTeamSolvedPreviousProblem() throws Exception {
+        Competition competition = competitionRepository.saveAndFlush(new Competition("competition1"));
+        Problem problem = problemRepository.saveAndFlush(new Problem("name", "answer", 12, Problem.ProblemType.FLAG, competition));
+        Problem prevProblem = problemRepository.saveAndFlush(new Problem("name1", "answer", 12, Problem.ProblemType.FLAG, competition));
+        Team team = teamRepository.saveAndFlush(new Team("name"));
+        User solver = userRepository.saveAndFlush(new User("user@email.com", "username", "password")
+                        .setTeam(team)
+        );
+
+        assertTrue(problemService.isTeamSolvedPreviousProblem(problem, solver.getTeam()));
+
+        problem = problemRepository.saveAndFlush(problem.setPrevProblem(prevProblem));
+
+        assertFalse(problemService.isTeamSolvedPreviousProblem(problem, solver.getTeam()));
+
+        team.getSolvedProblems().add(prevProblem);
+        team = teamRepository.saveAndFlush(team);
+
+        assertTrue(problemService.isTeamSolvedPreviousProblem(problem, team));
+    }
 }
