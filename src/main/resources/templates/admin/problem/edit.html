@@ -79,6 +79,17 @@
             </select>
         </div>
         <div class="form-group">
+            <label class="form-control" for="prev_problem">Previous solver problem</label>
+            <select name="prev_problem" id="prev_problem">
+                <option selected="selected" value="0">None</option>
+                <option th:each="prev_problem : ${all_problems}"
+                        th:value="${prev_problem.id}"
+                        th:text="${prev_problem.name + ' - ' + prev_problem.competition.name}"
+                        th:selected="${prev_problem.equals(problem.prevProblem)}"
+                        ></option>
+            </select>
+        </div>
+        <div class="form-group">
             <label class="form-control" for="file">File</label>
             <input th:value="${problem.file}? ${problem.file.name} : ''"
                    class="form-control"

@@ -46,6 +46,7 @@ public class AdminProblemController {
         model.addAttribute("problem_handlers_keys", problemHandlers.keySet());
         model.addAttribute("competitions", competitionService.findAll());
         model.addAttribute("categories", categoryService.findAll());
+        model.addAttribute("all_problems", problemService.getAllProblems());
         return "admin/problem/new";
     }
 
@@ -61,14 +62,16 @@ public class AdminProblemController {
             @RequestParam(value = "competition") Long competitionId,
             @RequestParam(value = "file", required = false) Optional<MultipartFile> file,
             @RequestParam(value = "file_name", required = false, defaultValue = "") String filename,
-            @RequestParam(value = "category", required = false, defaultValue = "0") Long categoryId
+            @RequestParam(value = "category", required = false, defaultValue = "0") Long categoryId,
+            @RequestParam(value = "prev_problem", required = false, defaultValue = "0") Long prevProblemId
     ) throws IOException {
         Competition competition = competitionService.findById(competitionId);
         Problem problemData = new Problem(name, answer, points, problemType, competition);
         if (categoryId != 0) {
-            problemData.setCategory(
-                    categoryService.findById(categoryId)
-            );
+            problemData.setCategory(categoryService.findById(categoryId));
+        }
+        if (prevProblemId != 0) {
+            problemData.setPrevProblem(problemService.getById(prevProblemId));
         }
         if (startDate.isPresent()) {
             problemData.setStartDate(startDate.get());
@@ -94,6 +97,7 @@ public class AdminProblemController {
         model.addAttribute("problem", problem);
         model.addAttribute("categories", categoryService.findAll());
         model.addAttribute("competitions", competitionService.findAll());
+        model.addAttribute("all_problems", problemService.getAllProblems());
         return "admin/problem/edit";
     }
 
@@ -106,7 +110,8 @@ public class AdminProblemController {
             @RequestParam(value = "end_date", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss") Optional<Date> endDate,
             @RequestParam(value = "file", required = false) Optional<MultipartFile> file,
             @RequestParam(value = "file_name", required = false, defaultValue = "") String filename,
-            @RequestParam(value = "category", required = false, defaultValue = "0") Long categoryId
+            @RequestParam(value = "category", required = false, defaultValue = "0") Long categoryId,
+            @RequestParam(value = "prev_problem", required = false, defaultValue = "0") Long prevProblemId
     ) throws IOException {
         Problem problem = problemService.getById(id);
         if (problem == null) {
@@ -114,9 +119,10 @@ public class AdminProblemController {
         }
         Problem problemData = new Problem(name, problem.getAnswer(), problem.getPoints(), problem.getProblemType(), problem.getCompetition());
         if (categoryId != 0) {
-            problemData.setCategory(
-                    categoryService.findById(categoryId)
-            );
+            problemData.setCategory(categoryService.findById(categoryId));
+        }
+        if (prevProblemId != 0) {
+            problemData.setPrevProblem(problemService.getById(prevProblemId));
         }
         if (startDate.isPresent()) {
             problemData.setStartDate(startDate.get());
