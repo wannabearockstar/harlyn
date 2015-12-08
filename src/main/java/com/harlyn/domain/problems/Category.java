@@ -1,6 +1,9 @@
 package com.harlyn.domain.problems;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 /**
  * Created by wannabe on 08.12.15.
@@ -14,6 +17,8 @@ public class Category {
     @Column(name = "id", updatable = false)
     private Long id;
 
+    @NotNull
+    @NotEmpty
     private String name;
 
     public Category() {
