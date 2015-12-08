@@ -4,6 +4,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 /**
  * Created by wannabe on 08.12.15.
@@ -39,5 +40,29 @@ public class Category {
     public Category setName(String name) {
         this.name = name;
         return this;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || !(o instanceof Category))
+            return false;
+
+        Category other = (Category) o;
+
+        if (id == null) return false;
+        if (Objects.equals(id, other.getId())) return true;
+
+        return id.equals(other.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        if (id != null) {
+            return id.hashCode();
+        } else {
+            return super.hashCode();
+        }
     }
 }

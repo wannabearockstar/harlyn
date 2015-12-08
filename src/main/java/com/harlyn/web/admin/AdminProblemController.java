@@ -4,6 +4,7 @@ import com.harlyn.domain.competitions.Competition;
 import com.harlyn.domain.problems.Problem;
 import com.harlyn.domain.problems.handlers.ProblemHandler;
 import com.harlyn.exception.ProblemNotFoundException;
+import com.harlyn.service.CategoryService;
 import com.harlyn.service.CompetitionService;
 import com.harlyn.service.FileService;
 import com.harlyn.service.ProblemService;
@@ -37,11 +38,14 @@ public class AdminProblemController {
     private CompetitionService competitionService;
     @Autowired
     private FileService fileService;
+    @Autowired
+    private CategoryService categoryService;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String newProblemPage(Model model) {
         model.addAttribute("problem_handlers_keys", problemHandlers.keySet());
         model.addAttribute("competitions", competitionService.findAll());
+        model.addAttribute("categories", categoryService.findAll());
         return "admin/problem/new";
     }
 
@@ -56,10 +60,16 @@ public class AdminProblemController {
             @RequestParam(value = "end_date", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss") Optional<Date> endDate,
             @RequestParam(value = "competition") Long competitionId,
             @RequestParam(value = "file", required = false) Optional<MultipartFile> file,
-            @RequestParam(value = "file_name", required = false, defaultValue = "") String filename
+            @RequestParam(value = "file_name", required = false, defaultValue = "") String filename,
+            @RequestParam(value = "category", required = false, defaultValue = "0") Long categoryId
     ) throws IOException {
         Competition competition = competitionService.findById(competitionId);
         Problem problemData = new Problem(name, answer, points, problemType, competition);
+        if (categoryId != 0) {
+            problemData.setCategory(
+                    categoryService.findById(categoryId)
+            );
+        }
         if (startDate.isPresent()) {
             problemData.setStartDate(startDate.get());
         }
@@ -68,7 +78,7 @@ public class AdminProblemController {
         }
         if (file.isPresent()) {
             filename = filename.length() == 0 ? file.get().getOriginalFilename() : filename;
-            problemData.setFile(fileService.uploadProblemFile(file.get(), problemData, filename));;
+            problemData.setFile(fileService.uploadProblemFile(file.get(), problemData, filename));
         }
         problemData.setInfo(info);
         return "redirect:/admin/problem/" + problemService.createProblem(problemData);
@@ -82,6 +92,8 @@ public class AdminProblemController {
         }
         model.addAttribute("problem_handlers_keys", problemHandlers.keySet());
         model.addAttribute("problem", problem);
+        model.addAttribute("categories", categoryService.findAll());
+        model.addAttribute("competitions", competitionService.findAll());
         return "admin/problem/edit";
     }
 
@@ -93,13 +105,19 @@ public class AdminProblemController {
             @RequestParam(value = "start_date", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss") Optional<Date> startDate,
             @RequestParam(value = "end_date", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss") Optional<Date> endDate,
             @RequestParam(value = "file", required = false) Optional<MultipartFile> file,
-            @RequestParam(value = "file_name", required = false, defaultValue = "") String filename
+            @RequestParam(value = "file_name", required = false, defaultValue = "") String filename,
+            @RequestParam(value = "category", required = false, defaultValue = "0") Long categoryId
     ) throws IOException {
         Problem problem = problemService.getById(id);
         if (problem == null) {
             throw new ProblemNotFoundException();
         }
         Problem problemData = new Problem(name, problem.getAnswer(), problem.getPoints(), problem.getProblemType(), problem.getCompetition());
+        if (categoryId != 0) {
+            problemData.setCategory(
+                    categoryService.findById(categoryId)
+            );
+        }
         if (startDate.isPresent()) {
             problemData.setStartDate(startDate.get());
         }
