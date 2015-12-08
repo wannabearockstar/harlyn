@@ -142,7 +142,9 @@ public class ProblemService {
                 .setProblemType(updateData.getProblemType())
                 .setStartDate(updateData.getStartDate())
                 .setEndDate(updateData.getEndDate())
-                .setCategory(updateData.getCategory());
+                .setCategory(updateData.getCategory())
+                .setPrevProblem(updateData.getPrevProblem())
+        ;
         if (updateData.getFile() != null) {
             ProblemFile problemFile = problem.getFile();
             if (problemFile != null) {

@@ -66,8 +66,12 @@ public class ProblemController {
         if (!competitionService.isCompetitionAvailable(problem.getCompetition(), currentDate)) {
             throw new OutdatedCompetitionException();
         }
-        if (!competitionService.isTeamRegistered(problem.getCompetition(), ((User) model.asMap().get("me")).getTeam())) {
+        User me = ((User) model.asMap().get("me"));
+        if (!competitionService.isTeamRegistered(problem.getCompetition(), me.getTeam())) {
             throw new TeamNotRegisteredForCompetitionException();
+        }
+        if (!problemService.isTeamSolvedPreviousProblem(problem, me.getTeam())) {
+            throw new TeamNotSolverPreviousProblemException(problem);
         }
 
         try {
@@ -86,7 +90,8 @@ public class ProblemController {
         if (problem == null) {
             throw new ProblemNotFoundException();
         }
-        if (!competitionService.isTeamRegistered(problem.getCompetition(), ((User) model.asMap().get("me")).getTeam())) {
+        User me = ((User) model.asMap().get("me"));
+        if (!competitionService.isTeamRegistered(problem.getCompetition(), me.getTeam())) {
             throw new TeamNotRegisteredForCompetitionException();
         }
         Date currentDate = new Date();
@@ -94,6 +99,7 @@ public class ProblemController {
         model.addAttribute("available", competitionService.isCompetitionAvailable(problem.getCompetition(), currentDate)
                         && problemService.isProblemAvailable(problem, currentDate)
         );
+        model.addAttribute("available_by_previous", problemService.isTeamSolvedPreviousProblem(problem, me.getTeam()));
 
         return "problem/show";
     }
