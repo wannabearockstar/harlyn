@@ -63,6 +63,26 @@
             </select>
         </div>
         <div class="form-group">
+            <label class="form-control" for="category">Category</label>
+            <select name="category" id="category">
+                <option value="0">None</option>
+                <option th:each="category : ${categories}"
+                        th:value="${category.id}"
+                        th:text="${category.name}"
+                        ></option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-control" for="prev_problem">Previous solver problem</label>
+            <select name="prev_problem" id="prev_problem">
+                <option value="0">None</option>
+                <option th:each="prev_problem : ${all_problems}"
+                        th:value="${prev_problem.id}"
+                        th:text="${prev_problem.name + ' - ' + prev_problem.competition.name}"
+                        ></option>
+            </select>
+        </div>
+        <div class="form-group">
             <label class="form-control" for="file">File</label>
             <input class="form-control" name="file_name" />
             <input class="form-control" type="file" name="file" id="file" />

@@ -1,0 +1,1 @@
+ALTER TABLE problems ADD COLUMN prev_problem_id INTEGER REFERENCES problems (id) DEFAULT NULL;

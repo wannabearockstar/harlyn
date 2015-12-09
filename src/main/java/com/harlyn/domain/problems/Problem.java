@@ -51,6 +51,14 @@ public class Problem {
     @OneToOne(mappedBy = "problem", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private ProblemFile file;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+    @ManyToOne
+    @JoinColumn(name = "prev_problem_id")
+    private Problem prevProblem;
+
     public Problem() {
     }
 
@@ -176,6 +184,24 @@ public class Problem {
 
     public Problem setFile(ProblemFile file) {
         this.file = file;
+        return this;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public Problem setCategory(Category category) {
+        this.category = category;
+        return this;
+    }
+
+    public Problem getPrevProblem() {
+        return prevProblem;
+    }
+
+    public Problem setPrevProblem(Problem prevProblem) {
+        this.prevProblem = prevProblem;
         return this;
     }
 

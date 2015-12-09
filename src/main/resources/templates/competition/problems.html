@@ -13,6 +13,7 @@
         <tr>
             <th>Name</th>
             <th>Points</th>
+            <th>Category</th>
             <th>Start date</th>
             <th>End date</th>
             <th>Solved by your team?</th>
@@ -24,6 +25,7 @@
                 <a th:href="@{'/problem/' + ${problem.id}}" th:text="${problem.name}"></a>
             </td>
             <td th:text="${problem.points}"></td>
+            <td th:text="${problem.category != null}? ${problem.category.name} : 'None'"></td>
             <td th:text="${problem.startDate != null}? ${#dates.format(problem.startDate, T(com.harlyn.domain.problems.Problem).DATE_FORMAT)} : 'Unbounded'"></td>
             <td th:text="${problem.endDate != null}? ${#dates.format(problem.endDate, T(com.harlyn.domain.problems.Problem).DATE_FORMAT)} : 'Unbounded'"></td>
             <td th:if="${me.team.solvedProblems.contains(problem)}"

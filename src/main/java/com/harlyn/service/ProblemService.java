@@ -141,7 +141,10 @@ public class ProblemService {
                 .setPoints(updateData.getPoints())
                 .setProblemType(updateData.getProblemType())
                 .setStartDate(updateData.getStartDate())
-                .setEndDate(updateData.getEndDate());
+                .setEndDate(updateData.getEndDate())
+                .setCategory(updateData.getCategory())
+                .setPrevProblem(updateData.getPrevProblem())
+        ;
         if (updateData.getFile() != null) {
             ProblemFile problemFile = problem.getFile();
             if (problemFile != null) {
@@ -175,6 +178,13 @@ public class ProblemService {
             return problem.getEndDate().after(currentDate);
         }
         return problem.getStartDate().before(currentDate) && problem.getEndDate().after(currentDate);
+    }
+
+    public boolean isTeamSolvedPreviousProblem(Problem problem, Team team) {
+        if (problem.getPrevProblem() == null) {
+            return true;
+        }
+        return team.getSolvedProblems().contains(problem.getPrevProblem());
     }
 
     public ProblemService setRegisteredTeamRepository(RegisteredTeamRepository registeredTeamRepository) {
