@@ -1,8 +1,10 @@
 package com.harlyn.web.admin;
 
+import com.harlyn.domain.UserSolvedProblems;
 import com.harlyn.domain.competitions.Competition;
 import com.harlyn.exception.CompetitionNotFoundException;
 import com.harlyn.service.CompetitionService;
+import com.harlyn.service.SolutionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -23,6 +26,8 @@ import java.util.Optional;
 public class AdminCompetitionController {
     @Autowired
     private CompetitionService competitionService;
+    @Autowired
+    private SolutionService solutionService;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String newCompetitionPage(Model model) {
@@ -80,5 +85,17 @@ public class AdminCompetitionController {
     public String listCompetitionPage(Model model) {
         model.addAttribute("competitions", competitionService.findAll());
         return "admin/competition/list";
+    }
+
+    @RequestMapping(value = "/{id}/rank/personal", method = RequestMethod.GET)
+    public String getCompetitionPersonalRank(@PathVariable(value = "id") Long id, Model model) {
+        Competition competition = competitionService.findById(id);
+        if (competition == null) {
+            throw new CompetitionNotFoundException(id);
+        }
+        List<UserSolvedProblems> userSolvedProblemses = solutionService.getUserSolverProblemsByCompetition(competition.getId());
+        model.addAttribute("rank_data", userSolvedProblemses);
+        model.addAttribute("competition", competition);
+        return "admin/competition/rank/personal";
     }
 }
