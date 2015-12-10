@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="fragments/wrapper">
+<head>
+    <title>Harlyn - competition - problems</title>
+</head>
+<body>
+<div layout:fragment="content" class="container">
+    <h3 th:text="${competition.name + ': personal rank'}">Personal rank</h3>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Username</th>
+            <th>Team</th>
+            <th>Points</th>
+            <th>Solved problems</th>
+            <th th:each="problem : ${competition.problems}"
+                th:text="${problem.name}"
+                    ></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user_result : ${rank_data}">
+            <td th:text="${user_result.solver.username}"></td>
+            <td th:text="${user_result.solver.team.name}"></td>
+            <td th:text="${user_result.points}"></td>
+            <td th:text="${user_result.problems.size()}"></td>
+            <td th:each="problem : ${competition.problems}"
+                th:class="${user_result.problems.contains(problem)? 'success' : 'alert'}"
+                th:text="${user_result.problems.contains(problem)? 'Solved' : '-'}"
+                    ></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
