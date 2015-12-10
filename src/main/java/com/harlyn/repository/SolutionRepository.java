@@ -11,6 +11,6 @@ import java.util.List;
  */
 @Repository
 public interface SolutionRepository extends JpaRepository<Solution, Long> {
-    List<Solution> findByCheckedFalse();
-    List<Solution> findAll();
+    List<Solution> findByCheckedFalseOrderByIdDesc();
+    List<Solution> findAllByOrderByIdDesc();
 }
