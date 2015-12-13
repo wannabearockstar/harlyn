@@ -46,6 +46,8 @@ dependencies {
     compile 'joda-time:joda-time:2.9.1'
     compile 'org.springframework.boot:spring-boot-devtools'
     compile 'commons-io:commons-io:2.4'
+    compile 'org.springframework.boot:spring-boot-starter-websocket'
+    compile 'org.springframework:spring-messaging'
 
     testCompile "junit:junit:4.12"
     testCompile "org.mockito:mockito-all:1.9.5"
