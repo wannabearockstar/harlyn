@@ -22,6 +22,9 @@ public class CompetitionChatMessage extends ChatMessage {
     @JoinColumn(name = "competition_id")
     private Competition competition;
 
+    public CompetitionChatMessage() {
+    }
+
     public CompetitionChatMessage(String content, Date postedAt, User author, Competition competition) {
         super(content, postedAt, author);
         this.competition = competition;

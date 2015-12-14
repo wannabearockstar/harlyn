@@ -22,6 +22,9 @@ public class TeamChatMessage extends ChatMessage {
     @JoinColumn(name = "team_id")
     private Team team;
 
+    public TeamChatMessage() {
+    }
+
     public TeamChatMessage(String content, Date postedAt, User author, Team team) {
         super(content, postedAt, author);
         this.team = team;
