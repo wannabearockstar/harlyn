@@ -27,6 +27,9 @@
     <div th:if="${registered}">
         <a th:href="${'/competition/' + competition.id + '/problems'}">Problems</a>
     </div>
+    <div th:if="${registered}">
+        <a th:href="${'/competition/' + competition.id + '/chat'}">Chat</a>
+    </div>
     <div>
         <a th:href="${'/competition/' + competition.id + '/teams'}">Teams</a>
     </div>
