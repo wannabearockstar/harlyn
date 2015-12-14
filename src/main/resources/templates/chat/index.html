@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html
+        xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+        layout:decorator="fragments/wrapper">
+<head>
+    <title>Harlyn - chat</title>
+
+    <script type="text/javascript">
+        var stompClient = null;
+        function connect() {
+            var socket = new SockJS('/main');
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, function (frame) {
+                console.log('Connected: ' + frame);
+                stompClient.subscribe('/topic/greetings', function(greeting) {
+                    console.log(greeting);
+                })
+            });
+        }
+
+        function disconnect() {
+            if (stompClient != null) {
+                stompClient.disconnect();
+            }
+            console.log("Disconnected");
+        }
+
+        function send() {
+            stompClient.send("/chat/hello", {}, JSON.stringify('Hey'));
+        }
+    </script>
+</head>
+<body onload="disconnect()">
+<div layout:fragment="content" class="container">
+    <div>
+        <button id="connect" onclick="connect();">Connect</button>
+        <button id="disconnect" onclick="disconnect();">Disconnect</button>
+        <button id="send" onclick="send();">Send</button>
+    </div>
+</div>
+</body>
+</html>
