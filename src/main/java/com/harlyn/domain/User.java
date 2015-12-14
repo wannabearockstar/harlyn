@@ -1,5 +1,6 @@
 package com.harlyn.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.security.core.GrantedAuthority;
@@ -37,12 +38,15 @@ public class User implements UserDetails {
 
     @NotNull
     @NotEmpty
+    @JsonIgnore
     private String password;
 
     @ManyToOne(targetEntity = Team.class)
     @JoinColumn(name = "team_id")
+    @JsonIgnore
     private Team team;
 
+    @JsonIgnore
     private boolean enabled = false;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -51,9 +55,11 @@ public class User implements UserDetails {
             joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")}
     )
+    @JsonIgnore
     private Set<Role> roles = new HashSet<>();
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "recipent")
+    @JsonIgnore
     private Set<TeamInvite> invites = new HashSet<>();
 
     public User() {
@@ -95,21 +101,25 @@ public class User implements UserDetails {
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonExpired() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonLocked() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         Set<Role> userRoles = this.getRoles();
