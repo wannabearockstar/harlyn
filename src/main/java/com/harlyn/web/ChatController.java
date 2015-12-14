@@ -1,7 +1,7 @@
 package com.harlyn.web;
 
-import com.harlyn.domain.ChatMessage;
 import com.harlyn.domain.User;
+import com.harlyn.domain.chat.ChatMessage;
 import com.harlyn.domain.competitions.Competition;
 import com.harlyn.exception.CompetitionNotFoundException;
 import com.harlyn.exception.TeamNotRegisteredForCompetitionException;
