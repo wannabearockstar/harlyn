@@ -74,8 +74,8 @@ public class TeamChatServiceTest {
         List<TeamChatMessage> teamChatMessages = teamChatService.getLastMessagesByTeam(team, 3);
         //then
         assertEquals(3, teamChatMessages.size());
-        assertEquals("c5", teamChatMessages.get(0).getContent());
+        assertEquals("c2", teamChatMessages.get(0).getContent());
         assertEquals("c3", teamChatMessages.get(1).getContent());
-        assertEquals("c2", teamChatMessages.get(2).getContent());
+        assertEquals("c5", teamChatMessages.get(2).getContent());
     }
 }

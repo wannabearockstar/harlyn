@@ -1,5 +1,6 @@
 package com.harlyn.domain.chat;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.harlyn.domain.User;
 import com.harlyn.domain.competitions.Competition;
 
@@ -20,6 +21,7 @@ public class CompetitionChatMessage extends ChatMessage {
 
     @ManyToOne
     @JoinColumn(name = "competition_id")
+    @JsonIgnore
     private Competition competition;
 
     public CompetitionChatMessage() {

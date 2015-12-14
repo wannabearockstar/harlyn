@@ -1,5 +1,6 @@
 package com.harlyn.domain.chat;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.harlyn.domain.Team;
 import com.harlyn.domain.User;
 
@@ -20,6 +21,7 @@ public class TeamChatMessage extends ChatMessage {
 
     @ManyToOne
     @JoinColumn(name = "team_id")
+    @JsonIgnore
     private Team team;
 
     public TeamChatMessage() {

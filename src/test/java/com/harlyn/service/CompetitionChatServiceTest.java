@@ -74,8 +74,8 @@ public class CompetitionChatServiceTest {
         List<CompetitionChatMessage> competitionChatMessages = competitionChatService.getLastMessagesByCompetition(competition, 3);
         //then
         assertEquals(3, competitionChatMessages.size());
-        assertEquals("c5", competitionChatMessages.get(0).getContent());
+        assertEquals("c2", competitionChatMessages.get(0).getContent());
         assertEquals("c3", competitionChatMessages.get(1).getContent());
-        assertEquals("c2", competitionChatMessages.get(2).getContent());
+        assertEquals("c5", competitionChatMessages.get(2).getContent());
     }
 }

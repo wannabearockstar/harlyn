@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -23,6 +24,12 @@ public class TeamChatService {
     }
 
     public List<TeamChatMessage> getLastMessagesByTeam(Team team, int limit) {
-        return teamChatMessageRepository.findAllByTeamOrderByIdDesc(team, new PageRequest(0, limit));
+        List<TeamChatMessage> teamChatMessages = teamChatMessageRepository.findAllByTeamOrderByIdDesc(team, new PageRequest(0, limit));
+        Collections.reverse(teamChatMessages);
+        return teamChatMessages;
+    }
+
+    public TeamChatMessage create(TeamChatMessage teamChatMessage) {
+        return teamChatMessageRepository.saveAndFlush(teamChatMessage);
     }
 }

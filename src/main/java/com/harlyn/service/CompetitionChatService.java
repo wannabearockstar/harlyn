@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -23,6 +24,12 @@ public class CompetitionChatService {
     }
 
     public List<CompetitionChatMessage> getLastMessagesByCompetition(Competition competition, int limit) {
-        return competitionChatMessageRepository.findAllByCompetitionOrderByIdDesc(competition, new PageRequest(0, limit));
+        List<CompetitionChatMessage> competitionChatMessages = competitionChatMessageRepository.findAllByCompetitionOrderByIdDesc(competition, new PageRequest(0, limit));
+        Collections.reverse(competitionChatMessages);
+        return competitionChatMessages;
+    }
+
+    public CompetitionChatMessage create(CompetitionChatMessage competitionChatMessage) {
+        return competitionChatMessageRepository.saveAndFlush(competitionChatMessage);
     }
 }
