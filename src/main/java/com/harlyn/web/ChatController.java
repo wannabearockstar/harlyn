@@ -5,16 +5,17 @@ import com.harlyn.domain.chat.ChatMessage;
 import com.harlyn.domain.chat.CompetitionChatMessage;
 import com.harlyn.domain.chat.TeamChatMessage;
 import com.harlyn.domain.competitions.Competition;
+import com.harlyn.event.MessagePublishedEvent;
 import com.harlyn.exception.CompetitionNotFoundException;
 import com.harlyn.exception.TeamNotRegisteredForCompetitionException;
 import com.harlyn.service.CompetitionChatService;
 import com.harlyn.service.CompetitionService;
 import com.harlyn.service.TeamChatService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
@@ -33,13 +34,13 @@ import java.util.Date;
 @Controller
 public class ChatController {
     @Autowired
-    private SimpMessagingTemplate template;
-    @Autowired
     private CompetitionService competitionService;
     @Autowired
     private CompetitionChatService competitionChatService;
     @Autowired
     private TeamChatService teamChatService;
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     @RequestMapping(value = "/chat/team", method = RequestMethod.GET)
     public String teamChatPage(Model model,
@@ -71,9 +72,9 @@ public class ChatController {
     @MessageMapping("/team.{team_id}")
     public void teamHandler(@Payload ChatMessage body, @DestinationVariable("team_id") Long teamId, Principal principal) throws Exception {
         User author = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
-        template.convertAndSend("/out/team." + teamId, teamChatService.create(
-                new TeamChatMessage(body.getContent(), new Date(), author, author.getTeam()))
-        );
+        TeamChatMessage teamChatMessage = new TeamChatMessage(body.getContent(), new Date(), author, author.getTeam());
+        eventPublisher.publishEvent(new MessagePublishedEvent(this, teamChatMessage));
+        teamChatService.create(teamChatMessage);
     }
 
     @MessageMapping("/competition.{competition_id}")
@@ -86,8 +87,8 @@ public class ChatController {
         if (competition == null) {
             throw new CompetitionNotFoundException(competitionId);
         }
-        template.convertAndSend("/out/competition." + competitionId, competitionChatService.create(
-                new CompetitionChatMessage(body.getContent(), new Date(), author, competition)
-        ));
+        CompetitionChatMessage chatMessage = new CompetitionChatMessage(body.getContent(), new Date(), author, competition);
+        eventPublisher.publishEvent(new MessagePublishedEvent(this, chatMessage));
+        competitionChatService.create(chatMessage);
     }
 }
