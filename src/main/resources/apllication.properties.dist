@@ -22,3 +22,5 @@ mail.problem.to=to@mail.com
 
 inet.host=localhost
 inet.port=1212
+
+locale.name=en
