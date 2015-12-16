@@ -8,7 +8,8 @@
 <body>
 
 <div layout:fragment="content" class="container">
-    <a href="/admin/category/">New category</a>
+    <h3 th:text="#{admin.category.list}"></h3>
+    <a th:href="@{/admin/category/}" th:text="#{admin.category.new}"></a>
     <ul>
         <li th:each="category : ${categories}">
             <a th:href="${'/admin/category/' + category.id}" th:text="${category.name}"></a>

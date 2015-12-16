@@ -3,17 +3,17 @@
       xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
       layout:decorator="fragments/wrapper">
 <head>
-    <title>Harlyn - admin - new category</title>
+    <title th:text="#{admin.category.title}"></title>
 </head>
 <body>
 <div layout:fragment="content" class="container">
     <form action="/admin/category/" method="post" th:object="${category}">
         <div class="form-group">
-            <label for="name" class="form-control">Name of category</label>
+            <label for="name" class="form-control" th:text="#{admin.category.form.name}"></label>
             <input class="form-control" type="text" name="name" id="name" required="required" th:field="*{name}" />
         </div>
         <div class="form-group">
-            <input type="submit" class="btn btn-primary form-control" value="Create" />
+            <input type="submit" class="btn btn-primary form-control" th:value="#{form.save}" />
         </div>
     </form>
 </div>

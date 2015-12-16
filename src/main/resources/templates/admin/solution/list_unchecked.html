@@ -7,14 +7,14 @@
 </head>
 <body>
 <div layout:fragment="content" class="container">
-    <h3>Solutions</h3>
+    <h3 th:text="#{admin.solution.list}"></h3>
     <table class="table table-hover">
         <thead>
         <tr>
-            <th>Problem</th>
-            <th>Competition</th>
-            <th>Team</th>
-            <th>Checked?</th>
+            <th th:text="#{admin.solutions.problem}"></th>
+            <th th:text="#{admin.solutions.competition}"></th>
+            <th th:text="#{admin.solutions.team}"></th>
+            <th th:text="#{admin.solutions.checked}"></th>
         </tr>
         </thead>
         <tbody>
@@ -23,15 +23,15 @@
             <td th:text="${solution.problem.competition.name}"></td>
             <td th:text="${solution.solver.team.name}"></td>
             <td th:if="${solution.checked}">
-                <a th:href="@{'/admin/solution/' + ${solution.id}}">Checked</a>
+                <a th:href="@{'/admin/solution/' + ${solution.id}}" th:text="#{admin.solutions.checked}"></a>
             </td>
             <td class="alert alert-warning" th:unless="${solution.checked}">
-                <a th:href="@{'/admin/solution/' + ${solution.id}}">Unchecked! Check</a>
+                <a th:href="@{'/admin/solution/' + ${solution.id}}" th:text="#{admin.solutions.unchecked}"></a>
             </td>
         </tr>
         </tbody>
     </table>
-    <a th:href="@{/admin/solution/}">See all</a>
+    <a th:href="@{/admin/solution/}" th:text="#{admin.solutions.all}"></a>
 </div>
 </body>
 </html>
