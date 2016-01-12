@@ -3,17 +3,17 @@
       xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
       layout:decorator="fragments/wrapper">
 <head>
-    <title>Harlyn - admin - new problem</title>
+    <title th:text="#{admin.competition.title}"></title>
 </head>
 <body>
 <div layout:fragment="content" class="container">
     <form action="/admin/competition/" method="post">
         <div class="form-group">
-            <label for="name" class="form-control">Name of problem</label>
+            <label for="name" class="form-control" th:text="#{admin.competition.form.name}"></label>
             <input class="form-control" type="text" name="name" id="name" placeholder="Name of problem" />
         </div>
         <div class="form-group">
-            <label class="form-control" for="start_date">Start date</label>
+            <label class="form-control" for="start_date" th:text="#{admin.competition.form.start_date}"></label>
             <div id="datetimepicker_start" class="input-group date">
                 <input th:data-format="${T(com.harlyn.domain.problems.Problem).DATE_FORMAT}" class="form-control" type="text"
                        name="start_date" id="start_date"/>
@@ -23,7 +23,7 @@
             </div>
         </div>
         <div class="form-group">
-            <label class="form-control" for="end_date">End date</label>
+            <label class="form-control" for="end_date" th:text="#{admin.competition.form.end_date}"></label>
             <div id="datetimepicker_end" class="input-group date">
                 <input th:data-format="${T(com.harlyn.domain.problems.Problem).DATE_FORMAT}" class="form-control" type="text"
                        name="end_date" id="end_date"/>
@@ -33,7 +33,7 @@
             </div>
         </div>
         <div class="form-group">
-            <input type="submit" class="btn btn-primary form-control" value="Create" />
+            <input type="submit" class="btn btn-primary form-control" th:value="#{form.save}" />
         </div>
     </form>
 </div>

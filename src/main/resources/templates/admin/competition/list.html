@@ -3,12 +3,13 @@
       xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
       layout:decorator="fragments/wrapper">
 <head>
-    <title>Harlyn - admin - competition</title>
+    <title th:text="#{admin.competition.title}"></title>
 </head>
 <body>
 
 <div layout:fragment="content" class="container">
-    <a href="/admin/competition/">New competition</a>
+    <h3 th:text="#{admin.competition.list}"></h3>
+    <a th:href="@{/admin/competition/}" th:text="#{admin.competition.new}"></a>
     <ul>
         <li th:each="competition : ${competitions}">
             <a th:href="${'/admin/competition/' + competition.id}" th:text="${competition.name}"></a>

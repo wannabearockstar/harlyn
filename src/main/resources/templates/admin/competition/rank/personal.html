@@ -3,18 +3,18 @@
       xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
       layout:decorator="fragments/wrapper">
 <head>
-    <title>Harlyn - competition - problems</title>
+    <title th:text="#{admin.competition.title}"></title>
 </head>
 <body>
 <div layout:fragment="content" class="container">
-    <h3 th:text="${competition.name + ': personal rank'}">Personal rank</h3>
+    <h3 th:text="${competition.name + ': ' + #{admin.competition.rank.personal.title}}"></h3>
     <table class="table table-bordered">
         <thead>
         <tr>
-            <th>Username</th>
-            <th>Team</th>
-            <th>Points</th>
-            <th>Solved problems</th>
+            <th th:text="#{admin.competition.rank.personal.username}"></th>
+            <th th:text="#{admin.competition.rank.personal.team}"></th>
+            <th th:text="#{admin.competition.rank.personal.username}"></th>
+            <th th:text="#{admin.competition.rank.personal.solver_problems}"></th>
             <th th:each="problem : ${competition.problems}"
                 th:text="${problem.name}"
                     ></th>
