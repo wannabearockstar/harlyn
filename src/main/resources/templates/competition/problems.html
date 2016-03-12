@@ -22,7 +22,8 @@
 		<tbody>
 		<tr th:each="problem : ${competition.problems}">
 			<td>
-				<a th:href="@{'/problem/' + ${problem.id}}" th:text="${problem.name}"></a>
+				<span th:if="${problem.prevProblem != null and !me.team.solvedProblems.contains(problem.prevProblem)}" th:text="${problem.name}"></span>
+				<a th:unless="${problem.prevProblem != null and !me.team.solvedProblems.contains(problem.prevProblem)}" th:href="@{'/problem/' + ${problem.id}}" th:text="${problem.name}"></a>
 			</td>
 			<td th:text="${problem.points}"></td>
 			<td th:text="${problem.category != null}? ${problem.category.name} : 'None'"></td>

@@ -29,7 +29,7 @@
 
 		<div th:unless="${available}" class="alert alert-warning">Problem do not available anymore</div>
 	</div>
-	<div th:if="${available and available_by_previous}">
+	<div th:if="${available}">
 		<form th:unless="${problem.solverTeams.contains(me.team)}" class="form-group"
 					th:action="${'/problem/' + problem.id + '/submit'}" method="post" enctype="multipart/form-data">
 			<div class="form-group">
@@ -45,13 +45,6 @@
 	</div>
 	<div th:if="${problem.solverTeams.contains(me.team)}" class="alert alert-success">
 		Your team already solved this problem
-	</div>
-	<div th:unless="${problem.solverTeams.contains(me.team)}">
-		<div class="alert alert-danger" th:unless="${available_by_previous}">
-			Problem require <a th:text="${problem.prevProblem.name}"
-												 th:href="${'/problem/' + problem.prevProblem.id}"
-		></a> to be completed first
-		</div>
 	</div>
 </div>
 </body>

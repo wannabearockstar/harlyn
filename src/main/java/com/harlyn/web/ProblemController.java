@@ -95,12 +95,14 @@ public class ProblemController {
 		if (!competitionService.isTeamRegistered(problem.getCompetition(), me.getTeam())) {
 			throw new TeamNotRegisteredForCompetitionException();
 		}
+		if (!problemService.isTeamSolvedPreviousProblem(problem, me.getTeam())) {
+			return "redirect:/competition/" + problem.getCompetition().getId();
+		}
 		Date currentDate = new Date();
 		model.addAttribute("problem", problem);
 		model.addAttribute("available", competitionService.isCompetitionAvailable(problem.getCompetition(), currentDate)
 			&& problemService.isProblemAvailable(problem, currentDate)
 		);
-		model.addAttribute("available_by_previous", problemService.isTeamSolvedPreviousProblem(problem, me.getTeam()));
 
 		return "problem/show";
 	}
