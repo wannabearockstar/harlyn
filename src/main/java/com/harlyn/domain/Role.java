@@ -8,27 +8,28 @@ import javax.persistence.*;
 @Entity
 @Table(name = "roles")
 public class Role {
-    @Id
-    @SequenceGenerator(name = "roles_id_seq", sequenceName = "roles_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "roles_id_seq")
-    @Column(name = "id", updatable = false)
-    private Integer id;
 
-    private String name;
+	@Id
+	@SequenceGenerator(name = "roles_id_seq", sequenceName = "roles_id_seq", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "roles_id_seq")
+	@Column(name = "id", updatable = false)
+	private Integer id;
 
-    public Role() {
-    }
+	private String name;
 
-    public Integer getId() {
-        return id;
-    }
+	public Role() {
+	}
 
-    public String getName() {
-        return name;
-    }
+	public Integer getId() {
+		return id;
+	}
 
-    public Role setName(String name) {
-        this.name = name;
-        return this;
-    }
+	public String getName() {
+		return name;
+	}
+
+	public Role setName(String name) {
+		this.name = name;
+		return this;
+	}
 }

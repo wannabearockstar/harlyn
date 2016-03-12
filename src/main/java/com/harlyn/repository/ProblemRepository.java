@@ -14,13 +14,14 @@ import java.util.List;
  */
 @Repository
 public interface ProblemRepository extends JpaRepository<Problem, Long> {
-    @Query(value = "select problem " +
-            "from Problem problem " +
-            "where (problem.startDate is null and problem.endDate is null) " +
-            "or (problem.startDate is null and problem.endDate > :current_date)" +
-            "or (problem.startDate < :current_date and problem.endDate is null) " +
-            "or (problem.startDate < :current_date and problem.endDate > :current_date)" +
-            "order by problem.id desc"
-    )
-    List<Problem> findAllByCurrentDate(@Param("current_date") Date currentDate);
+
+	@Query(value = "select problem " +
+		"from Problem problem " +
+		"where (problem.startDate is null and problem.endDate is null) " +
+		"or (problem.startDate is null and problem.endDate > :current_date)" +
+		"or (problem.startDate < :current_date and problem.endDate is null) " +
+		"or (problem.startDate < :current_date and problem.endDate > :current_date)" +
+		"order by problem.id desc"
+	)
+	List<Problem> findAllByCurrentDate(@Param("current_date") Date currentDate);
 }

@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
-      layout:decorator="fragments/wrapper">
+			xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+			layout:decorator="fragments/wrapper">
 <head>
-    <title th:text="#{admin.team.title}"></title>
+	<title th:text="#{admin.team.title}"></title>
 </head>
 <body>
 <div layout:fragment="content" class="container">
-    <h3 th:text="#{admin.team.list}"></h3>
-    <ul>
-        <li th:each="team : ${teams}">
-            <a th:href="${'/admin/team/' + team.id}" th:text="${team.name}"></a>
-        </li>
-    </ul>
+	<h3 th:text="#{admin.team.list}"></h3>
+	<ul>
+		<li th:each="team : ${teams}">
+			<a th:href="${'/admin/team/' + team.id}" th:text="${team.name}"></a>
+		</li>
+	</ul>
 </div>
 </body>
 </html>

@@ -15,21 +15,22 @@ import java.util.List;
  */
 @Service
 public class TeamChatService {
-    @Autowired
-    private TeamChatMessageRepository teamChatMessageRepository;
 
-    public TeamChatService setTeamChatMessageRepository(TeamChatMessageRepository teamChatMessageRepository) {
-        this.teamChatMessageRepository = teamChatMessageRepository;
-        return this;
-    }
+	@Autowired
+	private TeamChatMessageRepository teamChatMessageRepository;
 
-    public List<TeamChatMessage> getLastMessagesByTeam(Team team, int limit) {
-        List<TeamChatMessage> teamChatMessages = teamChatMessageRepository.findAllByTeamOrderByIdDesc(team, new PageRequest(0, limit));
-        Collections.reverse(teamChatMessages);
-        return teamChatMessages;
-    }
+	public TeamChatService setTeamChatMessageRepository(TeamChatMessageRepository teamChatMessageRepository) {
+		this.teamChatMessageRepository = teamChatMessageRepository;
+		return this;
+	}
 
-    public TeamChatMessage create(TeamChatMessage teamChatMessage) {
-        return teamChatMessageRepository.saveAndFlush(teamChatMessage);
-    }
+	public List<TeamChatMessage> getLastMessagesByTeam(Team team, int limit) {
+		List<TeamChatMessage> teamChatMessages = teamChatMessageRepository.findAllByTeamOrderByIdDesc(team, new PageRequest(0, limit));
+		Collections.reverse(teamChatMessages);
+		return teamChatMessages;
+	}
+
+	public TeamChatMessage create(TeamChatMessage teamChatMessage) {
+		return teamChatMessageRepository.saveAndFlush(teamChatMessage);
+	}
 }

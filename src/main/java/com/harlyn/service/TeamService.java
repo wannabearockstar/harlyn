@@ -18,85 +18,86 @@ import java.util.List;
  */
 @Service
 public class TeamService {
-    @Autowired
-    private TeamRepository teamRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private TeamInviteRepository teamInviteRepository;
 
-    public Team createTeam(String name, User captain) {
-        if (isTeamNameExists(name)) {
-            throw new NonUniqueTeamNameException(name);
-        }
-        Team team = teamRepository.saveAndFlush(new Team(name, captain));
-        userRepository.saveAndFlush(captain.setTeam(team));
-        return team;
-    }
+	@Autowired
+	private TeamRepository teamRepository;
+	@Autowired
+	private UserRepository userRepository;
+	@Autowired
+	private TeamInviteRepository teamInviteRepository;
 
-    public TeamService setTeamRepository(TeamRepository teamRepository) {
-        this.teamRepository = teamRepository;
-        return this;
-    }
+	public Team createTeam(String name, User captain) {
+		if (isTeamNameExists(name)) {
+			throw new NonUniqueTeamNameException(name);
+		}
+		Team team = teamRepository.saveAndFlush(new Team(name, captain));
+		userRepository.saveAndFlush(captain.setTeam(team));
+		return team;
+	}
 
-    public TeamService setTeamInviteRepository(TeamInviteRepository teamInviteRepository) {
-        this.teamInviteRepository = teamInviteRepository;
-        return this;
-    }
+	public TeamService setTeamRepository(TeamRepository teamRepository) {
+		this.teamRepository = teamRepository;
+		return this;
+	}
 
-    protected boolean isTeamNameExists(String name) {
-        return teamRepository.teamWithNameExist(name);
-    }
+	public TeamService setTeamInviteRepository(TeamInviteRepository teamInviteRepository) {
+		this.teamInviteRepository = teamInviteRepository;
+		return this;
+	}
 
-    public TeamInvite sendInvite(Team team, User user) {
-        if (teamInviteRepository.inviteExists(team, user)) {
-            throw new UserAlreadyInvitedException();
-        }
-        if (team.getUsers().contains(user)) {
-            throw new UserAlreadyInTeamException();
-        }
-        return teamInviteRepository.saveAndFlush(new TeamInvite(team, user));
-    }
+	protected boolean isTeamNameExists(String name) {
+		return teamRepository.teamWithNameExist(name);
+	}
 
-    @Transactional
-    public void confirmInvite(TeamInvite teamInvite) {
-        Team team = teamInvite.getTeam();
-        User recipent = teamInvite.getRecipent();
-        recipent.setTeam(team);
-        recipent.getInvites().remove(teamInvite);
-        teamInviteRepository.delete(teamInvite);
-        teamInviteRepository.flush();
-        userRepository.saveAndFlush(recipent);
-    }
+	public TeamInvite sendInvite(Team team, User user) {
+		if (teamInviteRepository.inviteExists(team, user)) {
+			throw new UserAlreadyInvitedException();
+		}
+		if (team.getUsers().contains(user)) {
+			throw new UserAlreadyInTeamException();
+		}
+		return teamInviteRepository.saveAndFlush(new TeamInvite(team, user));
+	}
 
-    public TeamInvite sendInvite(User captain, User recipent) {
-        if (captain.getTeam() == null) {
-            throw new UserWithoutTeamException();
-        }
-        if (captain.getTeam().getCaptain() != captain) {
-            throw new UserInvalidTeamRightsException();
-        }
-        return sendInvite(captain.getTeam(), recipent);
-    }
+	@Transactional
+	public void confirmInvite(TeamInvite teamInvite) {
+		Team team = teamInvite.getTeam();
+		User recipent = teamInvite.getRecipent();
+		recipent.setTeam(team);
+		recipent.getInvites().remove(teamInvite);
+		teamInviteRepository.delete(teamInvite);
+		teamInviteRepository.flush();
+		userRepository.saveAndFlush(recipent);
+	}
 
-    public Team getById(Long teamId) {
-        return teamRepository.findOne(teamId);
-    }
+	public TeamInvite sendInvite(User captain, User recipent) {
+		if (captain.getTeam() == null) {
+			throw new UserWithoutTeamException();
+		}
+		if (captain.getTeam().getCaptain() != captain) {
+			throw new UserInvalidTeamRightsException();
+		}
+		return sendInvite(captain.getTeam(), recipent);
+	}
 
-    public TeamService setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
-        return this;
-    }
+	public Team getById(Long teamId) {
+		return teamRepository.findOne(teamId);
+	}
 
-    public void confirmInvite(User recipent, Team team) {
-        TeamInvite invite = teamInviteRepository.findOneByRecipentAndTeam(recipent, team);
-        if (invite == null) {
-            throw new MissingInviteException();
-        }
-        confirmInvite(invite);
-    }
+	public TeamService setUserRepository(UserRepository userRepository) {
+		this.userRepository = userRepository;
+		return this;
+	}
 
-    public List<Team> getAllTeams() {
-        return teamRepository.findAllByOrderByIdDesc();
-    }
+	public void confirmInvite(User recipent, Team team) {
+		TeamInvite invite = teamInviteRepository.findOneByRecipentAndTeam(recipent, team);
+		if (invite == null) {
+			throw new MissingInviteException();
+		}
+		confirmInvite(invite);
+	}
+
+	public List<Team> getAllTeams() {
+		return teamRepository.findAllByOrderByIdDesc();
+	}
 }

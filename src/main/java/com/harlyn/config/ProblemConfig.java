@@ -20,40 +20,41 @@ import java.util.Map;
  */
 @Configuration
 public class ProblemConfig {
-    @Autowired
-    private JavaMailSender mailSender;
-    @Autowired
-    private SimpleMailMessage templateMailProblemMessage;
-    @Autowired
-    private VelocityEngine velocityEngine;
 
-    @Bean
-    public ProblemHandler flagProblemHandler() {
-        return new FlagProblemHandler();
-    }
+	@Autowired
+	private JavaMailSender mailSender;
+	@Autowired
+	private SimpleMailMessage templateMailProblemMessage;
+	@Autowired
+	private VelocityEngine velocityEngine;
 
-    @Bean
-    public ProblemHandler infoEmailProblemHandler() {
-        return new InfoEmailProblemHandler(
-                mailSender,
-                templateMailProblemMessage,
-                velocityEngine
-        );
-    }
+	@Bean
+	public ProblemHandler flagProblemHandler() {
+		return new FlagProblemHandler();
+	}
 
-    @Bean
-    public ProblemHandler infoWebProblemHandler() {
-        return new InfoWebProblemHandler();
-    }
+	@Bean
+	public ProblemHandler infoEmailProblemHandler() {
+		return new InfoEmailProblemHandler(
+			mailSender,
+			templateMailProblemMessage,
+			velocityEngine
+		);
+	}
 
-    @Bean(name = "problemHandlers")
-    public Map<Problem.ProblemType, ProblemHandler> handlers() {
-        final Map<Problem.ProblemType, ProblemHandler> handlers = new HashMap<>();
+	@Bean
+	public ProblemHandler infoWebProblemHandler() {
+		return new InfoWebProblemHandler();
+	}
 
-        handlers.put(Problem.ProblemType.FLAG, flagProblemHandler());
-        handlers.put(Problem.ProblemType.INFO_EMAIL, infoEmailProblemHandler());
-        handlers.put(Problem.ProblemType.INFO_WEB, infoWebProblemHandler());
+	@Bean(name = "problemHandlers")
+	public Map<Problem.ProblemType, ProblemHandler> handlers() {
+		final Map<Problem.ProblemType, ProblemHandler> handlers = new HashMap<>();
 
-        return handlers;
-    }
+		handlers.put(Problem.ProblemType.FLAG, flagProblemHandler());
+		handlers.put(Problem.ProblemType.INFO_EMAIL, infoEmailProblemHandler());
+		handlers.put(Problem.ProblemType.INFO_WEB, infoWebProblemHandler());
+
+		return handlers;
+	}
 }

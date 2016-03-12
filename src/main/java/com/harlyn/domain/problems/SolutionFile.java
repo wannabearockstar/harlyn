@@ -8,83 +8,84 @@ import javax.persistence.*;
 @Entity
 @Table(name = "solution_files")
 public class SolutionFile {
-    @Id
-    @SequenceGenerator(name = "solution_files_id_seq", sequenceName = "solution_files_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "solution_files_id_seq")
-    @Column(name = "id", updatable = false)
-    private Long id;
 
-    private String path;
+	@Id
+	@SequenceGenerator(name = "solution_files_id_seq", sequenceName = "solution_files_id_seq", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "solution_files_id_seq")
+	@Column(name = "id", updatable = false)
+	private Long id;
 
-    private String name;
+	private String path;
 
-    @Column(name = "content_type")
-    private String contentType;
+	private String name;
 
-    @Column(name = "content_length")
-    private Long contentLength;
+	@Column(name = "content_type")
+	private String contentType;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "solution_id")
-    private Solution solution;
+	@Column(name = "content_length")
+	private Long contentLength;
 
-    public SolutionFile() {
-    }
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "solution_id")
+	private Solution solution;
 
-    public SolutionFile(String path, Solution solution, String name, String contentType, Long contentLength) {
-        this.path = path;
-        this.solution = solution;
-        this.name = name;
-        this.contentType = contentType;
-        this.contentLength = contentLength;
-    }
+	public SolutionFile() {
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public SolutionFile(String path, Solution solution, String name, String contentType, Long contentLength) {
+		this.path = path;
+		this.solution = solution;
+		this.name = name;
+		this.contentType = contentType;
+		this.contentLength = contentLength;
+	}
 
-    public String getPath() {
-        return path;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public SolutionFile setPath(String path) {
-        this.path = path;
-        return this;
-    }
+	public String getPath() {
+		return path;
+	}
 
-    public Solution getSolution() {
-        return solution;
-    }
+	public SolutionFile setPath(String path) {
+		this.path = path;
+		return this;
+	}
 
-    public SolutionFile setSolution(Solution solution) {
-        this.solution = solution;
-        return this;
-    }
+	public Solution getSolution() {
+		return solution;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public SolutionFile setSolution(Solution solution) {
+		this.solution = solution;
+		return this;
+	}
 
-    public SolutionFile setName(String name) {
-        this.name = name;
-        return this;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public String getContentType() {
-        return contentType;
-    }
+	public SolutionFile setName(String name) {
+		this.name = name;
+		return this;
+	}
 
-    public SolutionFile setContentType(String contentType) {
-        this.contentType = contentType;
-        return this;
-    }
+	public String getContentType() {
+		return contentType;
+	}
 
-    public Long getContentLength() {
-        return contentLength;
-    }
+	public SolutionFile setContentType(String contentType) {
+		this.contentType = contentType;
+		return this;
+	}
 
-    public SolutionFile setContentLength(Long contentLength) {
-        this.contentLength = contentLength;
-        return this;
-    }
+	public Long getContentLength() {
+		return contentLength;
+	}
+
+	public SolutionFile setContentLength(Long contentLength) {
+		this.contentLength = contentLength;
+		return this;
+	}
 }

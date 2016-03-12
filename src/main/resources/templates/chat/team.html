@@ -1,68 +1,69 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
-      layout:decorator="fragments/wrapper">
+			xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+			layout:decorator="fragments/wrapper">
 <head>
-    <title>Harlyn - chat - team</title>
+	<title>Harlyn - chat - team</title>
 
-    <script type="text/javascript">
-        var stompClient = null;
-        function connect() {
-            var socket = new SockJS('/chat');
-            stompClient = Stomp.over(socket);
-            stompClient.connect({}, function (frame) {
-                console.log('Connected: ' + frame);
-                stompClient.subscribe('/out/team.' + $("#team_id").val(), function (chatMessage) {
-                    showMessage(JSON.parse(chatMessage.body));
-                })
-            });
-        }
+	<script type="text/javascript">
+		var stompClient = null;
+		function connect() {
+			var socket = new SockJS('/chat');
+			stompClient = Stomp.over(socket);
+			stompClient.connect({}, function (frame) {
+				console.log('Connected: ' + frame);
+				stompClient.subscribe('/out/team.' + $("#team_id").val(), function (chatMessage) {
+					showMessage(JSON.parse(chatMessage.body));
+				})
+			});
+		}
 
-        function disconnect() {
-            if (stompClient != null) {
-                stompClient.disconnect();
-            }
-            console.log("Disconnected");
-        }
+		function disconnect() {
+			if (stompClient != null) {
+				stompClient.disconnect();
+			}
+			console.log("Disconnected");
+		}
 
-        function send() {
-            stompClient.send("/in/team." + $("#team_id").val(), {}, JSON.stringify({
-                content: $("#content").val()
-            }));
-            $("#content").val("");
-        }
+		function send() {
+			stompClient.send("/in/team." + $("#team_id").val(), {}, JSON.stringify({
+				content: $("#content").val()
+			}));
+			$("#content").val("");
+		}
 
-        function showMessage(payload) {
-            var $message = $("<div />");
-            $message.append($("<span />", {
-                text: "[" + new Date(payload.postedAt).toLocaleTimeString() + "] " + payload.author.username + ": "
-            }));
-            $message.append($("<span />", {
-                text: payload.content
-            }));
-            $("#messages").append($message);
-        }
-    </script>
+		function showMessage(payload) {
+			var $message = $("<div />");
+			$message.append($("<span />", {
+				text: "[" + new Date(payload.postedAt).toLocaleTimeString() + "] " + payload.author.username + ": "
+			}));
+			$message.append($("<span />", {
+				text: payload.content
+			}));
+			$("#messages").append($message);
+		}
+	</script>
 </head>
 <body onload="connect()">
 <div layout:fragment="content" class="container">
-    <h2 th:text="${'Chat of team ' + me.team.name}"></h2>
-    <div id="messages">
-        <div th:each="message : ${messages}">
-            <span th:text="${'[' + #dates.format(message.postedAt, 'HH:mm:ss') + '] ' + message.author.username + ': '}"></span>
-            <span th:text="${message.content}"></span>
-        </div>
-    </div>
-    <div>
-        <div class="form-group">
-            <label class="form-control" for="content">Message</label>
-            <textarea class="form-control" id="content"></textarea>
-        </div>
-        <div class="form-group">
-            <button class="form-control btn btn-primary" id="send" onclick="send();">Send</button>
-            <input type="hidden" id="team_id" th:value="${me.team.id}"/>
-        </div>
-    </div>
+	<h2 th:text="${'Chat of team ' + me.team.name}"></h2>
+	<div id="messages">
+		<div th:each="message : ${messages}">
+			<span
+				th:text="${'[' + #dates.format(message.postedAt, 'HH:mm:ss') + '] ' + message.author.username + ': '}"></span>
+			<span th:text="${message.content}"></span>
+		</div>
+	</div>
+	<div>
+		<div class="form-group">
+			<label class="form-control" for="content">Message</label>
+			<textarea class="form-control" id="content"></textarea>
+		</div>
+		<div class="form-group">
+			<button class="form-control btn btn-primary" id="send" onclick="send();">Send</button>
+			<input type="hidden" id="team_id" th:value="${me.team.id}"/>
+		</div>
+	</div>
 </div>
 </body>
 </html>

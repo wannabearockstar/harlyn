@@ -23,73 +23,74 @@ import java.util.stream.Collectors;
  */
 @Service
 public class SolutionService {
-    @PersistenceContext
-    private EntityManager em;
-    @Autowired
-    private SolutionRepository solutionRepository;
 
-    public Solution getById(Long id) {
-        return solutionRepository.findOne(id);
-    }
+	@PersistenceContext
+	private EntityManager em;
+	@Autowired
+	private SolutionRepository solutionRepository;
 
-    public List<Solution> getAllSolutions() {
-        return solutionRepository.findAllByOrderByIdDesc();
-    }
+	public Solution getById(Long id) {
+		return solutionRepository.findOne(id);
+	}
 
-    public List<Solution> getAllUncheckedSolutions() {
-        return solutionRepository.findByCheckedFalseOrderByIdDesc();
-    }
+	public List<Solution> getAllSolutions() {
+		return solutionRepository.findAllByOrderByIdDesc();
+	}
 
-    public List<UserSolvedProblems> getUserSolverProblemsByCompetition(long competitionId) {
-        Query query = em.createNativeQuery("SELECT\n" +
-                "  solver_id solver,\n" +
-                "  string_agg(DISTINCT CAST(problem_id as TEXT), ',') problems,\n" +
-                "  SUM(problems.points) points\n" +
-                "FROM solutions\n" +
-                "  LEFT OUTER JOIN problems\n" +
-                "    ON problems.id = solutions.problem_id\n" +
-                "  LEFT OUTER JOIN users\n" +
-                "    ON solutions.solver_id = users.id\n" +
-                "  INNER JOIN (\n" +
-                "               SELECT DISTINCT ON (users.id) users.id\n" +
-                "               FROM users\n" +
-                "                 LEFT OUTER JOIN (\n" +
-                "                                   SELECT *\n" +
-                "                                   FROM registered_teams\n" +
-                "                                 ) reg_teams ON reg_teams.team_id = users.team_id\n" +
-                "\n" +
-                "               WHERE reg_teams.competition_id = :competition_id_param\n" +
-                "             ) registered_users\n" +
-                "    ON registered_users.id = users.id\n" +
-                "WHERE correct = TRUE AND problems.competition_id = :competition_id_param\n" +
-                "GROUP BY solutions.solver_id\n" +
-                "ORDER BY points DESC");
-        query.setParameter("competition_id_param", competitionId);
+	public List<Solution> getAllUncheckedSolutions() {
+		return solutionRepository.findByCheckedFalseOrderByIdDesc();
+	}
 
-        @SuppressWarnings("unchecked")
-        List<Object> resultObjects = query.getResultList();
-        return resultObjects.stream()
-                .map(resultObj -> {
-                    Object[] res = (Object[]) resultObj;
-                    User user = em.getReference(User.class, Long.valueOf((Integer) res[0]));
-                    Set<Problem> problems = new HashSet<>(
-                            Arrays.asList(((String) res[1]).split(",")).stream()
-                                    .map(s -> em.getReference(Problem.class, Long.parseLong(s)))
-                                    .collect(Collectors.toSet())
-                    );
-                    BigInteger points = (BigInteger) res[2];
-                    return new UserSolvedProblems(user, problems, points);
-                })
-                .collect(Collectors.toList());
-    }
+	public List<UserSolvedProblems> getUserSolverProblemsByCompetition(long competitionId) {
+		Query query = em.createNativeQuery("SELECT\n" +
+			"  solver_id solver,\n" +
+			"  string_agg(DISTINCT CAST(problem_id as TEXT), ',') problems,\n" +
+			"  SUM(problems.points) points\n" +
+			"FROM solutions\n" +
+			"  LEFT OUTER JOIN problems\n" +
+			"    ON problems.id = solutions.problem_id\n" +
+			"  LEFT OUTER JOIN users\n" +
+			"    ON solutions.solver_id = users.id\n" +
+			"  INNER JOIN (\n" +
+			"               SELECT DISTINCT ON (users.id) users.id\n" +
+			"               FROM users\n" +
+			"                 LEFT OUTER JOIN (\n" +
+			"                                   SELECT *\n" +
+			"                                   FROM registered_teams\n" +
+			"                                 ) reg_teams ON reg_teams.team_id = users.team_id\n" +
+			"\n" +
+			"               WHERE reg_teams.competition_id = :competition_id_param\n" +
+			"             ) registered_users\n" +
+			"    ON registered_users.id = users.id\n" +
+			"WHERE correct = TRUE AND problems.competition_id = :competition_id_param\n" +
+			"GROUP BY solutions.solver_id\n" +
+			"ORDER BY points DESC");
+		query.setParameter("competition_id_param", competitionId);
 
-    public SolutionService setEm(EntityManager em) {
-        this.em = em;
-        return this;
-    }
+		@SuppressWarnings("unchecked")
+		List<Object> resultObjects = query.getResultList();
+		return resultObjects.stream()
+			.map(resultObj -> {
+				Object[] res = (Object[]) resultObj;
+				User user = em.getReference(User.class, Long.valueOf((Integer) res[0]));
+				Set<Problem> problems = new HashSet<>(
+					Arrays.asList(((String) res[1]).split(",")).stream()
+						.map(s -> em.getReference(Problem.class, Long.parseLong(s)))
+						.collect(Collectors.toSet())
+				);
+				BigInteger points = (BigInteger) res[2];
+				return new UserSolvedProblems(user, problems, points);
+			})
+			.collect(Collectors.toList());
+	}
 
-    public SolutionService setSolutionRepository(SolutionRepository solutionRepository) {
-        this.solutionRepository = solutionRepository;
-        return this;
-    }
+	public SolutionService setEm(EntityManager em) {
+		this.em = em;
+		return this;
+	}
+
+	public SolutionService setSolutionRepository(SolutionRepository solutionRepository) {
+		this.solutionRepository = solutionRepository;
+		return this;
+	}
 }

@@ -19,69 +19,70 @@ import java.util.List;
  */
 @Service
 public class CompetitionService {
-    @Autowired
-    private CompetitionRepository competitionRepository;
-    @Autowired
-    private RegisteredTeamRepository registeredTeamRepository;
 
-    public CompetitionService setCompetitionRepository(CompetitionRepository competitionRepository) {
-        this.competitionRepository = competitionRepository;
-        return this;
-    }
+	@Autowired
+	private CompetitionRepository competitionRepository;
+	@Autowired
+	private RegisteredTeamRepository registeredTeamRepository;
 
-    public CompetitionService setRegisteredTeamRepository(RegisteredTeamRepository registeredTeamRepository) {
-        this.registeredTeamRepository = registeredTeamRepository;
-        return this;
-    }
+	public CompetitionService setCompetitionRepository(CompetitionRepository competitionRepository) {
+		this.competitionRepository = competitionRepository;
+		return this;
+	}
 
-    public Competition findById(long id) {
-        return competitionRepository.findOne(id);
-    }
+	public CompetitionService setRegisteredTeamRepository(RegisteredTeamRepository registeredTeamRepository) {
+		this.registeredTeamRepository = registeredTeamRepository;
+		return this;
+	}
 
-    public void registerUserTeamToCompetition(Competition competition, User user) {
-        if (!user.getTeam().getCaptain().equals(user)) {
-            throw new UserNotCaptainException();
-        }
-        RegisteredTeam registeredTeam = registeredTeamRepository.findOneByCompetitionAndTeam(competition, user.getTeam());
-        if (registeredTeam != null) {
-            throw new TeamAlreadyRegisteredException();
-        }
-        registeredTeamRepository.saveAndFlush(new RegisteredTeam(competition, user.getTeam()));
-    }
+	public Competition findById(long id) {
+		return competitionRepository.findOne(id);
+	}
 
-    public List<Competition> findAll() {
-        return competitionRepository.findAll();
-    }
+	public void registerUserTeamToCompetition(Competition competition, User user) {
+		if (!user.getTeam().getCaptain().equals(user)) {
+			throw new UserNotCaptainException();
+		}
+		RegisteredTeam registeredTeam = registeredTeamRepository.findOneByCompetitionAndTeam(competition, user.getTeam());
+		if (registeredTeam != null) {
+			throw new TeamAlreadyRegisteredException();
+		}
+		registeredTeamRepository.saveAndFlush(new RegisteredTeam(competition, user.getTeam()));
+	}
 
-    public List<Competition> findAllAvailableCompetitions(Date currentDate) {
-        return competitionRepository.findAllByCurrentDate(currentDate);
-    }
+	public List<Competition> findAll() {
+		return competitionRepository.findAll();
+	}
 
-    public boolean isCompetitionAvailable(final Competition competition, Date currentDate) {
-        if (competition.getEndDate() == null && competition.getStartDate() == null) {
-            return true;
-        }
-        if (competition.getEndDate() == null) {
-            return competition.getStartDate().before(currentDate);
-        }
-        if (competition.getStartDate() == null) {
-            return competition.getEndDate().after(currentDate);
-        }
-        return competition.getStartDate().before(currentDate) && competition.getEndDate().after(currentDate);
-    }
+	public List<Competition> findAllAvailableCompetitions(Date currentDate) {
+		return competitionRepository.findAllByCurrentDate(currentDate);
+	}
 
-    public boolean isTeamRegistered(Competition competition, Team team) {
-        return registeredTeamRepository.existsByCompetitionAndTeam(competition, team);
-    }
+	public boolean isCompetitionAvailable(final Competition competition, Date currentDate) {
+		if (competition.getEndDate() == null && competition.getStartDate() == null) {
+			return true;
+		}
+		if (competition.getEndDate() == null) {
+			return competition.getStartDate().before(currentDate);
+		}
+		if (competition.getStartDate() == null) {
+			return competition.getEndDate().after(currentDate);
+		}
+		return competition.getStartDate().before(currentDate) && competition.getEndDate().after(currentDate);
+	}
 
-    public Long createCompetition(Competition competitionDate) {
-        return competitionRepository.saveAndFlush(competitionDate).getId();
-    }
+	public boolean isTeamRegistered(Competition competition, Team team) {
+		return registeredTeamRepository.existsByCompetitionAndTeam(competition, team);
+	}
 
-    public Long updateCompetition(Competition competition, Competition competitionData) {
-        competition.setName(competitionData.getName())
-                .setStartDate(competitionData.getStartDate())
-                .setEndDate(competitionData.getEndDate());
-        return competitionRepository.saveAndFlush(competition).getId();
-    }
+	public Long createCompetition(Competition competitionDate) {
+		return competitionRepository.saveAndFlush(competitionDate).getId();
+	}
+
+	public Long updateCompetition(Competition competition, Competition competitionData) {
+		competition.setName(competitionData.getName())
+			.setStartDate(competitionData.getStartDate())
+			.setEndDate(competitionData.getEndDate());
+		return competitionRepository.saveAndFlush(competition).getId();
+	}
 }

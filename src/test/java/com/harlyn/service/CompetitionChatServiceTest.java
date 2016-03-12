@@ -37,45 +37,46 @@ import static org.junit.Assert.assertEquals;
 @WebAppConfiguration
 @ActiveProfiles({"test"})
 public class CompetitionChatServiceTest {
-    @Autowired
-    private Flyway flyway;
-    @Autowired
-    private CompetitionChatMessageRepository competitionChatMessageRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private CompetitionRepository competitionRepository;
-    private CompetitionChatService competitionChatService;
 
-    @Before
-    public void setUp() throws Exception {
-        flyway.clean();
-        flyway.migrate();
-        competitionChatService = new CompetitionChatService().setCompetitionChatMessageRepository(competitionChatMessageRepository);
-    }
+	@Autowired
+	private Flyway flyway;
+	@Autowired
+	private CompetitionChatMessageRepository competitionChatMessageRepository;
+	@Autowired
+	private UserRepository userRepository;
+	@Autowired
+	private CompetitionRepository competitionRepository;
+	private CompetitionChatService competitionChatService;
 
-    @After
-    public void tearDown() throws Exception {
-        flyway.clean();
-    }
+	@Before
+	public void setUp() throws Exception {
+		flyway.clean();
+		flyway.migrate();
+		competitionChatService = new CompetitionChatService().setCompetitionChatMessageRepository(competitionChatMessageRepository);
+	}
 
-    @Test
-    public void testGetLastMessagesByCompetition() throws Exception {
-        //given
-        User user = userRepository.saveAndFlush(new User("email@email.com", "usrnm", "password"));
-        Competition competition = competitionRepository.saveAndFlush(new Competition("name"));
-        Competition competition2 = competitionRepository.saveAndFlush(new Competition("name2"));
-        competitionChatMessageRepository.saveAndFlush(new CompetitionChatMessage("c1", new Date(), user, competition));
-        competitionChatMessageRepository.saveAndFlush(new CompetitionChatMessage("c2", new Date(), user, competition));
-        competitionChatMessageRepository.saveAndFlush(new CompetitionChatMessage("c3", new Date(), user, competition));
-        competitionChatMessageRepository.saveAndFlush(new CompetitionChatMessage("c4", new Date(), user, competition2));
-        competitionChatMessageRepository.saveAndFlush(new CompetitionChatMessage("c5", new Date(), user, competition));
-        //when
-        List<CompetitionChatMessage> competitionChatMessages = competitionChatService.getLastMessagesByCompetition(competition, 3);
-        //then
-        assertEquals(3, competitionChatMessages.size());
-        assertEquals("c2", competitionChatMessages.get(0).getContent());
-        assertEquals("c3", competitionChatMessages.get(1).getContent());
-        assertEquals("c5", competitionChatMessages.get(2).getContent());
-    }
+	@After
+	public void tearDown() throws Exception {
+		flyway.clean();
+	}
+
+	@Test
+	public void testGetLastMessagesByCompetition() throws Exception {
+		//given
+		User user = userRepository.saveAndFlush(new User("email@email.com", "usrnm", "password"));
+		Competition competition = competitionRepository.saveAndFlush(new Competition("name"));
+		Competition competition2 = competitionRepository.saveAndFlush(new Competition("name2"));
+		competitionChatMessageRepository.saveAndFlush(new CompetitionChatMessage("c1", new Date(), user, competition));
+		competitionChatMessageRepository.saveAndFlush(new CompetitionChatMessage("c2", new Date(), user, competition));
+		competitionChatMessageRepository.saveAndFlush(new CompetitionChatMessage("c3", new Date(), user, competition));
+		competitionChatMessageRepository.saveAndFlush(new CompetitionChatMessage("c4", new Date(), user, competition2));
+		competitionChatMessageRepository.saveAndFlush(new CompetitionChatMessage("c5", new Date(), user, competition));
+		//when
+		List<CompetitionChatMessage> competitionChatMessages = competitionChatService.getLastMessagesByCompetition(competition, 3);
+		//then
+		assertEquals(3, competitionChatMessages.size());
+		assertEquals("c2", competitionChatMessages.get(0).getContent());
+		assertEquals("c3", competitionChatMessages.get(1).getContent());
+		assertEquals("c5", competitionChatMessages.get(2).getContent());
+	}
 }

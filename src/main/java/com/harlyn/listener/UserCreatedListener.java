@@ -13,14 +13,15 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class UserCreatedListener implements ApplicationListener {
-    @Autowired
-    private ConfirmCodeService confirmCodeService;
 
-    @Override
-    public void onApplicationEvent(ApplicationEvent event) {
-        if (event instanceof UserCreatedEvent) {
-            User user = ((UserCreatedEvent) event).getUser();
-            confirmCodeService.createConfirmCode(user);
-        }
-    }
+	@Autowired
+	private ConfirmCodeService confirmCodeService;
+
+	@Override
+	public void onApplicationEvent(ApplicationEvent event) {
+		if (event instanceof UserCreatedEvent) {
+			User user = ((UserCreatedEvent) event).getUser();
+			confirmCodeService.createConfirmCode(user);
+		}
+	}
 }

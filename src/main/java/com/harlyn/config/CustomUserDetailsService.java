@@ -15,18 +15,19 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class CustomUserDetailsService implements UserDetailsService {
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
 
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userService.findUserByEmail(email);
-        if (user == null) {
-            throw new UsernameNotFoundException("Email " + email + " not found");
-        }
-        eventPublisher.publishEvent(new UserChangedEvent(this, user));
-        return user;
-    }
+	@Autowired
+	private UserService userService;
+	@Autowired
+	private ApplicationEventPublisher eventPublisher;
+
+	@Override
+	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+		User user = userService.findUserByEmail(email);
+		if (user == null) {
+			throw new UsernameNotFoundException("Email " + email + " not found");
+		}
+		eventPublisher.publishEvent(new UserChangedEvent(this, user));
+		return user;
+	}
 }

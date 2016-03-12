@@ -16,55 +16,57 @@ import java.io.UnsupportedEncodingException;
  */
 @Configuration
 public class BeanConfig {
-    @Bean(name = "mailSender")
-    public JavaMailSenderImpl mailSender(@Value("${mail.host}") String host,
-                                         @Value("${mail.username}") String username,
-                                         @Value("${mail.password}") String password
-    ) {
-        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost(host);
-        mailSender.setUsername(username);
-        mailSender.setPassword(password);
-        mailSender.setDefaultEncoding("UTF-8");
 
-        return mailSender;
-    }
+	@Bean(name = "mailSender")
+	public JavaMailSenderImpl mailSender(@Value("${mail.host}") String host,
+																			 @Value("${mail.username}") String username,
+																			 @Value("${mail.password}") String password
+	) {
+		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+		mailSender.setHost(host);
+		mailSender.setUsername(username);
+		mailSender.setPassword(password);
+		mailSender.setDefaultEncoding("UTF-8");
 
-    @Bean(name = "templateConfirmCodeMessage")
-    public SimpleMailMessage templateMessage(@Value("${mail.confirm.from}") String from,
-                                             @Value("${mail.confirm.subject}") String subject) throws UnsupportedEncodingException {
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setFrom(from);
-        mailMessage.setSubject(subject);
+		return mailSender;
+	}
 
-        return mailMessage;
-    }
+	@Bean(name = "templateConfirmCodeMessage")
+	public SimpleMailMessage templateMessage(@Value("${mail.confirm.from}") String from,
+																					 @Value("${mail.confirm.subject}") String subject)
+		throws UnsupportedEncodingException {
+		SimpleMailMessage mailMessage = new SimpleMailMessage();
+		mailMessage.setFrom(from);
+		mailMessage.setSubject(subject);
 
-    @Bean(name = "templateMailProblemMessage")
-    public SimpleMailMessage templateMailProblemMessage(@Value("${mail.problem.from}") String from,
-                                                        @Value("${mail.problem.to}") String to
-    ) throws UnsupportedEncodingException {
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setFrom(from);
-        mailMessage.setTo(to);
+		return mailMessage;
+	}
 
-        return mailMessage;
-    }
+	@Bean(name = "templateMailProblemMessage")
+	public SimpleMailMessage templateMailProblemMessage(@Value("${mail.problem.from}") String from,
+																											@Value("${mail.problem.to}") String to
+	) throws UnsupportedEncodingException {
+		SimpleMailMessage mailMessage = new SimpleMailMessage();
+		mailMessage.setFrom(from);
+		mailMessage.setTo(to);
 
-    @Bean(name = "velocityEngine")
-    public VelocityEngine velocityEngine() {
-        VelocityEngine velocityEngine = new VelocityEngine();
-        velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
-        velocityEngine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+		return mailMessage;
+	}
 
-        return velocityEngine;
-    }
+	@Bean(name = "velocityEngine")
+	public VelocityEngine velocityEngine() {
+		VelocityEngine velocityEngine = new VelocityEngine();
+		velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
+		velocityEngine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
 
-    @Bean(name = "currentHost")
-    public String currentHost(
-            @Value("${inet.host}") String host,
-            @Value("${inet.port}") String port
-    ) {
-        return host + ":" + port;
-    }
+		return velocityEngine;
+	}
+
+	@Bean(name = "currentHost")
+	public String currentHost(
+		@Value("${inet.host}") String host,
+		@Value("${inet.port}") String port
+	) {
+		return host + ":" + port;
+	}
 }

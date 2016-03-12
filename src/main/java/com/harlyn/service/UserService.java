@@ -19,60 +19,61 @@ import java.util.Set;
  */
 @Service
 public class UserService {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private RoleRepository roleRepository;
 
-    public User findUserByEmail(String email) {
-        return userRepository.findUserByEmail(email);
-    }
+	@Autowired
+	private UserRepository userRepository;
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	@Autowired
+	private RoleRepository roleRepository;
 
-    public User createUser(User user, boolean isAdmin) {
-        Set<ConstraintViolation<User>> errors = Validation.buildDefaultValidatorFactory().getValidator().validate(user);
-        if (!errors.isEmpty()) {
-            throw new ConstraintViolationException(errors);
-        }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        if (isAdmin) {
-            user.getRoles().add(roleRepository.findOneByName("ROLE_ADMIN"));
-        }
-        return userRepository.saveAndFlush(user);
-    }
+	public User findUserByEmail(String email) {
+		return userRepository.findUserByEmail(email);
+	}
 
-    public void validateUniqueData(final User user) {
-        if (userRepository.userExistByEmail(user.getEmail())) {
-            throw new NonUniqueUserDataException("Email already taken", user);
-        }
-        if (userRepository.userExistByUsername(user.getUsername())) {
-            throw new NonUniqueUserDataException("Username already taken", user);
-        }
+	public User createUser(User user, boolean isAdmin) {
+		Set<ConstraintViolation<User>> errors = Validation.buildDefaultValidatorFactory().getValidator().validate(user);
+		if (!errors.isEmpty()) {
+			throw new ConstraintViolationException(errors);
+		}
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		if (isAdmin) {
+			user.getRoles().add(roleRepository.findOneByName("ROLE_ADMIN"));
+		}
+		return userRepository.saveAndFlush(user);
+	}
 
-    }
+	public void validateUniqueData(final User user) {
+		if (userRepository.userExistByEmail(user.getEmail())) {
+			throw new NonUniqueUserDataException("Email already taken", user);
+		}
+		if (userRepository.userExistByUsername(user.getUsername())) {
+			throw new NonUniqueUserDataException("Username already taken", user);
+		}
 
-    public UserService setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
-        return this;
-    }
+	}
 
-    public UserService setPasswordEncoder(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-        return this;
-    }
+	public UserService setUserRepository(UserRepository userRepository) {
+		this.userRepository = userRepository;
+		return this;
+	}
 
-    public UserService setRoleRepository(RoleRepository roleRepository) {
-        this.roleRepository = roleRepository;
-        return this;
-    }
+	public UserService setPasswordEncoder(PasswordEncoder passwordEncoder) {
+		this.passwordEncoder = passwordEncoder;
+		return this;
+	}
 
-    public User getById(Long id) {
-        return userRepository.findOne(id);
-    }
+	public UserService setRoleRepository(RoleRepository roleRepository) {
+		this.roleRepository = roleRepository;
+		return this;
+	}
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
+	public User getById(Long id) {
+		return userRepository.findOne(id);
+	}
+
+	public List<User> getAllUsers() {
+		return userRepository.findAll();
+	}
 
 }

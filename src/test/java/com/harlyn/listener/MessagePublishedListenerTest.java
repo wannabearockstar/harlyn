@@ -42,61 +42,62 @@ import static org.mockito.Mockito.*;
 @WebAppConfiguration
 @ActiveProfiles({"test"})
 public class MessagePublishedListenerTest {
-    @Autowired
-    private Flyway flyway;
-    @Autowired
-    private CompetitionChatMessageRepository competitionChatMessageRepository;
-    @Autowired
-    private TeamChatMessageRepository teamChatMessageRepository;
-    @Autowired
-    private TeamRepository teamRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private CompetitionRepository competitionRepository;
-    @Resource
-    private Map<Class<? extends ChatMessage>, WebSocketConfig.MessageEndpointResolver> chatEndpointResolvers;
-    private SimpMessagingTemplate simpMessagingTemplate;
-    private MessagePublishedListener messagePublishedListener;
 
-    @Before
-    public void setUp() throws Exception {
-        flyway.clean();
-        flyway.migrate();
-        simpMessagingTemplate = mock(SimpMessagingTemplate.class);
-        messagePublishedListener = new MessagePublishedListener()
-                .setTemplate(simpMessagingTemplate)
-                .setChatEndpointResolvers(chatEndpointResolvers);
-    }
+	@Autowired
+	private Flyway flyway;
+	@Autowired
+	private CompetitionChatMessageRepository competitionChatMessageRepository;
+	@Autowired
+	private TeamChatMessageRepository teamChatMessageRepository;
+	@Autowired
+	private TeamRepository teamRepository;
+	@Autowired
+	private UserRepository userRepository;
+	@Autowired
+	private CompetitionRepository competitionRepository;
+	@Resource
+	private Map<Class<? extends ChatMessage>, WebSocketConfig.MessageEndpointResolver> chatEndpointResolvers;
+	private SimpMessagingTemplate simpMessagingTemplate;
+	private MessagePublishedListener messagePublishedListener;
 
-    @After
-    public void tearDown() throws Exception {
-        flyway.clean();
-    }
+	@Before
+	public void setUp() throws Exception {
+		flyway.clean();
+		flyway.migrate();
+		simpMessagingTemplate = mock(SimpMessagingTemplate.class);
+		messagePublishedListener = new MessagePublishedListener()
+			.setTemplate(simpMessagingTemplate)
+			.setChatEndpointResolvers(chatEndpointResolvers);
+	}
 
-    @Test
-    public void testOnApplicationEvent() throws Exception {
-        //given
-        Competition competition = competitionRepository.saveAndFlush(new Competition("name1"));
-        User user = userRepository.saveAndFlush(new User("email@emai.com", "usrnm", "psswd"));
-        Team team = teamRepository.saveAndFlush(new Team("name", user));
-        CompetitionChatMessage competitionChatMessage = competitionChatMessageRepository.saveAndFlush(new CompetitionChatMessage("content1", new Date(), user, competition));
-        TeamChatMessage teamChatMessage = teamChatMessageRepository.saveAndFlush(new TeamChatMessage("content2", new Date(), user, team));
-        MessagePublishedEvent competitionEvent = new MessagePublishedEvent(this, competitionChatMessage);
-        MessagePublishedEvent teamEvent = new MessagePublishedEvent(this, teamChatMessage);
-        //when
-        messagePublishedListener.onApplicationEvent(competitionEvent);
-        //then
-        verify(simpMessagingTemplate, times(1)).convertAndSend(
-                "/out/competition." + competition.getId(),
-                competitionChatMessage
-        );
-        //when
-        messagePublishedListener.onApplicationEvent(teamEvent);
-        //then
-        verify(simpMessagingTemplate, times(1)).convertAndSend(
-                "/out/team." + team.getId(),
-                teamChatMessage
-        );
-    }
+	@After
+	public void tearDown() throws Exception {
+		flyway.clean();
+	}
+
+	@Test
+	public void testOnApplicationEvent() throws Exception {
+		//given
+		Competition competition = competitionRepository.saveAndFlush(new Competition("name1"));
+		User user = userRepository.saveAndFlush(new User("email@emai.com", "usrnm", "psswd"));
+		Team team = teamRepository.saveAndFlush(new Team("name", user));
+		CompetitionChatMessage competitionChatMessage = competitionChatMessageRepository.saveAndFlush(new CompetitionChatMessage("content1", new Date(), user, competition));
+		TeamChatMessage teamChatMessage = teamChatMessageRepository.saveAndFlush(new TeamChatMessage("content2", new Date(), user, team));
+		MessagePublishedEvent competitionEvent = new MessagePublishedEvent(this, competitionChatMessage);
+		MessagePublishedEvent teamEvent = new MessagePublishedEvent(this, teamChatMessage);
+		//when
+		messagePublishedListener.onApplicationEvent(competitionEvent);
+		//then
+		verify(simpMessagingTemplate, times(1)).convertAndSend(
+			"/out/competition." + competition.getId(),
+			competitionChatMessage
+		);
+		//when
+		messagePublishedListener.onApplicationEvent(teamEvent);
+		//then
+		verify(simpMessagingTemplate, times(1)).convertAndSend(
+			"/out/team." + team.getId(),
+			teamChatMessage
+		);
+	}
 }

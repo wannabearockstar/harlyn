@@ -37,127 +37,128 @@ import static org.junit.Assert.*;
 @WebAppConfiguration
 @ActiveProfiles({"test"})
 public class TeamServiceTest {
-    @Autowired
-    private Flyway flyway;
-    @Autowired
-    private TeamRepository teamRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private TeamInviteRepository teamInviteRepository;
 
-    private TeamService teamService;
+	@Autowired
+	private Flyway flyway;
+	@Autowired
+	private TeamRepository teamRepository;
+	@Autowired
+	private UserRepository userRepository;
+	@Autowired
+	private TeamInviteRepository teamInviteRepository;
 
-    @Before
-    public void setUp() throws Exception {
-        flyway.clean();
-        flyway.migrate();
-        teamService = new TeamService();
-        teamService.setTeamRepository(teamRepository)
-                .setTeamInviteRepository(teamInviteRepository)
-                .setUserRepository(userRepository)
-                ;
-    }
+	private TeamService teamService;
 
-    @After
-    public void tearDown() throws Exception {
-        flyway.clean();
-    }
+	@Before
+	public void setUp() throws Exception {
+		flyway.clean();
+		flyway.migrate();
+		teamService = new TeamService();
+		teamService.setTeamRepository(teamRepository)
+			.setTeamInviteRepository(teamInviteRepository)
+			.setUserRepository(userRepository)
+		;
+	}
 
-    @Test
-    public void testCreateTeam() throws Exception {
-        User captain = userRepository.saveAndFlush(new User("captain@cap.cap", "captain", "i am captain"));
-        Team team = teamService.createTeam("team1", captain);
-        assertEquals("team1", teamRepository.findOneByName("team1").getName());
+	@After
+	public void tearDown() throws Exception {
+		flyway.clean();
+	}
 
-        try {
-            teamService.createTeam("team1", captain);
-            fail("Duplicate team name");
-        } catch (NonUniqueTeamNameException name) {
-            assertTrue(true);
-        }
-    }
+	@Test
+	public void testCreateTeam() throws Exception {
+		User captain = userRepository.saveAndFlush(new User("captain@cap.cap", "captain", "i am captain"));
+		Team team = teamService.createTeam("team1", captain);
+		assertEquals("team1", teamRepository.findOneByName("team1").getName());
 
-    @Test
-    public void testCreateTeamWithEmptyName() throws Exception {
-        User captain = userRepository.saveAndFlush(new User("captain@cap.cap", "captain", "i am captain"));
-        try {
-            teamService.createTeam("", captain);
-            fail("Create team with empty name");
-        } catch (ConstraintViolationException e) {
-            assertTrue(true);
-        }
-    }
+		try {
+			teamService.createTeam("team1", captain);
+			fail("Duplicate team name");
+		} catch (NonUniqueTeamNameException name) {
+			assertTrue(true);
+		}
+	}
 
-    @Test
-    public void testSendInvite() throws Exception {
-        User user = userRepository.saveAndFlush(new User("user@cap.cap", "user", "i am user"));
-        User captain = userRepository.saveAndFlush(new User("captain@cap.cap", "captain", "i am captain"));
-        Team team = teamService.createTeam("team1", captain);
+	@Test
+	public void testCreateTeamWithEmptyName() throws Exception {
+		User captain = userRepository.saveAndFlush(new User("captain@cap.cap", "captain", "i am captain"));
+		try {
+			teamService.createTeam("", captain);
+			fail("Create team with empty name");
+		} catch (ConstraintViolationException e) {
+			assertTrue(true);
+		}
+	}
 
-        TeamInvite teamInvite = teamService.sendInvite(team, user);
-        assertEquals(user.getId(), teamInviteRepository.findOne(teamInvite.getId()).getRecipent().getId());
-        assertEquals(team.getId(), teamInviteRepository.findOne(teamInvite.getId()).getTeam().getId());
+	@Test
+	public void testSendInvite() throws Exception {
+		User user = userRepository.saveAndFlush(new User("user@cap.cap", "user", "i am user"));
+		User captain = userRepository.saveAndFlush(new User("captain@cap.cap", "captain", "i am captain"));
+		Team team = teamService.createTeam("team1", captain);
 
-        try {
-            teamService.sendInvite(team, user);
-            fail("Sent invite to already invited user");
-        } catch (UserAlreadyInvitedException e) {
-            assertTrue(true);
-        }
-        teamInviteRepository.delete(teamInvite);
-        teamInviteRepository.flush();
+		TeamInvite teamInvite = teamService.sendInvite(team, user);
+		assertEquals(user.getId(), teamInviteRepository.findOne(teamInvite.getId()).getRecipent().getId());
+		assertEquals(team.getId(), teamInviteRepository.findOne(teamInvite.getId()).getTeam().getId());
 
-        teamRepository.saveAndFlush(team.addUser(user));
-        try {
-            teamService.sendInvite(team, user);
-            fail("Sent invite to member of the team");
-        } catch (UserAlreadyInTeamException e) {
-            assertTrue(true);
-        }
-    }
+		try {
+			teamService.sendInvite(team, user);
+			fail("Sent invite to already invited user");
+		} catch (UserAlreadyInvitedException e) {
+			assertTrue(true);
+		}
+		teamInviteRepository.delete(teamInvite);
+		teamInviteRepository.flush();
 
-    @Test
-    public void testConfirmInvite() throws Exception {
-        User user = userRepository.saveAndFlush(new User("user@cap.cap", "user", "i am user"));
-        User captain = userRepository.saveAndFlush(new User("captain@cap.cap", "captain", "i am captain"));
-        Team team = teamService.createTeam("team1", captain);
+		teamRepository.saveAndFlush(team.addUser(user));
+		try {
+			teamService.sendInvite(team, user);
+			fail("Sent invite to member of the team");
+		} catch (UserAlreadyInTeamException e) {
+			assertTrue(true);
+		}
+	}
 
-        assertFalse(team.getUsers().contains(user));
+	@Test
+	public void testConfirmInvite() throws Exception {
+		User user = userRepository.saveAndFlush(new User("user@cap.cap", "user", "i am user"));
+		User captain = userRepository.saveAndFlush(new User("captain@cap.cap", "captain", "i am captain"));
+		Team team = teamService.createTeam("team1", captain);
 
-        TeamInvite teamInvite = teamService.sendInvite(team, user);
-        teamService.confirmInvite(teamInvite);
-        team = teamService.getById(team.getId());
+		assertFalse(team.getUsers().contains(user));
 
-        assertNull(teamInviteRepository.findOne(teamInvite.getId()));
-        assertTrue(team.getUsers().contains(user));
-    }
+		TeamInvite teamInvite = teamService.sendInvite(team, user);
+		teamService.confirmInvite(teamInvite);
+		team = teamService.getById(team.getId());
 
-    @Test
-    public void testSendInviteByUser() throws Exception {
-        User user = userRepository.saveAndFlush(new User("user@cap.cap", "user", "i am user"));
-        User captain = userRepository.saveAndFlush(new User("captain@cap.cap", "captain", "i am captain"));
-        Team team = teamService.createTeam("team1", captain);
-        User another = userRepository.saveAndFlush(new User("another@cap.cap", "another", "i am another"));
+		assertNull(teamInviteRepository.findOne(teamInvite.getId()));
+		assertTrue(team.getUsers().contains(user));
+	}
 
-        TeamInvite teamInvite = teamService.sendInvite(captain, user);
+	@Test
+	public void testSendInviteByUser() throws Exception {
+		User user = userRepository.saveAndFlush(new User("user@cap.cap", "user", "i am user"));
+		User captain = userRepository.saveAndFlush(new User("captain@cap.cap", "captain", "i am captain"));
+		Team team = teamService.createTeam("team1", captain);
+		User another = userRepository.saveAndFlush(new User("another@cap.cap", "another", "i am another"));
 
-        assertEquals(teamInvite.getRecipent(), user);
-        assertEquals(teamInvite.getTeam(), captain.getTeam());
+		TeamInvite teamInvite = teamService.sendInvite(captain, user);
 
-        teamRepository.saveAndFlush(team.addUser(user));
+		assertEquals(teamInvite.getRecipent(), user);
+		assertEquals(teamInvite.getTeam(), captain.getTeam());
 
-        try {
-            teamService.sendInvite(user, another);
-            fail("User sent invite without rights of captain");
-        } catch (UserInvalidTeamRightsException e) {
-            assertTrue(true);
-        }
-        try {
-            teamService.sendInvite(another, user);
-            fail("User sent invite without team");
-        } catch (UserWithoutTeamException e) {
-            assertTrue(true);
-        }
-    }
+		teamRepository.saveAndFlush(team.addUser(user));
+
+		try {
+			teamService.sendInvite(user, another);
+			fail("User sent invite without rights of captain");
+		} catch (UserInvalidTeamRightsException e) {
+			assertTrue(true);
+		}
+		try {
+			teamService.sendInvite(another, user);
+			fail("User sent invite without team");
+		} catch (UserWithoutTeamException e) {
+			assertTrue(true);
+		}
+	}
 }

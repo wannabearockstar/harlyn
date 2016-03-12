@@ -18,46 +18,47 @@ import javax.validation.Valid;
 @Controller
 @RequestMapping(value = "/admin/category")
 public class AdminCategoryController {
-    @Autowired
-    private CategoryService categoryService;
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String newCategoryPage(Model model) {
-        model.addAttribute("category", new Category());
-        return "admin/category/new";
-    }
+	@Autowired
+	private CategoryService categoryService;
 
-    @RequestMapping(value = "/", method = RequestMethod.POST)
-    public String newCategoryAction(@Valid Category category) {
-        return "redirect:/admin/category/" + categoryService.createCategory(category);
-    }
+	@RequestMapping(value = "/", method = RequestMethod.GET)
+	public String newCategoryPage(Model model) {
+		model.addAttribute("category", new Category());
+		return "admin/category/new";
+	}
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public String editCategoryPage(@PathVariable(value = "id") Long id, Model model) {
-        Category category = categoryService.findById(id);
-        if (category == null) {
-            throw new CategoryNotFoundException(id);
-        }
-        model.addAttribute("category", category);
-        return "admin/category/edit";
-    }
+	@RequestMapping(value = "/", method = RequestMethod.POST)
+	public String newCategoryAction(@Valid Category category) {
+		return "redirect:/admin/category/" + categoryService.createCategory(category);
+	}
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.POST)
-    public String editCategoryAction(@PathVariable(value = "id") Long id,
-                                     @Valid Category categoryData,
-                                     Model model
-    ) {
-        Category category = categoryService.findById(id);
-        if (category == null) {
-            throw new CategoryNotFoundException(id);
-        }
-        categoryService.updateCategory(category, categoryData);
-        return "redirect:/admin/category/" + category.getId();
-    }
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	public String editCategoryPage(@PathVariable(value = "id") Long id, Model model) {
+		Category category = categoryService.findById(id);
+		if (category == null) {
+			throw new CategoryNotFoundException(id);
+		}
+		model.addAttribute("category", category);
+		return "admin/category/edit";
+	}
 
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public String listCategoriesPage(Model model) {
-        model.addAttribute("categories", categoryService.findAll());
-        return "admin/category/list";
-    }
+	@RequestMapping(value = "/{id}", method = RequestMethod.POST)
+	public String editCategoryAction(@PathVariable(value = "id") Long id,
+																	 @Valid Category categoryData,
+																	 Model model
+	) {
+		Category category = categoryService.findById(id);
+		if (category == null) {
+			throw new CategoryNotFoundException(id);
+		}
+		categoryService.updateCategory(category, categoryData);
+		return "redirect:/admin/category/" + category.getId();
+	}
+
+	@RequestMapping(value = "/list", method = RequestMethod.GET)
+	public String listCategoriesPage(Model model) {
+		model.addAttribute("categories", categoryService.findAll());
+		return "admin/category/list";
+	}
 }

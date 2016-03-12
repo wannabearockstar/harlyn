@@ -9,6 +9,7 @@ import java.util.Date;
 @Entity
 @Table(name = "hints")
 public class Hint {
+
 	@Id
 	@SequenceGenerator(name = "hints_id_seq", sequenceName = "hints_id_seq", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hints_id_seq")
@@ -21,7 +22,8 @@ public class Hint {
 	@Column(name = "posted_at")
 	private Date postedAt;
 
-	Hint() {}
+	Hint() {
+	}
 
 	public Hint(String content, Problem problem) {
 		this.content = content;

@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
-      layout:decorator="fragments/wrapper">
+			xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+			layout:decorator="fragments/wrapper">
 <head>
-    <title>Harlyn - solutions</title>
+	<title>Harlyn - solutions</title>
 </head>
 <body>
 <div layout:fragment="content" class="container">
-    <h2 th:text="${'Solution #' + solution.id}"></h2>
-    <div th:if="${solution.checked}">
-        <div class="alert alert-success" th:if="${solution.correct}">
-            Yay! Correct answer!
-        </div>
-        <div class="alert alert-danger" th:unless="${solution.correct}">
-            Wrong answer :(
-        </div>
-    </div>
-    <div th:unless="${solution.checked}" class="alert alert-info">
-        Solution has not been reviewed yet.
-    </div>
+	<h2 th:text="${'Solution #' + solution.id}"></h2>
+	<div th:if="${solution.checked}">
+		<div class="alert alert-success" th:if="${solution.correct}">
+			Yay! Correct answer!
+		</div>
+		<div class="alert alert-danger" th:unless="${solution.correct}">
+			Wrong answer :(
+		</div>
+	</div>
+	<div th:unless="${solution.checked}" class="alert alert-info">
+		Solution has not been reviewed yet.
+	</div>
 </div>
 </body>
 </html>

@@ -12,222 +12,223 @@ import java.util.*;
 @Entity
 @Table(name = "problems")
 public class Problem {
-    public static final String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
 
-    @Id
-    @SequenceGenerator(name = "problems_id_seq", sequenceName = "problems_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "problems_id_seq")
-    @Column(name = "id", updatable = false)
-    private Long id;
-    private String name;
-    private String info;
-    private String answer;
-    private Integer points;
+	public static final String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
 
-    @Column(name = "start_date", nullable = true)
-    private Date startDate;
-    @Column(name = "end_date", nullable = true)
-    private Date endDate;
+	@Id
+	@SequenceGenerator(name = "problems_id_seq", sequenceName = "problems_id_seq", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "problems_id_seq")
+	@Column(name = "id", updatable = false)
+	private Long id;
+	private String name;
+	private String info;
+	private String answer;
+	private Integer points;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "problem_type")
-    private ProblemType problemType;
+	@Column(name = "start_date", nullable = true)
+	private Date startDate;
+	@Column(name = "end_date", nullable = true)
+	private Date endDate;
 
-    @ManyToOne
-    @JoinColumn(name = "competition_id")
-    private Competition competition;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "problem_type")
+	private ProblemType problemType;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "teams_problems_solved",
-            joinColumns = {@JoinColumn(name = "problem_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "team_id", referencedColumnName = "id")}
-    )
-    private Set<Team> solverTeams = new HashSet<>();
+	@ManyToOne
+	@JoinColumn(name = "competition_id")
+	private Competition competition;
 
-    @OneToOne(mappedBy = "problem", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private ProblemFile file;
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(
+		name = "teams_problems_solved",
+		joinColumns = {@JoinColumn(name = "problem_id", referencedColumnName = "id")},
+		inverseJoinColumns = {@JoinColumn(name = "team_id", referencedColumnName = "id")}
+	)
+	private Set<Team> solverTeams = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "category_id")
-    private Category category;
+	@OneToOne(mappedBy = "problem", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private ProblemFile file;
 
-    @ManyToOne
-    @JoinColumn(name = "prev_problem_id")
-    private Problem prevProblem;
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "category_id")
+	private Category category;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "problem")
+	@ManyToOne
+	@JoinColumn(name = "prev_problem_id")
+	private Problem prevProblem;
+
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "problem")
 //    @OrderBy(value = "postedAt DESC")
-    private List<Hint> hints = new ArrayList<>();
+	private List<Hint> hints = new ArrayList<>();
 
-    public Problem() {
-    }
+	public Problem() {
+	}
 
-    public Problem(String name, String answer, Integer points, ProblemType problemType, Competition competition) {
-        this.name = name;
-        this.answer = answer;
-        this.points = points;
-        this.problemType = problemType;
-        this.competition = competition;
-    }
+	public Problem(String name, String answer, Integer points, ProblemType problemType, Competition competition) {
+		this.name = name;
+		this.answer = answer;
+		this.points = points;
+		this.problemType = problemType;
+		this.competition = competition;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public Problem setName(String name) {
-        this.name = name;
-        return this;
-    }
+	public Problem setName(String name) {
+		this.name = name;
+		return this;
+	}
 
-    public String getInfo() {
-        return info;
-    }
+	public String getInfo() {
+		return info;
+	}
 
-    public Problem setInfo(String info) {
-        this.info = info;
-        return this;
-    }
+	public Problem setInfo(String info) {
+		this.info = info;
+		return this;
+	}
 
-    public String getAnswer() {
-        return answer;
-    }
+	public String getAnswer() {
+		return answer;
+	}
 
-    public Problem setAnswer(String answer) {
-        this.answer = answer;
-        return this;
-    }
+	public Problem setAnswer(String answer) {
+		this.answer = answer;
+		return this;
+	}
 
-    public ProblemType getProblemType() {
-        return problemType;
-    }
+	public ProblemType getProblemType() {
+		return problemType;
+	}
 
-    public Problem setProblemType(ProblemType problemType) {
-        this.problemType = problemType;
-        return this;
-    }
+	public Problem setProblemType(ProblemType problemType) {
+		this.problemType = problemType;
+		return this;
+	}
 
-    public Integer getPoints() {
-        return points;
-    }
+	public Integer getPoints() {
+		return points;
+	}
 
-    public Problem setPoints(Integer points) {
-        this.points = points;
-        return this;
-    }
+	public Problem setPoints(Integer points) {
+		this.points = points;
+		return this;
+	}
 
-    public Set<Team> getSolverTeams() {
-        return solverTeams;
-    }
+	public Set<Team> getSolverTeams() {
+		return solverTeams;
+	}
 
-    public Problem setSolverTeams(Set<Team> solverTeams) {
-        this.solverTeams = solverTeams;
-        return this;
-    }
+	public Problem setSolverTeams(Set<Team> solverTeams) {
+		this.solverTeams = solverTeams;
+		return this;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || !(o instanceof Problem))
-            return false;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || !(o instanceof Problem))
+			return false;
 
-        Problem other = (Problem) o;
+		Problem other = (Problem) o;
 
-        if (id == null) return false;
-        if (Objects.equals(id, other.getId())) return true;
+		if (id == null) return false;
+		if (Objects.equals(id, other.getId())) return true;
 
-        return id.equals(other.getId());
-    }
+		return id.equals(other.getId());
+	}
 
-    @Override
-    public int hashCode() {
-        if (id != null) {
-            return id.hashCode();
-        } else {
-            return super.hashCode();
-        }
-    }
+	@Override
+	public int hashCode() {
+		if (id != null) {
+			return id.hashCode();
+		} else {
+			return super.hashCode();
+		}
+	}
 
-    public Date getStartDate() {
-        return startDate;
-    }
+	public Date getStartDate() {
+		return startDate;
+	}
 
-    public Problem setStartDate(Date startDate) {
-        this.startDate = startDate;
-        return this;
-    }
+	public Problem setStartDate(Date startDate) {
+		this.startDate = startDate;
+		return this;
+	}
 
-    public Date getEndDate() {
-        return endDate;
-    }
+	public Date getEndDate() {
+		return endDate;
+	}
 
-    public Problem setEndDate(Date endDate) {
-        this.endDate = endDate;
-        return this;
-    }
+	public Problem setEndDate(Date endDate) {
+		this.endDate = endDate;
+		return this;
+	}
 
-    public Competition getCompetition() {
-        return competition;
-    }
+	public Competition getCompetition() {
+		return competition;
+	}
 
-    public Problem setCompetition(Competition competition) {
-        this.competition = competition;
-        return this;
-    }
+	public Problem setCompetition(Competition competition) {
+		this.competition = competition;
+		return this;
+	}
 
-    public ProblemFile getFile() {
-        return file;
-    }
+	public ProblemFile getFile() {
+		return file;
+	}
 
-    public Problem setFile(ProblemFile file) {
-        this.file = file;
-        return this;
-    }
+	public Problem setFile(ProblemFile file) {
+		this.file = file;
+		return this;
+	}
 
-    public Category getCategory() {
-        return category;
-    }
+	public Category getCategory() {
+		return category;
+	}
 
-    public Problem setCategory(Category category) {
-        this.category = category;
-        return this;
-    }
+	public Problem setCategory(Category category) {
+		this.category = category;
+		return this;
+	}
 
-    public Problem getPrevProblem() {
-        return prevProblem;
-    }
+	public Problem getPrevProblem() {
+		return prevProblem;
+	}
 
-    public Problem setPrevProblem(Problem prevProblem) {
-        this.prevProblem = prevProblem;
-        return this;
-    }
+	public Problem setPrevProblem(Problem prevProblem) {
+		this.prevProblem = prevProblem;
+		return this;
+	}
 
-    public List<Hint> getHints() {
-        return hints;
-    }
+	public List<Hint> getHints() {
+		return hints;
+	}
 
-    public Problem setHints(List<Hint> hints) {
-        this.hints = hints;
-        return this;
-    }
+	public Problem setHints(List<Hint> hints) {
+		this.hints = hints;
+		return this;
+	}
 
-    public enum ProblemType {
-        FLAG("Flag compare"),
-        INFO_WEB("Manual checking of text info"),
-        INFO_EMAIL("Manual checking of text info via email");
+	public enum ProblemType {
+		FLAG("Flag compare"),
+		INFO_WEB("Manual checking of text info"),
+		INFO_EMAIL("Manual checking of text info via email");
 
-        private String localeName;
+		private String localeName;
 
-        ProblemType(String localeName) {
-            this.localeName = localeName;
-        }
+		ProblemType(String localeName) {
+			this.localeName = localeName;
+		}
 
-        public String getLocaleName() {
-            return localeName;
-        }
-    }
+		public String getLocaleName() {
+			return localeName;
+		}
+	}
 }

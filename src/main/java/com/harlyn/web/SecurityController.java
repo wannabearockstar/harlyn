@@ -25,46 +25,46 @@ import java.util.Collections;
 @Controller
 public class SecurityController {
 
-    @Autowired
-    private UserService userService;
+	@Autowired
+	private UserService userService;
 
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
+	@Autowired
+	private ApplicationEventPublisher eventPublisher;
 
-    @RequestMapping(value = "/login/form", method = RequestMethod.GET)
-    public String loginForm(Model model) {
-        return "security/login";
-    }
+	@RequestMapping(value = "/login/form", method = RequestMethod.GET)
+	public String loginForm(Model model) {
+		return "security/login";
+	}
 
-    @RequestMapping(value = "/registration/form", method = RequestMethod.GET)
-    public String registrationForm(Model model) {
-        model.addAttribute("user", new User());
-        return "security/registration";
-    }
+	@RequestMapping(value = "/registration/form", method = RequestMethod.GET)
+	public String registrationForm(Model model) {
+		model.addAttribute("user", new User());
+		return "security/registration";
+	}
 
-    @RequestMapping(value = "/registration", method = RequestMethod.POST)
-    public String registration(Model model,
-                               @Valid User user,
-                               BindingResult bindingResult,
-                               @RequestParam(value = "admin", defaultValue = "false") boolean isAdmin
-    ) {
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("errors", bindingResult.getAllErrors());
-            model.addAttribute("user", user);
-            return "security/registration";
-        }
-        userService.validateUniqueData(user);
-        User userCreated = userService.createUser(user, isAdmin);
-        eventPublisher.publishEvent(new UserCreatedEvent(this, userCreated));
-        return "redirect:/login/form?register";
-    }
+	@RequestMapping(value = "/registration", method = RequestMethod.POST)
+	public String registration(Model model,
+														 @Valid User user,
+														 BindingResult bindingResult,
+														 @RequestParam(value = "admin", defaultValue = "false") boolean isAdmin
+	) {
+		if (bindingResult.hasErrors()) {
+			model.addAttribute("errors", bindingResult.getAllErrors());
+			model.addAttribute("user", user);
+			return "security/registration";
+		}
+		userService.validateUniqueData(user);
+		User userCreated = userService.createUser(user, isAdmin);
+		eventPublisher.publishEvent(new UserCreatedEvent(this, userCreated));
+		return "redirect:/login/form?register";
+	}
 
-    @ExceptionHandler(NonUniqueUserDataException.class)
-    public ModelAndView nonUniqueUserDataException(NonUniqueUserDataException e) {
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("errors", Collections.singleton(new ObjectError("User", e.getMessage())));
-        mav.addObject("user", e.getUser());
-        mav.setViewName("security/registration");
-        return mav;
-    }
+	@ExceptionHandler(NonUniqueUserDataException.class)
+	public ModelAndView nonUniqueUserDataException(NonUniqueUserDataException e) {
+		ModelAndView mav = new ModelAndView();
+		mav.addObject("errors", Collections.singleton(new ObjectError("User", e.getMessage())));
+		mav.addObject("user", e.getUser());
+		mav.setViewName("security/registration");
+		return mav;
+	}
 }

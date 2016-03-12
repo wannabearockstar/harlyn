@@ -43,135 +43,136 @@ import static org.junit.Assert.*;
 @WebAppConfiguration
 @ActiveProfiles({"test"})
 public class CompetitionServiceTest {
-    @Autowired
-    private Flyway flyway;
-    @Autowired
-    private CompetitionRepository competitionRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private TeamRepository teamRepository;
-    @Autowired
-    private RegisteredTeamRepository registeredTeamRepository;
-    private CompetitionService competitionService;
 
-    @Before
-    public void setUp() throws Exception {
-        flyway.clean();
-        flyway.migrate();
-        competitionService = new CompetitionService()
-                .setCompetitionRepository(competitionRepository)
-                .setRegisteredTeamRepository(registeredTeamRepository);
-    }
+	@Autowired
+	private Flyway flyway;
+	@Autowired
+	private CompetitionRepository competitionRepository;
+	@Autowired
+	private UserRepository userRepository;
+	@Autowired
+	private TeamRepository teamRepository;
+	@Autowired
+	private RegisteredTeamRepository registeredTeamRepository;
+	private CompetitionService competitionService;
 
-    @Test
-    public void testFindById() throws Exception {
-        Competition competition = competitionRepository.saveAndFlush(new Competition("name"));
+	@Before
+	public void setUp() throws Exception {
+		flyway.clean();
+		flyway.migrate();
+		competitionService = new CompetitionService()
+			.setCompetitionRepository(competitionRepository)
+			.setRegisteredTeamRepository(registeredTeamRepository);
+	}
 
-        assertEquals("name", competitionService.findById(competition.getId()).getName());
-    }
+	@Test
+	public void testFindById() throws Exception {
+		Competition competition = competitionRepository.saveAndFlush(new Competition("name"));
 
-    @Test
-    public void testRegisterUserTeamToCompetition() throws Exception {
-        Competition competition = competitionRepository.saveAndFlush(new Competition("name"));
-        User captain = userRepository.saveAndFlush(new User("captain@email.com", "captain", "captain"));
-        Team team = teamRepository.saveAndFlush(new Team("name", captain));
-        User user = userRepository.saveAndFlush(new User("user@email.com", "user", "user").setTeam(team));
-        captain = userRepository.saveAndFlush(captain.setTeam(team));
-        try {
-            competitionService.registerUserTeamToCompetition(competition, user);
-            fail("User register team as no captain");
-        } catch (UserNotCaptainException e) {
-            assertTrue(true);
-        }
-        competitionService.registerUserTeamToCompetition(competition, captain);
-        competition = competitionRepository.findOne(competition.getId());
-        RegisteredTeam registeredTeam = competition.getRegisteredTeams()
-                .iterator()
-                .next();
+		assertEquals("name", competitionService.findById(competition.getId()).getName());
+	}
 
-        assertTrue(registeredTeam.getTeam().equals(team));
-        assertTrue(registeredTeam.getCompetition().equals(competition));
+	@Test
+	public void testRegisterUserTeamToCompetition() throws Exception {
+		Competition competition = competitionRepository.saveAndFlush(new Competition("name"));
+		User captain = userRepository.saveAndFlush(new User("captain@email.com", "captain", "captain"));
+		Team team = teamRepository.saveAndFlush(new Team("name", captain));
+		User user = userRepository.saveAndFlush(new User("user@email.com", "user", "user").setTeam(team));
+		captain = userRepository.saveAndFlush(captain.setTeam(team));
+		try {
+			competitionService.registerUserTeamToCompetition(competition, user);
+			fail("User register team as no captain");
+		} catch (UserNotCaptainException e) {
+			assertTrue(true);
+		}
+		competitionService.registerUserTeamToCompetition(competition, captain);
+		competition = competitionRepository.findOne(competition.getId());
+		RegisteredTeam registeredTeam = competition.getRegisteredTeams()
+			.iterator()
+			.next();
 
-        try {
-            competitionService.registerUserTeamToCompetition(competition, captain);
-            fail("Same team registered twice for competition");
-        } catch (TeamAlreadyRegisteredException e) {
-            assertTrue(true);
-        }
-    }
+		assertTrue(registeredTeam.getTeam().equals(team));
+		assertTrue(registeredTeam.getCompetition().equals(competition));
 
-    @Test
-    public void testFindAllAvailableCompetitions() throws Exception {
-        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
-        Date currentDate = formatter.parseDateTime("12/10/2015 14:10:30").toDate();
-        Competition competition = competitionRepository.saveAndFlush(new Competition("name")
-                        .setStartDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate())
-                        .setEndDate(formatter.parseDateTime("12/10/2015 15:00:30").toDate())
-        );
+		try {
+			competitionService.registerUserTeamToCompetition(competition, captain);
+			fail("Same team registered twice for competition");
+		} catch (TeamAlreadyRegisteredException e) {
+			assertTrue(true);
+		}
+	}
 
-        Competition earlyCompetition = competitionRepository.saveAndFlush(new Competition("early")
-                        .setStartDate(formatter.parseDateTime("12/10/2015 13:00:30").toDate())
-                        .setEndDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate())
-        );
+	@Test
+	public void testFindAllAvailableCompetitions() throws Exception {
+		DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
+		Date currentDate = formatter.parseDateTime("12/10/2015 14:10:30").toDate();
+		Competition competition = competitionRepository.saveAndFlush(new Competition("name")
+			.setStartDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate())
+			.setEndDate(formatter.parseDateTime("12/10/2015 15:00:30").toDate())
+		);
 
-        Competition lateCompetition = competitionRepository.saveAndFlush(new Competition("late")
-                        .setStartDate(formatter.parseDateTime("12/10/2015 15:00:30").toDate())
-                        .setEndDate(formatter.parseDateTime("12/10/2015 16:00:30").toDate())
-        );
-        List<Competition> availableCompetitions = competitionService.findAllAvailableCompetitions(currentDate);
+		Competition earlyCompetition = competitionRepository.saveAndFlush(new Competition("early")
+			.setStartDate(formatter.parseDateTime("12/10/2015 13:00:30").toDate())
+			.setEndDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate())
+		);
 
-        assertEquals(1, availableCompetitions.size());
-        assertEquals("name", availableCompetitions.get(0).getName());
+		Competition lateCompetition = competitionRepository.saveAndFlush(new Competition("late")
+			.setStartDate(formatter.parseDateTime("12/10/2015 15:00:30").toDate())
+			.setEndDate(formatter.parseDateTime("12/10/2015 16:00:30").toDate())
+		);
+		List<Competition> availableCompetitions = competitionService.findAllAvailableCompetitions(currentDate);
 
-        earlyCompetition = competitionRepository.saveAndFlush(earlyCompetition.setEndDate(null));
-        availableCompetitions = competitionService.findAllAvailableCompetitions(currentDate);
+		assertEquals(1, availableCompetitions.size());
+		assertEquals("name", availableCompetitions.get(0).getName());
 
-        assertEquals(2, availableCompetitions.size());
-        assertEquals("early", availableCompetitions.get(0).getName());
-        assertEquals("name", availableCompetitions.get(1).getName());
-    }
+		earlyCompetition = competitionRepository.saveAndFlush(earlyCompetition.setEndDate(null));
+		availableCompetitions = competitionService.findAllAvailableCompetitions(currentDate);
 
-    @Test
-    public void testIsProblemAvailable() throws Exception {
-        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
-        Date currentDate = formatter.parseDateTime("12/10/2015 14:10:30").toDate();
+		assertEquals(2, availableCompetitions.size());
+		assertEquals("early", availableCompetitions.get(0).getName());
+		assertEquals("name", availableCompetitions.get(1).getName());
+	}
 
-        Competition competition = new Competition("name1")
-                .setStartDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate())
-                .setEndDate(formatter.parseDateTime("12/10/2015 15:00:30").toDate());
+	@Test
+	public void testIsProblemAvailable() throws Exception {
+		DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
+		Date currentDate = formatter.parseDateTime("12/10/2015 14:10:30").toDate();
 
-        Competition competition1 = new Competition("name2")
-                .setStartDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate());
+		Competition competition = new Competition("name1")
+			.setStartDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate())
+			.setEndDate(formatter.parseDateTime("12/10/2015 15:00:30").toDate());
 
-        Competition earlyCompetition = new Competition("name3")
-                .setStartDate(formatter.parseDateTime("12/10/2015 13:00:30").toDate())
-                .setEndDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate());
+		Competition competition1 = new Competition("name2")
+			.setStartDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate());
 
-        Competition earlyCompetition1 = new Competition("name4")
-                .setEndDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate());
+		Competition earlyCompetition = new Competition("name3")
+			.setStartDate(formatter.parseDateTime("12/10/2015 13:00:30").toDate())
+			.setEndDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate());
 
-        Competition lateCompetition = new Competition("name5")
-                .setStartDate(formatter.parseDateTime("12/10/2015 15:00:30").toDate())
-                .setEndDate(formatter.parseDateTime("12/10/2015 16:00:30").toDate());
+		Competition earlyCompetition1 = new Competition("name4")
+			.setEndDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate());
 
-        assertTrue(competitionService.isCompetitionAvailable(competition, currentDate));
-        assertTrue(competitionService.isCompetitionAvailable(competition1, currentDate));
-        assertFalse(competitionService.isCompetitionAvailable(earlyCompetition, currentDate));
-        assertFalse(competitionService.isCompetitionAvailable(earlyCompetition1, currentDate));
-        assertFalse(competitionService.isCompetitionAvailable(lateCompetition, currentDate));
-    }
+		Competition lateCompetition = new Competition("name5")
+			.setStartDate(formatter.parseDateTime("12/10/2015 15:00:30").toDate())
+			.setEndDate(formatter.parseDateTime("12/10/2015 16:00:30").toDate());
 
-    @Test
-    @FlywayTest
-    public void testIsTeamRegistered() throws Exception {
-        Competition competition = competitionRepository.saveAndFlush(new Competition("name1"));
-        User captain = userRepository.saveAndFlush(new User("captain@email.com", "captain", "captain"));
-        Team team = teamRepository.saveAndFlush(new Team("name", captain));
+		assertTrue(competitionService.isCompetitionAvailable(competition, currentDate));
+		assertTrue(competitionService.isCompetitionAvailable(competition1, currentDate));
+		assertFalse(competitionService.isCompetitionAvailable(earlyCompetition, currentDate));
+		assertFalse(competitionService.isCompetitionAvailable(earlyCompetition1, currentDate));
+		assertFalse(competitionService.isCompetitionAvailable(lateCompetition, currentDate));
+	}
 
-        assertFalse(competitionService.isTeamRegistered(competition, team));
-        registeredTeamRepository.saveAndFlush(new RegisteredTeam(competition, team));
+	@Test
+	@FlywayTest
+	public void testIsTeamRegistered() throws Exception {
+		Competition competition = competitionRepository.saveAndFlush(new Competition("name1"));
+		User captain = userRepository.saveAndFlush(new User("captain@email.com", "captain", "captain"));
+		Team team = teamRepository.saveAndFlush(new Team("name", captain));
 
-        assertTrue(competitionService.isTeamRegistered(competition, team));
-    }
+		assertFalse(competitionService.isTeamRegistered(competition, team));
+		registeredTeamRepository.saveAndFlush(new RegisteredTeam(competition, team));
+
+		assertTrue(competitionService.isTeamRegistered(competition, team));
+	}
 }

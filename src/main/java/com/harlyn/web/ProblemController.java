@@ -38,108 +38,109 @@ import java.util.Date;
 @Controller
 @RequestMapping("/problem")
 public class ProblemController {
-    public static final Logger logger = LoggerFactory.getLogger(ProblemController.class);
-    @Autowired
-    private ProblemService problemService;
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
-    @Autowired
-    private CompetitionService competitionService;
-    @Autowired
-    private FileService fileService;
 
-    @Transactional
-    @RequestMapping(value = "/{id}/submit", method = RequestMethod.POST)
-    public String submitSolution(@PathVariable(value = "id") Long id,
-                                 @RequestParam(value = "query", required = false) String queryParam,
-                                 @RequestParam(value = "file", required = false) MultipartFile fileParam,
-                                 Model model
-    ) {
-        Problem problem = problemService.getById(id);
-        if (problem == null) {
-            throw new ProblemNotFoundException();
-        }
-        Date currentDate = new Date();
-        if (!problemService.isProblemAvailable(problem, currentDate)) {
-            throw new OutdatedProblemException(problem);
-        }
-        if (!competitionService.isCompetitionAvailable(problem.getCompetition(), currentDate)) {
-            throw new OutdatedCompetitionException();
-        }
-        User me = ((User) model.asMap().get("me"));
-        if (!competitionService.isTeamRegistered(problem.getCompetition(), me.getTeam())) {
-            throw new TeamNotRegisteredForCompetitionException();
-        }
-        if (!problemService.isTeamSolvedPreviousProblem(problem, me.getTeam())) {
-            throw new TeamNotSolverPreviousProblemException(problem);
-        }
+	public static final Logger logger = LoggerFactory.getLogger(ProblemController.class);
+	@Autowired
+	private ProblemService problemService;
+	@Autowired
+	private ApplicationEventPublisher eventPublisher;
+	@Autowired
+	private CompetitionService competitionService;
+	@Autowired
+	private FileService fileService;
 
-        try {
-            Long solutionId = problemService.createSolution(problem, new SubmitData(queryParam, fileParam), (User) model.asMap().get("me"));
-            eventPublisher.publishEvent(new UserChangedEvent(this, (User) model.asMap().get("me")));
-            return "redirect:/solution/" + solutionId;
-        } catch (IOException e) {
-            logger.error("Error while uploading file: {}", e.getMessage());
-            throw new InvalidFileException();
-        }
-    }
+	@Transactional
+	@RequestMapping(value = "/{id}/submit", method = RequestMethod.POST)
+	public String submitSolution(@PathVariable(value = "id") Long id,
+															 @RequestParam(value = "query", required = false) String queryParam,
+															 @RequestParam(value = "file", required = false) MultipartFile fileParam,
+															 Model model
+	) {
+		Problem problem = problemService.getById(id);
+		if (problem == null) {
+			throw new ProblemNotFoundException();
+		}
+		Date currentDate = new Date();
+		if (!problemService.isProblemAvailable(problem, currentDate)) {
+			throw new OutdatedProblemException(problem);
+		}
+		if (!competitionService.isCompetitionAvailable(problem.getCompetition(), currentDate)) {
+			throw new OutdatedCompetitionException();
+		}
+		User me = ((User) model.asMap().get("me"));
+		if (!competitionService.isTeamRegistered(problem.getCompetition(), me.getTeam())) {
+			throw new TeamNotRegisteredForCompetitionException();
+		}
+		if (!problemService.isTeamSolvedPreviousProblem(problem, me.getTeam())) {
+			throw new TeamNotSolverPreviousProblemException(problem);
+		}
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public String problemPage(@PathVariable(value = "id") Long id, Model model) {
-        Problem problem = problemService.getById(id);
-        if (problem == null) {
-            throw new ProblemNotFoundException();
-        }
-        User me = ((User) model.asMap().get("me"));
-        if (!competitionService.isTeamRegistered(problem.getCompetition(), me.getTeam())) {
-            throw new TeamNotRegisteredForCompetitionException();
-        }
-        Date currentDate = new Date();
-        model.addAttribute("problem", problem);
-        model.addAttribute("available", competitionService.isCompetitionAvailable(problem.getCompetition(), currentDate)
-                        && problemService.isProblemAvailable(problem, currentDate)
-        );
-        model.addAttribute("available_by_previous", problemService.isTeamSolvedPreviousProblem(problem, me.getTeam()));
+		try {
+			Long solutionId = problemService.createSolution(problem, new SubmitData(queryParam, fileParam), (User) model.asMap().get("me"));
+			eventPublisher.publishEvent(new UserChangedEvent(this, (User) model.asMap().get("me")));
+			return "redirect:/solution/" + solutionId;
+		} catch (IOException e) {
+			logger.error("Error while uploading file: {}", e.getMessage());
+			throw new InvalidFileException();
+		}
+	}
 
-        return "problem/show";
-    }
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	public String problemPage(@PathVariable(value = "id") Long id, Model model) {
+		Problem problem = problemService.getById(id);
+		if (problem == null) {
+			throw new ProblemNotFoundException();
+		}
+		User me = ((User) model.asMap().get("me"));
+		if (!competitionService.isTeamRegistered(problem.getCompetition(), me.getTeam())) {
+			throw new TeamNotRegisteredForCompetitionException();
+		}
+		Date currentDate = new Date();
+		model.addAttribute("problem", problem);
+		model.addAttribute("available", competitionService.isCompetitionAvailable(problem.getCompetition(), currentDate)
+			&& problemService.isProblemAvailable(problem, currentDate)
+		);
+		model.addAttribute("available_by_previous", problemService.isTeamSolvedPreviousProblem(problem, me.getTeam()));
 
-    @RequestMapping(value = "/{id}/file", method = RequestMethod.GET)
-    public ResponseEntity<InputStreamResource> problemFileAction(@PathVariable(value = "id") Long id, Model model) {
-        Problem problem = problemService.getById(id);
-        if (problem == null) {
-            throw new ProblemNotFoundException();
-        }
-        Date currentDate = new Date();
-        if (!problemService.isProblemAvailable(problem, currentDate)) {
-            throw new OutdatedProblemException(problem);
-        }
-        if (!competitionService.isCompetitionAvailable(problem.getCompetition(), currentDate)) {
-            throw new OutdatedCompetitionException();
-        }
-        if (!competitionService.isTeamRegistered(problem.getCompetition(), ((User) model.asMap().get("me")).getTeam())) {
-            throw new TeamNotRegisteredForCompetitionException();
-        }
-        if (problem.getFile() == null) {
-            throw new ProblemFileNoutFoundException();
-        }
-        File problemFile = fileService.getFileForProblem(problem);
-        try {
-            HttpHeaders respHeaders = new HttpHeaders();
-            respHeaders.setContentType(MediaType.valueOf(problem.getFile().getContentType()));
-            respHeaders.setContentLength(problem.getFile().getContentLength());
-            respHeaders.setContentDispositionFormData("attachment",
-                    problem.getFile().getName()
-                            + "."
-                            + FilenameUtils.getExtension(
-                            problemFile.getName()
-                    ));
+		return "problem/show";
+	}
 
-            InputStreamResource isr = new InputStreamResource(new FileInputStream(problemFile));
-            return new ResponseEntity<>(isr, respHeaders, HttpStatus.OK);
-        } catch (Exception e) {
-            logger.warn("Cant get file for problem: {}", e.getMessage());
-            throw new ProblemNotFoundException();
-        }
-    }
+	@RequestMapping(value = "/{id}/file", method = RequestMethod.GET)
+	public ResponseEntity<InputStreamResource> problemFileAction(@PathVariable(value = "id") Long id, Model model) {
+		Problem problem = problemService.getById(id);
+		if (problem == null) {
+			throw new ProblemNotFoundException();
+		}
+		Date currentDate = new Date();
+		if (!problemService.isProblemAvailable(problem, currentDate)) {
+			throw new OutdatedProblemException(problem);
+		}
+		if (!competitionService.isCompetitionAvailable(problem.getCompetition(), currentDate)) {
+			throw new OutdatedCompetitionException();
+		}
+		if (!competitionService.isTeamRegistered(problem.getCompetition(), ((User) model.asMap().get("me")).getTeam())) {
+			throw new TeamNotRegisteredForCompetitionException();
+		}
+		if (problem.getFile() == null) {
+			throw new ProblemFileNoutFoundException();
+		}
+		File problemFile = fileService.getFileForProblem(problem);
+		try {
+			HttpHeaders respHeaders = new HttpHeaders();
+			respHeaders.setContentType(MediaType.valueOf(problem.getFile().getContentType()));
+			respHeaders.setContentLength(problem.getFile().getContentLength());
+			respHeaders.setContentDispositionFormData("attachment",
+				problem.getFile().getName()
+					+ "."
+					+ FilenameUtils.getExtension(
+					problemFile.getName()
+				));
+
+			InputStreamResource isr = new InputStreamResource(new FileInputStream(problemFile));
+			return new ResponseEntity<>(isr, respHeaders, HttpStatus.OK);
+		} catch (Exception e) {
+			logger.warn("Cant get file for problem: {}", e.getMessage());
+			throw new ProblemNotFoundException();
+		}
+	}
 }

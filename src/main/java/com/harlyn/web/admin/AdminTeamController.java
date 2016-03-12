@@ -13,12 +13,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping(value = "/admin/team")
 public class AdminTeamController {
-    @Autowired
-    private TeamService teamService;
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String listTeamPage(Model model) {
-        model.addAttribute("teams", teamService.getAllTeams());
-        return "admin/team/list";
-    }
+	@Autowired
+	private TeamService teamService;
+
+	@RequestMapping(value = "/", method = RequestMethod.GET)
+	public String listTeamPage(Model model) {
+		model.addAttribute("teams", teamService.getAllTeams());
+		return "admin/team/list";
+	}
 }

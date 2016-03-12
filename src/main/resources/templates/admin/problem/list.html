@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-       xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
-       layout:decorator="fragments/wrapper">
+			xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+			layout:decorator="fragments/wrapper">
 <head>
-    <title th:text="#{admin.problem.title}"></title>
+	<title th:text="#{admin.problem.title}"></title>
 </head>
 <body>
 
 <div layout:fragment="content" class="container">
-    <h3 th:text="#{admin.problem.list}"></h3>
-    <a th:href="@{/admin/problem/}" th:text="#{admin.problem.new}"></a>
-<ul>
-    <li th:each="problem : ${problems}">
-        <a th:href="${'/admin/problem/' + problem.id}" th:text="${problem.name}"></a>
-    </li>
-</ul>
-    </div>
+	<h3 th:text="#{admin.problem.list}"></h3>
+	<a th:href="@{/admin/problem/}" th:text="#{admin.problem.new}"></a>
+	<ul>
+		<li th:each="problem : ${problems}">
+			<a th:href="${'/admin/problem/' + problem.id}" th:text="${problem.name}"></a>
+		</li>
+	</ul>
+</div>
 </body>
 </html>

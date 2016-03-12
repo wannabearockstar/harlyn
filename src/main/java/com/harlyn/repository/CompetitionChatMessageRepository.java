@@ -13,5 +13,6 @@ import java.util.List;
  */
 @Repository
 public interface CompetitionChatMessageRepository extends JpaRepository<CompetitionChatMessage, Long> {
-    List<CompetitionChatMessage> findAllByCompetitionOrderByIdDesc(Competition competition, Pageable pageable);
+
+	List<CompetitionChatMessage> findAllByCompetitionOrderByIdDesc(Competition competition, Pageable pageable);
 }

@@ -1,37 +1,37 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
-      layout:decorator="fragments/wrapper">
+			xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+			layout:decorator="fragments/wrapper">
 <head>
-    <title th:text="#{admin.solution.title}"></title>
+	<title th:text="#{admin.solution.title}"></title>
 </head>
 <body>
 <div layout:fragment="content" class="container">
-    <h3 th:text="#{admin.solution.list}"></h3>
-    <table class="table table-hover">
-        <thead>
-        <tr>
-            <th th:text="#{admin.solutions.problem}"></th>
-            <th th:text="#{admin.solutions.competition}"></th>
-            <th th:text="#{admin.solutions.team}"></th>
-            <th th:text="#{admin.solutions.checked}"></th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="solution : ${solutions}">
-            <td th:text="${solution.problem.name}"></td>
-            <td th:text="${solution.problem.competition.name}"></td>
-            <td th:text="${solution.solver.team.name}"></td>
-            <td th:if="${solution.checked}">
-                <a th:href="@{'/admin/solution/' + ${solution.id}}" th:text="#{admin.solutions.checked}"></a>
-            </td>
-            <td class="alert alert-warning" th:unless="${solution.checked}">
-                <a th:href="@{'/admin/solution/' + ${solution.id}}" th:text="#{admin.solutions.unchecked}"></a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <a th:href="@{/admin/solution/unchecked}" th:text="#{admin.solutions.only_unchecked}"></a>
+	<h3 th:text="#{admin.solution.list}"></h3>
+	<table class="table table-hover">
+		<thead>
+		<tr>
+			<th th:text="#{admin.solutions.problem}"></th>
+			<th th:text="#{admin.solutions.competition}"></th>
+			<th th:text="#{admin.solutions.team}"></th>
+			<th th:text="#{admin.solutions.checked}"></th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr th:each="solution : ${solutions}">
+			<td th:text="${solution.problem.name}"></td>
+			<td th:text="${solution.problem.competition.name}"></td>
+			<td th:text="${solution.solver.team.name}"></td>
+			<td th:if="${solution.checked}">
+				<a th:href="@{'/admin/solution/' + ${solution.id}}" th:text="#{admin.solutions.checked}"></a>
+			</td>
+			<td class="alert alert-warning" th:unless="${solution.checked}">
+				<a th:href="@{'/admin/solution/' + ${solution.id}}" th:text="#{admin.solutions.unchecked}"></a>
+			</td>
+		</tr>
+		</tbody>
+	</table>
+	<a th:href="@{/admin/solution/unchecked}" th:text="#{admin.solutions.only_unchecked}"></a>
 </div>
 </body>
 </html>

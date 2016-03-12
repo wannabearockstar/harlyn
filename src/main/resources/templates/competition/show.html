@@ -1,38 +1,39 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
-      layout:decorator="fragments/wrapper">
+			xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+			layout:decorator="fragments/wrapper">
 <head>
-    <title>Harlyn - competition</title>
+	<title>Harlyn - competition</title>
 </head>
 <body>
 <div layout:fragment="content" class="container">
-    <h2 th:text="${competition.name}"></h2>
-    <div th:if="${available}">
-        <div th:unless="${registered}">
-            <form th:if="${me.equals(me.team.captain)}" method="post" th:action="${'/competition/' + competition.id + '/register'}">
-                <input class="form-control" type="submit" value="Register your team" />
-            </form>
-            <div th:unless="${me.equals(me.team.captain)}" class="alert alert-danger">
-                Only captain can register teams on competitions
-            </div>
-        </div>
-        <div th:if="${registered}" class="alert alert-success">
-            You already register for this competition
-        </div>
-    </div>
-    <div th:unless="${available}" class="alert alert-warning">
-        Competition do not available anymore.
-    </div>
-    <div th:if="${registered}">
-        <a th:href="${'/competition/' + competition.id + '/problems'}">Problems</a>
-    </div>
-    <div th:if="${registered}">
-        <a th:href="${'/competition/' + competition.id + '/chat'}">Chat</a>
-    </div>
-    <div>
-        <a th:href="${'/competition/' + competition.id + '/teams'}">Teams</a>
-    </div>
+	<h2 th:text="${competition.name}"></h2>
+	<div th:if="${available}">
+		<div th:unless="${registered}">
+			<form th:if="${me.equals(me.team.captain)}" method="post"
+						th:action="${'/competition/' + competition.id + '/register'}">
+				<input class="form-control" type="submit" value="Register your team"/>
+			</form>
+			<div th:unless="${me.equals(me.team.captain)}" class="alert alert-danger">
+				Only captain can register teams on competitions
+			</div>
+		</div>
+		<div th:if="${registered}" class="alert alert-success">
+			You already register for this competition
+		</div>
+	</div>
+	<div th:unless="${available}" class="alert alert-warning">
+		Competition do not available anymore.
+	</div>
+	<div th:if="${registered}">
+		<a th:href="${'/competition/' + competition.id + '/problems'}">Problems</a>
+	</div>
+	<div th:if="${registered}">
+		<a th:href="${'/competition/' + competition.id + '/chat'}">Chat</a>
+	</div>
+	<div>
+		<a th:href="${'/competition/' + competition.id + '/teams'}">Teams</a>
+	</div>
 </div>
 </body>
 </html>

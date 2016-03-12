@@ -15,13 +15,14 @@ import java.util.Objects;
  * Compare solution query param to problem answer
  */
 public class FlagProblemHandler implements ProblemHandler {
-    @Override
-    public boolean isManual() {
-        return false;
-    }
 
-    @Override
-    public boolean checkSolution(Problem problem, SubmitData solution, User solver) {
-        return Objects.equals(problem.getAnswer(), solution.getQueryParam());
-    }
+	@Override
+	public boolean isManual() {
+		return false;
+	}
+
+	@Override
+	public boolean checkSolution(Problem problem, SubmitData solution, User solver) {
+		return Objects.equals(problem.getAnswer(), solution.getQueryParam());
+	}
 }

@@ -21,43 +21,44 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping(value = "/team")
 public class TeamController {
-    @Autowired
-    private TeamService teamService;
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
 
-    @RequestMapping(value = "/", method = RequestMethod.POST)
-    public String createTeam(@RequestParam(value = "name", required = true) String name, Model model) {
-        Team team = teamService.createTeam(name, (User) model.asMap().get("me"));
-        eventPublisher.publishEvent(new UserChangedEvent(this, (User) model.asMap().get("me")));
-        return "redirect:/team/" + team.getId();
-    }
+	@Autowired
+	private TeamService teamService;
+	@Autowired
+	private ApplicationEventPublisher eventPublisher;
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public String showTeam(@PathVariable(value = "id") Long teamId, Model model) {
-        Team team = teamService.getById(teamId);
-        if (team == null) {
-            throw new TeamNotFoundException(teamId);
-        }
-        model.addAttribute("team", team);
-        return "team/show";
-    }
+	@RequestMapping(value = "/", method = RequestMethod.POST)
+	public String createTeam(@RequestParam(value = "name", required = true) String name, Model model) {
+		Team team = teamService.createTeam(name, (User) model.asMap().get("me"));
+		eventPublisher.publishEvent(new UserChangedEvent(this, (User) model.asMap().get("me")));
+		return "redirect:/team/" + team.getId();
+	}
 
-    @RequestMapping(value = "/{id}/invite/accept", method = RequestMethod.POST)
-    public String acceptInvite(@PathVariable(value = "id") Long teamId, Model model) {
-        Team team = teamService.getById(teamId);
-        if (team == null) {
-            throw new TeamNotFoundException(teamId);
-        }
-        teamService.confirmInvite((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal(), team);
-        eventPublisher.publishEvent(new UserChangedEvent(this, (User) model.asMap().get("me")));
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	public String showTeam(@PathVariable(value = "id") Long teamId, Model model) {
+		Team team = teamService.getById(teamId);
+		if (team == null) {
+			throw new TeamNotFoundException(teamId);
+		}
+		model.addAttribute("team", team);
+		return "team/show";
+	}
 
-        return "redirect:/team/" + teamId;
-    }
+	@RequestMapping(value = "/{id}/invite/accept", method = RequestMethod.POST)
+	public String acceptInvite(@PathVariable(value = "id") Long teamId, Model model) {
+		Team team = teamService.getById(teamId);
+		if (team == null) {
+			throw new TeamNotFoundException(teamId);
+		}
+		teamService.confirmInvite((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal(), team);
+		eventPublisher.publishEvent(new UserChangedEvent(this, (User) model.asMap().get("me")));
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String teamsListPage(Model model) {
-        model.addAttribute("teams", teamService.getAllTeams());
-        return "team/list";
-    }
+		return "redirect:/team/" + teamId;
+	}
+
+	@RequestMapping(value = "/", method = RequestMethod.GET)
+	public String teamsListPage(Model model) {
+		model.addAttribute("teams", teamService.getAllTeams());
+		return "team/list";
+	}
 }

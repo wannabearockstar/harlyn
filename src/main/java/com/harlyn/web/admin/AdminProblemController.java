@@ -30,137 +30,138 @@ import java.util.Optional;
 @Controller
 @RequestMapping(value = "/admin/problem")
 public class AdminProblemController {
-    @Autowired
-    private ProblemService problemService;
-    @Resource
-    private Map<Problem.ProblemType, ProblemHandler> problemHandlers;
-    @Autowired
-    private CompetitionService competitionService;
-    @Autowired
-    private FileService fileService;
-    @Autowired
-    private CategoryService categoryService;
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String newProblemPage(Model model) {
-        model.addAttribute("problem_handlers_keys", problemHandlers.keySet());
-        model.addAttribute("competitions", competitionService.findAll());
-        model.addAttribute("categories", categoryService.findAll());
-        model.addAttribute("all_problems", problemService.getAllProblems());
-        return "admin/problem/new";
-    }
+	@Autowired
+	private ProblemService problemService;
+	@Resource
+	private Map<Problem.ProblemType, ProblemHandler> problemHandlers;
+	@Autowired
+	private CompetitionService competitionService;
+	@Autowired
+	private FileService fileService;
+	@Autowired
+	private CategoryService categoryService;
 
-    @RequestMapping(value = "/", method = RequestMethod.POST)
-    public String newProblemAction(
-            @RequestParam(value = "name") String name,
-            @RequestParam(value = "answer") String answer,
-            @RequestParam(value = "points") Integer points,
-            @RequestParam(value = "problem_type") Problem.ProblemType problemType,
-            @RequestParam(value = "info", required = false, defaultValue = "") String info,
-            @RequestParam(value = "start_date", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss") Optional<Date> startDate,
-            @RequestParam(value = "end_date", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss") Optional<Date> endDate,
-            @RequestParam(value = "competition") Long competitionId,
-            @RequestParam(value = "file", required = false) Optional<MultipartFile> file,
-            @RequestParam(value = "file_name", required = false, defaultValue = "") String filename,
-            @RequestParam(value = "category", required = false, defaultValue = "0") Long categoryId,
-            @RequestParam(value = "prev_problem", required = false, defaultValue = "0") Long prevProblemId
-    ) throws IOException {
-        Competition competition = competitionService.findById(competitionId);
-        Problem problemData = new Problem(name, answer, points, problemType, competition);
-        if (categoryId != 0) {
-            problemData.setCategory(categoryService.findById(categoryId));
-        }
-        if (prevProblemId != 0) {
-            problemData.setPrevProblem(problemService.getById(prevProblemId));
-        }
-        if (startDate.isPresent()) {
-            problemData.setStartDate(startDate.get());
-        }
-        if (endDate.isPresent()) {
-            problemData.setEndDate(endDate.get());
-        }
-        if (file.isPresent()) {
-            filename = filename.length() == 0 ? file.get().getOriginalFilename() : filename;
-            problemData.setFile(fileService.uploadProblemFile(file.get(), problemData, filename));
-        }
-        problemData.setInfo(info);
-        problemService.createProblem(problemData);
-        return "redirect:/admin/problem/list";
-    }
+	@RequestMapping(value = "/", method = RequestMethod.GET)
+	public String newProblemPage(Model model) {
+		model.addAttribute("problem_handlers_keys", problemHandlers.keySet());
+		model.addAttribute("competitions", competitionService.findAll());
+		model.addAttribute("categories", categoryService.findAll());
+		model.addAttribute("all_problems", problemService.getAllProblems());
+		return "admin/problem/new";
+	}
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public String editProblemPage(@PathVariable(value = "id") Long id, Model model) {
-        Problem problem = problemService.getById(id);
-        if (problem == null) {
-            throw new ProblemNotFoundException();
-        }
-        model.addAttribute("problem_handlers_keys", problemHandlers.keySet());
-        model.addAttribute("problem", problem);
-        model.addAttribute("categories", categoryService.findAll());
-        model.addAttribute("competitions", competitionService.findAll());
-        model.addAttribute("all_problems", problemService.getAllProblems());
-        return "admin/problem/edit";
-    }
+	@RequestMapping(value = "/", method = RequestMethod.POST)
+	public String newProblemAction(
+		@RequestParam(value = "name") String name,
+		@RequestParam(value = "answer") String answer,
+		@RequestParam(value = "points") Integer points,
+		@RequestParam(value = "problem_type") Problem.ProblemType problemType,
+		@RequestParam(value = "info", required = false, defaultValue = "") String info,
+		@RequestParam(value = "start_date", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss") Optional<Date> startDate,
+		@RequestParam(value = "end_date", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss") Optional<Date> endDate,
+		@RequestParam(value = "competition") Long competitionId,
+		@RequestParam(value = "file", required = false) Optional<MultipartFile> file,
+		@RequestParam(value = "file_name", required = false, defaultValue = "") String filename,
+		@RequestParam(value = "category", required = false, defaultValue = "0") Long categoryId,
+		@RequestParam(value = "prev_problem", required = false, defaultValue = "0") Long prevProblemId
+	) throws IOException {
+		Competition competition = competitionService.findById(competitionId);
+		Problem problemData = new Problem(name, answer, points, problemType, competition);
+		if (categoryId != 0) {
+			problemData.setCategory(categoryService.findById(categoryId));
+		}
+		if (prevProblemId != 0) {
+			problemData.setPrevProblem(problemService.getById(prevProblemId));
+		}
+		if (startDate.isPresent()) {
+			problemData.setStartDate(startDate.get());
+		}
+		if (endDate.isPresent()) {
+			problemData.setEndDate(endDate.get());
+		}
+		if (file.isPresent()) {
+			filename = filename.length() == 0 ? file.get().getOriginalFilename() : filename;
+			problemData.setFile(fileService.uploadProblemFile(file.get(), problemData, filename));
+		}
+		problemData.setInfo(info);
+		problemService.createProblem(problemData);
+		return "redirect:/admin/problem/list";
+	}
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.POST)
-    public String editProblemAction(
-            @PathVariable(value = "id") Long id,
-            @RequestParam(value = "name") String name,
-            @RequestParam(value = "info", required = false, defaultValue = "") String info,
-            @RequestParam(value = "start_date", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss") Optional<Date> startDate,
-            @RequestParam(value = "end_date", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss") Optional<Date> endDate,
-            @RequestParam(value = "file", required = false) Optional<MultipartFile> file,
-            @RequestParam(value = "file_name", required = false, defaultValue = "") String filename,
-            @RequestParam(value = "category", required = false, defaultValue = "0") Long categoryId,
-            @RequestParam(value = "prev_problem", required = false, defaultValue = "0") Long prevProblemId
-    ) throws IOException {
-        Problem problem = problemService.getById(id);
-        if (problem == null) {
-            throw new ProblemNotFoundException();
-        }
-        Problem problemData = new Problem(name, problem.getAnswer(), problem.getPoints(), problem.getProblemType(), problem.getCompetition());
-        if (categoryId != 0) {
-            problemData.setCategory(categoryService.findById(categoryId));
-        }
-        if (prevProblemId != 0) {
-            problemData.setPrevProblem(problemService.getById(prevProblemId));
-        }
-        if (startDate.isPresent()) {
-            problemData.setStartDate(startDate.get());
-        }
-        if (endDate.isPresent()) {
-            problemData.setEndDate(endDate.get());
-        }
-        if (file.isPresent()) {
-            filename = filename.length() == 0 ? file.get().getOriginalFilename() : filename;
-            problemData.setFile(fileService.uploadProblemFile(file.get(), problem, filename));
-        }
-        problemData.setInfo(info);
-        problemService.updateProblem(problem, problemData);
-        return "redirect:/admin/problem/list";
-    }
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	public String editProblemPage(@PathVariable(value = "id") Long id, Model model) {
+		Problem problem = problemService.getById(id);
+		if (problem == null) {
+			throw new ProblemNotFoundException();
+		}
+		model.addAttribute("problem_handlers_keys", problemHandlers.keySet());
+		model.addAttribute("problem", problem);
+		model.addAttribute("categories", categoryService.findAll());
+		model.addAttribute("competitions", competitionService.findAll());
+		model.addAttribute("all_problems", problemService.getAllProblems());
+		return "admin/problem/edit";
+	}
 
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public String listProblemPage(Model model) {
-        model.addAttribute("problems", problemService.getAllProblems());
-        return "admin/problem/list";
-    }
+	@RequestMapping(value = "/{id}", method = RequestMethod.POST)
+	public String editProblemAction(
+		@PathVariable(value = "id") Long id,
+		@RequestParam(value = "name") String name,
+		@RequestParam(value = "info", required = false, defaultValue = "") String info,
+		@RequestParam(value = "start_date", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss") Optional<Date> startDate,
+		@RequestParam(value = "end_date", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss") Optional<Date> endDate,
+		@RequestParam(value = "file", required = false) Optional<MultipartFile> file,
+		@RequestParam(value = "file_name", required = false, defaultValue = "") String filename,
+		@RequestParam(value = "category", required = false, defaultValue = "0") Long categoryId,
+		@RequestParam(value = "prev_problem", required = false, defaultValue = "0") Long prevProblemId
+	) throws IOException {
+		Problem problem = problemService.getById(id);
+		if (problem == null) {
+			throw new ProblemNotFoundException();
+		}
+		Problem problemData = new Problem(name, problem.getAnswer(), problem.getPoints(), problem.getProblemType(), problem.getCompetition());
+		if (categoryId != 0) {
+			problemData.setCategory(categoryService.findById(categoryId));
+		}
+		if (prevProblemId != 0) {
+			problemData.setPrevProblem(problemService.getById(prevProblemId));
+		}
+		if (startDate.isPresent()) {
+			problemData.setStartDate(startDate.get());
+		}
+		if (endDate.isPresent()) {
+			problemData.setEndDate(endDate.get());
+		}
+		if (file.isPresent()) {
+			filename = filename.length() == 0 ? file.get().getOriginalFilename() : filename;
+			problemData.setFile(fileService.uploadProblemFile(file.get(), problem, filename));
+		}
+		problemData.setInfo(info);
+		problemService.updateProblem(problem, problemData);
+		return "redirect:/admin/problem/list";
+	}
 
-    @RequestMapping(value = "/{id}/hint", method = RequestMethod.POST)
-    public String addHint(@RequestParam(value = "content") String content,
-                          @PathVariable(value = "id") Long id
-    ) {
-        Problem problem = problemService.getById(id);
-        if (problem == null) {
-            throw new ProblemNotFoundException();
-        }
-        problemService.addHint(problem, content);
-        return "redirect:/admin/problem/list";
-    }
+	@RequestMapping(value = "/list", method = RequestMethod.GET)
+	public String listProblemPage(Model model) {
+		model.addAttribute("problems", problemService.getAllProblems());
+		return "admin/problem/list";
+	}
 
-    @RequestMapping(value = "/hint/{id}/delete", method = RequestMethod.POST)
-    public String deleteHint(@PathVariable(value = "id") Long id) {
-        problemService.deleteHint(id);
-        return "redirect:/admin/problem/list";
-    }
+	@RequestMapping(value = "/{id}/hint", method = RequestMethod.POST)
+	public String addHint(@RequestParam(value = "content") String content,
+												@PathVariable(value = "id") Long id
+	) {
+		Problem problem = problemService.getById(id);
+		if (problem == null) {
+			throw new ProblemNotFoundException();
+		}
+		problemService.addHint(problem, content);
+		return "redirect:/admin/problem/list";
+	}
+
+	@RequestMapping(value = "/hint/{id}/delete", method = RequestMethod.POST)
+	public String deleteHint(@PathVariable(value = "id") Long id) {
+		problemService.deleteHint(id);
+		return "redirect:/admin/problem/list";
+	}
 }

@@ -8,83 +8,84 @@ import javax.persistence.*;
 @Entity
 @Table(name = "problem_files")
 public class ProblemFile {
-    @Id
-    @SequenceGenerator(name = "problem_files_id_seq", sequenceName = "problem_files_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "problem_files_id_seq")
-    @Column(name = "id", updatable = false)
-    private Long id;
 
-    private String path;
+	@Id
+	@SequenceGenerator(name = "problem_files_id_seq", sequenceName = "problem_files_id_seq", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "problem_files_id_seq")
+	@Column(name = "id", updatable = false)
+	private Long id;
 
-    private String name;
+	private String path;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "problem_id")
-    private Problem problem;
+	private String name;
 
-    @Column(name = "content_type")
-    private String contentType;
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "problem_id")
+	private Problem problem;
 
-    @Column(name = "content_length")
-    private Long contentLength;
+	@Column(name = "content_type")
+	private String contentType;
 
-    public ProblemFile() {
-    }
+	@Column(name = "content_length")
+	private Long contentLength;
 
-    public ProblemFile(String path, Problem problem, String name, String contentType, Long contentLength) {
-        this.path = path;
-        this.problem = problem;
-        this.name = name;
-        this.contentType = contentType;
-        this.contentLength = contentLength;
-    }
+	public ProblemFile() {
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public ProblemFile(String path, Problem problem, String name, String contentType, Long contentLength) {
+		this.path = path;
+		this.problem = problem;
+		this.name = name;
+		this.contentType = contentType;
+		this.contentLength = contentLength;
+	}
 
-    public String getPath() {
-        return path;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public ProblemFile setPath(String path) {
-        this.path = path;
-        return this;
-    }
+	public String getPath() {
+		return path;
+	}
 
-    public Problem getProblem() {
-        return problem;
-    }
+	public ProblemFile setPath(String path) {
+		this.path = path;
+		return this;
+	}
 
-    public ProblemFile setProblem(Problem problem) {
-        this.problem = problem;
-        return this;
-    }
+	public Problem getProblem() {
+		return problem;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public ProblemFile setProblem(Problem problem) {
+		this.problem = problem;
+		return this;
+	}
 
-    public ProblemFile setName(String name) {
-        this.name = name;
-        return this;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public String getContentType() {
-        return contentType;
-    }
+	public ProblemFile setName(String name) {
+		this.name = name;
+		return this;
+	}
 
-    public ProblemFile setContentType(String contentType) {
-        this.contentType = contentType;
-        return this;
-    }
+	public String getContentType() {
+		return contentType;
+	}
 
-    public Long getContentLength() {
-        return contentLength;
-    }
+	public ProblemFile setContentType(String contentType) {
+		this.contentType = contentType;
+		return this;
+	}
 
-    public ProblemFile setContentLength(Long contentLength) {
-        this.contentLength = contentLength;
-        return this;
-    }
+	public Long getContentLength() {
+		return contentLength;
+	}
+
+	public ProblemFile setContentLength(Long contentLength) {
+		this.contentLength = contentLength;
+		return this;
+	}
 }

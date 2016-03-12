@@ -15,22 +15,23 @@ import java.util.Locale;
  */
 @Configuration
 public class LocalizationConfig {
-    @Bean
-    public MessageSource messageSource() {
-        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-        messageSource.setAlwaysUseMessageFormat(true);
-        messageSource.setUseCodeAsDefaultMessage(true);
-        messageSource.setBasenames("classpath:messages");
-        messageSource.setDefaultEncoding("UTF-8");
-        return messageSource;
-    }
 
-    @Bean
-    public LocaleResolver localeResolver(
-            @Value("${locale.name}") String localeName
-    ) {
-        FixedLocaleResolver localeResolver = new FixedLocaleResolver();
-        localeResolver.setDefaultLocale(new Locale(localeName));
-        return localeResolver;
-    }
+	@Bean
+	public MessageSource messageSource() {
+		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+		messageSource.setAlwaysUseMessageFormat(true);
+		messageSource.setUseCodeAsDefaultMessage(true);
+		messageSource.setBasenames("classpath:messages");
+		messageSource.setDefaultEncoding("UTF-8");
+		return messageSource;
+	}
+
+	@Bean
+	public LocaleResolver localeResolver(
+		@Value("${locale.name}") String localeName
+	) {
+		FixedLocaleResolver localeResolver = new FixedLocaleResolver();
+		localeResolver.setDefaultLocale(new Locale(localeName));
+		return localeResolver;
+	}
 }

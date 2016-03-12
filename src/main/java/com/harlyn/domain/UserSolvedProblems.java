@@ -9,25 +9,26 @@ import java.util.Set;
  * Created by wannabe on 09.12.15.
  */
 public class UserSolvedProblems {
-    private final User solver;
-    private final Set<Problem> problems;
-    private final BigInteger points;
 
-    public UserSolvedProblems(User user, Set<Problem> problems, BigInteger points) {
-        this.solver = user;
-        this.problems = problems;
-        this.points = points;
-    }
+	private final User solver;
+	private final Set<Problem> problems;
+	private final BigInteger points;
 
-    public User getSolver() {
-        return solver;
-    }
+	public UserSolvedProblems(User user, Set<Problem> problems, BigInteger points) {
+		this.solver = user;
+		this.problems = problems;
+		this.points = points;
+	}
 
-    public Set<Problem>  getProblems() {
-        return problems;
-    }
+	public User getSolver() {
+		return solver;
+	}
 
-    public BigInteger getPoints() {
-        return points;
-    }
+	public Set<Problem> getProblems() {
+		return problems;
+	}
+
+	public BigInteger getPoints() {
+		return points;
+	}
 }

@@ -14,116 +14,117 @@ import java.util.*;
 @Entity
 @Table(name = "teams")
 public class Team {
-    @Id
-    @SequenceGenerator(name = "teams_id_seq", sequenceName = "teams_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "teams_id_seq")
-    @Column(name = "id", updatable = false)
-    private Long id;
 
-    @NotNull
-    @NotEmpty
-    private String name;
+	@Id
+	@SequenceGenerator(name = "teams_id_seq", sequenceName = "teams_id_seq", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "teams_id_seq")
+	@Column(name = "id", updatable = false)
+	private Long id;
 
-    @OneToMany(mappedBy = "team", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-    private Set<User> users = new HashSet<>();
+	@NotNull
+	@NotEmpty
+	private String name;
 
-    @OneToOne(targetEntity = User.class)
-    @JoinColumn(name = "captain_id")
-    private User captain;
+	@OneToMany(mappedBy = "team", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+	private Set<User> users = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "solverTeams")
-    private Set<Problem> solvedProblems = new HashSet<>();
+	@OneToOne(targetEntity = User.class)
+	@JoinColumn(name = "captain_id")
+	private User captain;
 
-    @OneToMany(mappedBy = "team", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-    private List<RegisteredTeam> registeredTeams = new ArrayList<>();
+	@ManyToMany(fetch = FetchType.EAGER, mappedBy = "solverTeams")
+	private Set<Problem> solvedProblems = new HashSet<>();
 
-    public Team(String name) {
-        this.name = name;
-    }
+	@OneToMany(mappedBy = "team", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+	private List<RegisteredTeam> registeredTeams = new ArrayList<>();
 
-    public Team() {
-    }
+	public Team(String name) {
+		this.name = name;
+	}
 
-    public Team(String name, User captain) {
-        this(name);
-        this.captain = captain;
-    }
+	public Team() {
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public Team(String name, User captain) {
+		this(name);
+		this.captain = captain;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public Team setName(String name) {
-        this.name = name;
-        return this;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public Set<User> getUsers() {
-        return users;
-    }
+	public Team setName(String name) {
+		this.name = name;
+		return this;
+	}
 
-    public Team setUsers(Set<User> users) {
-        this.users = users;
-        return this;
-    }
+	public Set<User> getUsers() {
+		return users;
+	}
 
-    public Team addUser(User user) {
-        this.users.add(user);
-        user.setTeam(this);
-        return this;
-    }
+	public Team setUsers(Set<User> users) {
+		this.users = users;
+		return this;
+	}
 
-    public User getCaptain() {
-        return captain;
-    }
+	public Team addUser(User user) {
+		this.users.add(user);
+		user.setTeam(this);
+		return this;
+	}
 
-    public Team setCaptain(User captain) {
-        this.captain = captain;
-        return this;
-    }
+	public User getCaptain() {
+		return captain;
+	}
 
-    public Set<Problem> getSolvedProblems() {
-        return solvedProblems;
-    }
+	public Team setCaptain(User captain) {
+		this.captain = captain;
+		return this;
+	}
 
-    public Team setSolvedProblems(Set<Problem> solvedProblems) {
-        this.solvedProblems = solvedProblems;
-        return this;
-    }
+	public Set<Problem> getSolvedProblems() {
+		return solvedProblems;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || !(o instanceof Team))
-            return false;
+	public Team setSolvedProblems(Set<Problem> solvedProblems) {
+		this.solvedProblems = solvedProblems;
+		return this;
+	}
 
-        Team other = (Team) o;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || !(o instanceof Team))
+			return false;
 
-        if (id == null) return false;
-        if (Objects.equals(id, other.getId())) return true;
+		Team other = (Team) o;
 
-        return id.equals(other.getId());
-    }
+		if (id == null) return false;
+		if (Objects.equals(id, other.getId())) return true;
 
-    @Override
-    public int hashCode() {
-        if (id != null) {
-            return id.hashCode();
-        } else {
-            return super.hashCode();
-        }
-    }
+		return id.equals(other.getId());
+	}
 
-    public List<RegisteredTeam> getRegisteredTeams() {
-        return registeredTeams;
-    }
+	@Override
+	public int hashCode() {
+		if (id != null) {
+			return id.hashCode();
+		} else {
+			return super.hashCode();
+		}
+	}
 
-    public Team setRegisteredTeams(List<RegisteredTeam> registeredTeams) {
-        this.registeredTeams = registeredTeams;
-        return this;
-    }
+	public List<RegisteredTeam> getRegisteredTeams() {
+		return registeredTeams;
+	}
+
+	public Team setRegisteredTeams(List<RegisteredTeam> registeredTeams) {
+		this.registeredTeams = registeredTeams;
+		return this;
+	}
 }
