@@ -10,7 +10,7 @@
     <h3 th:text="#{admin.user.list}"></h3>
     <ul>
         <li th:each="user : ${users}">
-            <a th:href="${'/admin/user/' + user.id}" th:text="${user.username}"></a>
+            <span th:text="${user.username}"></span>
         </li>
     </ul>
 </div>
