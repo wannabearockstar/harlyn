@@ -84,7 +84,8 @@ public class AdminProblemController {
             problemData.setFile(fileService.uploadProblemFile(file.get(), problemData, filename));
         }
         problemData.setInfo(info);
-        return "redirect:/admin/problem/" + problemService.createProblem(problemData);
+        problemService.createProblem(problemData);
+        return "redirect:/admin/problem/list";
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
@@ -135,7 +136,8 @@ public class AdminProblemController {
             problemData.setFile(fileService.uploadProblemFile(file.get(), problem, filename));
         }
         problemData.setInfo(info);
-        return "redirect:/admin/problem/" + problemService.updateProblem(problem, problemData);
+        problemService.updateProblem(problem, problemData);
+        return "redirect:/admin/problem/list";
     }
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)
