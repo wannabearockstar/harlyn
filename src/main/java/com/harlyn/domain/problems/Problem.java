@@ -4,10 +4,7 @@ import com.harlyn.domain.Team;
 import com.harlyn.domain.competitions.Competition;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by wannabe on 20.11.15.
@@ -58,6 +55,10 @@ public class Problem {
     @ManyToOne
     @JoinColumn(name = "prev_problem_id")
     private Problem prevProblem;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "problem")
+//    @OrderBy(value = "postedAt DESC")
+    private List<Hint> hints = new ArrayList<>();
 
     public Problem() {
     }
@@ -202,6 +203,15 @@ public class Problem {
 
     public Problem setPrevProblem(Problem prevProblem) {
         this.prevProblem = prevProblem;
+        return this;
+    }
+
+    public List<Hint> getHints() {
+        return hints;
+    }
+
+    public Problem setHints(List<Hint> hints) {
+        this.hints = hints;
         return this;
     }
 

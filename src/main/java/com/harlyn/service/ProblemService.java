@@ -3,17 +3,11 @@ package com.harlyn.service;
 import com.harlyn.domain.Team;
 import com.harlyn.domain.User;
 import com.harlyn.domain.competitions.RegisteredTeam;
-import com.harlyn.domain.problems.Problem;
-import com.harlyn.domain.problems.ProblemFile;
-import com.harlyn.domain.problems.Solution;
-import com.harlyn.domain.problems.SubmitData;
+import com.harlyn.domain.problems.*;
 import com.harlyn.domain.problems.handlers.ProblemHandler;
 import com.harlyn.exception.TeamAlreadySolveProblemException;
 import com.harlyn.exception.TeamNotRegisteredForCompetitionException;
-import com.harlyn.repository.ProblemRepository;
-import com.harlyn.repository.RegisteredTeamRepository;
-import com.harlyn.repository.SolutionRepository;
-import com.harlyn.repository.TeamRepository;
+import com.harlyn.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +35,8 @@ public class ProblemService {
     private Map<Problem.ProblemType, ProblemHandler> problemHandlers;
     @Autowired
     private FileService fileService;
+    @Autowired
+    private HintRepository hintRepository;
 
     public Problem getById(Long id) {
         return problemRepository.findOne(id);
@@ -190,5 +186,14 @@ public class ProblemService {
     public ProblemService setRegisteredTeamRepository(RegisteredTeamRepository registeredTeamRepository) {
         this.registeredTeamRepository = registeredTeamRepository;
         return this;
+    }
+
+    public void addHint(Problem problem, String content) {
+        Hint hint = new Hint(content, problem);
+        hintRepository.saveAndFlush(hint);
+    }
+
+    public void deleteHint(Long id) {
+        hintRepository.delete(id);
     }
 }

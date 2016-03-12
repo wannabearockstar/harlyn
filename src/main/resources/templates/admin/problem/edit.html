@@ -101,6 +101,27 @@
             <input type="submit" class="btn btn-primary form-control" th:value="#{form.edit}"/>
         </div>
     </form>
+    <div>
+        <h3>Hints</h3>
+        <div th:each="hint : ${problem.hints}"
+             th:text="${hint.content}"
+             class="alert alert-warning"
+        >
+            <form th:action="${'/admin/problem/hint/' + hint.id + '/delete'}" method="POST">
+                <input type="submit" value="Delete" />
+            </form>
+        </div>
+        <div >
+            <h4>Add new</h4>
+            <form th:action="${'/admin/problem/' + problem.id + '/hint'}" method="POST">
+                <div  class="form-group">
+                    <label for="hint_content">Hint content</label>
+                    <textarea id="hint_content" name="content" required="required" class="form-control"></textarea>
+                    <input type="submit" value="Create" class="form-control btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 </body>
 </html>

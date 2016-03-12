@@ -145,4 +145,22 @@ public class AdminProblemController {
         model.addAttribute("problems", problemService.getAllProblems());
         return "admin/problem/list";
     }
+
+    @RequestMapping(value = "/{id}/hint", method = RequestMethod.POST)
+    public String addHint(@RequestParam(value = "content") String content,
+                          @PathVariable(value = "id") Long id
+    ) {
+        Problem problem = problemService.getById(id);
+        if (problem == null) {
+            throw new ProblemNotFoundException();
+        }
+        problemService.addHint(problem, content);
+        return "redirect:/admin/problem/list";
+    }
+
+    @RequestMapping(value = "/hint/{id}/delete", method = RequestMethod.POST)
+    public String deleteHint(@PathVariable(value = "id") Long id) {
+        problemService.deleteHint(id);
+        return "redirect:/admin/problem/list";
+    }
 }

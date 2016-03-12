@@ -16,6 +16,15 @@
             <a th:if="${problem.file != null}" th:href="${'/problem/' + problem.id + '/file'}"
                th:text="${problem.file.name}"
                     ></a>
+            <div th:unless="${problem.hints.empty}">
+                <h3>Hints</h3>
+                <div th:each="hint : ${problem.hints}"
+                     class="alert alert-warning"
+                >
+                    <strong th:text="${#dates.format(hint.postedAt, T(com.harlyn.domain.problems.Problem).DATE_FORMAT)}"></strong>
+                    <span th:text="${hint.content}"></span>
+                </div>
+            </div>
         </div>
 
         <div th:unless="${available}" class="alert alert-warning">Problem do not available anymore</div>
