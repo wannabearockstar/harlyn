@@ -8,10 +8,13 @@
 <body>
 <div layout:fragment="content" class="container">
     <div th:text="${team.name}"></div>
-    <div th:text="${'Points: ' + team.points}"></div>
     <div>Members</div>
     <ul>
         <li th:each="user : ${team.users}" th:text="${user.username}"></li>
+    </ul>
+    <div>Participation in competitions:</div>
+    <ul>
+        <li th:each="reg_team : ${team.registeredTeams}" th:text="${reg_team.competition.name + ': ' + reg_team.points}"></li>
     </ul>
 </div>
 </body>

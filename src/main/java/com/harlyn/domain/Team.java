@@ -1,13 +1,12 @@
 package com.harlyn.domain;
 
+import com.harlyn.domain.competitions.RegisteredTeam;
 import com.harlyn.domain.problems.Problem;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by wannabe on 11.11.15.
@@ -34,6 +33,9 @@ public class Team {
 
     @ManyToMany(fetch = FetchType.EAGER, mappedBy = "solverTeams")
     private Set<Problem> solvedProblems = new HashSet<>();
+
+    @OneToMany(mappedBy = "team", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    private List<RegisteredTeam> registeredTeams = new ArrayList<>();
 
     public Team(String name) {
         this.name = name;
@@ -93,7 +95,6 @@ public class Team {
         return this;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -115,5 +116,14 @@ public class Team {
         } else {
             return super.hashCode();
         }
+    }
+
+    public List<RegisteredTeam> getRegisteredTeams() {
+        return registeredTeams;
+    }
+
+    public Team setRegisteredTeams(List<RegisteredTeam> registeredTeams) {
+        this.registeredTeams = registeredTeams;
+        return this;
     }
 }
