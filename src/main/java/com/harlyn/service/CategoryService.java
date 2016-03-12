@@ -28,6 +28,9 @@ public class CategoryService {
 		if (categoryData.getName() != null) {
 			category.setName(categoryData.getName());
 		}
+		if (categoryData.getColor() != null) {
+			category.setColor(categoryData.getColor());
+		}
 		categoryRepository.saveAndFlush(category);
 	}
 

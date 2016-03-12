@@ -23,6 +23,8 @@ public class Category {
 	@NotEmpty
 	private String name;
 
+	private String color;
+
 	public Category() {
 	}
 
@@ -43,6 +45,14 @@ public class Category {
 		return this;
 	}
 
+	public String getColor() {
+		return color;
+	}
+
+	public Category setColor(String color) {
+		this.color = color;
+		return this;
+	}
 
 	@Override
 	public boolean equals(Object o) {
