@@ -3,8 +3,8 @@ package com.harlyn.service;
 import com.harlyn.domain.ConfirmCode;
 import com.harlyn.domain.User;
 import com.harlyn.exception.InvalidConfirmCodeException;
+import com.harlyn.repository.ConfirmCodeRepository;
 import com.harlyn.repository.UserRepository;
-import com.harlyn.repository.СonfirmCodeRepository;
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -26,7 +26,7 @@ import java.util.UUID;
 public class ConfirmCodeService {
 
 	@Autowired
-	private СonfirmCodeRepository confirmCodeRepository;
+	private ConfirmCodeRepository confirmCodeRepository;
 	@Autowired
 	private JavaMailSender mailSender;
 	@Autowired
@@ -73,7 +73,7 @@ public class ConfirmCodeService {
 		confirmCodeRepository.flush();
 	}
 
-	public ConfirmCodeService setConfirmCodeRepository(СonfirmCodeRepository confirmCodeRepository) {
+	public ConfirmCodeService setConfirmCodeRepository(ConfirmCodeRepository confirmCodeRepository) {
 		this.confirmCodeRepository = confirmCodeRepository;
 		return this;
 	}

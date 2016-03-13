@@ -3,8 +3,8 @@ package com.harlyn.service;
 import com.harlyn.HarlynApplication;
 import com.harlyn.domain.ConfirmCode;
 import com.harlyn.domain.User;
+import com.harlyn.repository.ConfirmCodeRepository;
 import com.harlyn.repository.UserRepository;
-import com.harlyn.repository.СonfirmCodeRepository;
 import org.apache.velocity.app.VelocityEngine;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.test.junit.FlywayTestExecutionListener;
@@ -49,7 +49,7 @@ public class ConfirmCodeServiceTest {
 	@Autowired
 	private Flyway flyway;
 	@Autowired
-	private СonfirmCodeRepository confirmCodeRepository;
+	private ConfirmCodeRepository confirmCodeRepository;
 	@Mock
 	private JavaMailSender mailSender;
 	@Autowired
