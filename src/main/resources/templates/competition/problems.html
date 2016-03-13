@@ -8,6 +8,22 @@
 <body>
 <div layout:fragment="content" class="container">
 	<h3 th:text="${competition.name + ': problem list'}">Problem list</h3>
+	<div class="form-group">
+		<form th:action="${'/competition/' + competition.id + '/problems'}" method="get">
+			<a th:if="${selected_category_id != 0}" th:href="${'/competition/' + competition.id + '/problems'}">
+				Flush filter
+			</a>
+			<label for="category">Category</label>
+			<select name="category" id="category" class="form-control">
+				<option th:each="category : ${categories}"
+								th:text="${category.name}"
+								th:value="${category.id}"
+								th:selected="${selected_category_id != 0 and selected_category_id eq category.id}"
+				></option>
+			</select>
+			<input type="submit" value="Filter" class="form-control btn btn-primary" />
+		</form>
+	</div>
 	<table class="table table-hover">
 		<thead>
 		<tr>
@@ -19,8 +35,8 @@
 			<th>Solved by your team?</th>
 		</tr>
 		</thead>
-		<tbody>
-		<tr th:each="problem : ${competition.problems}">
+		<tbody  th:with="sel_cat=${selected_category_id}">
+		<tr th:each="problem : ${competition.problems.?[__${sel_cat}__ == 0 or (category != null and category.id eq __${sel_cat}__)]}">
 			<td>
 				<span th:if="${problem.prevProblem != null and !me.team.solvedProblems.contains(problem.prevProblem)}" th:text="${problem.name}"></span>
 				<a th:unless="${problem.prevProblem != null and !me.team.solvedProblems.contains(problem.prevProblem)}" th:href="@{'/problem/' + ${problem.id}}" th:text="${problem.name}"></a>
