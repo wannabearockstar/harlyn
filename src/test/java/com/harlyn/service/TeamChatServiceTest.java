@@ -37,45 +37,46 @@ import static org.junit.Assert.assertEquals;
 @WebAppConfiguration
 @ActiveProfiles({"test"})
 public class TeamChatServiceTest {
-    @Autowired
-    private Flyway flyway;
-    @Autowired
-    private TeamChatMessageRepository teamChatMessageRepository;
-    @Autowired
-    private TeamRepository teamRepository;
-    @Autowired
-    private UserRepository userRepository;
-    private TeamChatService teamChatService;
 
-    @Before
-    public void setUp() throws Exception {
-        flyway.clean();
-        flyway.migrate();
-        teamChatService = new TeamChatService().setTeamChatMessageRepository(teamChatMessageRepository);
-    }
+	@Autowired
+	private Flyway flyway;
+	@Autowired
+	private TeamChatMessageRepository teamChatMessageRepository;
+	@Autowired
+	private TeamRepository teamRepository;
+	@Autowired
+	private UserRepository userRepository;
+	private TeamChatService teamChatService;
 
-    @After
-    public void tearDown() throws Exception {
-        flyway.clean();
-    }
+	@Before
+	public void setUp() throws Exception {
+		flyway.clean();
+		flyway.migrate();
+		teamChatService = new TeamChatService().setTeamChatMessageRepository(teamChatMessageRepository);
+	}
 
-    @Test
-    public void testGetLastMessagesByTeam() throws Exception {
-        //given
-        User user = userRepository.saveAndFlush(new User("email@email.com", "usrnm", "password"));
-        Team team = teamRepository.saveAndFlush(new Team("name1", user));
-        Team team2 = teamRepository.saveAndFlush(new Team("name2"));
-        teamChatMessageRepository.saveAndFlush(new TeamChatMessage("c1", new Date(), user, team));
-        teamChatMessageRepository.saveAndFlush(new TeamChatMessage("c2", new Date(), user, team));
-        teamChatMessageRepository.saveAndFlush(new TeamChatMessage("c3", new Date(), user, team));
-        teamChatMessageRepository.saveAndFlush(new TeamChatMessage("c4", new Date(), user, team2));
-        teamChatMessageRepository.saveAndFlush(new TeamChatMessage("c5", new Date(), user, team));
-        //when
-        List<TeamChatMessage> teamChatMessages = teamChatService.getLastMessagesByTeam(team, 3);
-        //then
-        assertEquals(3, teamChatMessages.size());
-        assertEquals("c2", teamChatMessages.get(0).getContent());
-        assertEquals("c3", teamChatMessages.get(1).getContent());
-        assertEquals("c5", teamChatMessages.get(2).getContent());
-    }
+	@After
+	public void tearDown() throws Exception {
+		flyway.clean();
+	}
+
+	@Test
+	public void testGetLastMessagesByTeam() throws Exception {
+		//given
+		User user = userRepository.saveAndFlush(new User("email@email.com", "usrnm", "password"));
+		Team team = teamRepository.saveAndFlush(new Team("name1", user));
+		Team team2 = teamRepository.saveAndFlush(new Team("name2"));
+		teamChatMessageRepository.saveAndFlush(new TeamChatMessage("c1", new Date(), user, team));
+		teamChatMessageRepository.saveAndFlush(new TeamChatMessage("c2", new Date(), user, team));
+		teamChatMessageRepository.saveAndFlush(new TeamChatMessage("c3", new Date(), user, team));
+		teamChatMessageRepository.saveAndFlush(new TeamChatMessage("c4", new Date(), user, team2));
+		teamChatMessageRepository.saveAndFlush(new TeamChatMessage("c5", new Date(), user, team));
+		//when
+		List<TeamChatMessage> teamChatMessages = teamChatService.getLastMessagesByTeam(team, 3);
+		//then
+		assertEquals(3, teamChatMessages.size());
+		assertEquals("c2", teamChatMessages.get(0).getContent());
+		assertEquals("c3", teamChatMessages.get(1).getContent());
+		assertEquals("c5", teamChatMessages.get(2).getContent());
+	}
 }

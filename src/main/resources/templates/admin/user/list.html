@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
-      layout:decorator="fragments/wrapper">
+			xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+			layout:decorator="fragments/wrapper">
 <head>
-    <title th:text="#{admin.user.title}"></title>
+	<title th:text="#{admin.user.title}"></title>
 </head>
 <body>
 <div layout:fragment="content" class="container">
-    <h3 th:text="#{admin.user.list}"></h3>
-    <ul>
-        <li th:each="user : ${users}">
-            <a th:href="${'/admin/user/' + user.id}" th:text="${user.username}"></a>
-        </li>
-    </ul>
+	<h3 th:text="#{admin.user.list}"></h3>
+	<ul>
+		<li th:each="user : ${users}">
+			<span th:text="${user.username}"></span>
+		</li>
+	</ul>
 </div>
 </body>
 </html>

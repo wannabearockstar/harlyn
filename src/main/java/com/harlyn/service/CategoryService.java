@@ -12,30 +12,34 @@ import java.util.List;
  */
 @Service
 public class CategoryService {
-    @Autowired
-    private CategoryRepository categoryRepository;
 
-    public Category findById(Long id) {
-        return categoryRepository.findOne(id);
-    }
+	@Autowired
+	private CategoryRepository categoryRepository;
 
-    public Long createCategory(Category category) {
-        return categoryRepository.saveAndFlush(category).getId();
-    }
+	public Category findById(Long id) {
+		return categoryRepository.findOne(id);
+	}
 
-    public void updateCategory(Category category, Category categoryData) {
-        if (categoryData.getName() != null) {
-            category.setName(categoryData.getName());
-        }
-        categoryRepository.saveAndFlush(category);
-    }
+	public Long createCategory(Category category) {
+		return categoryRepository.saveAndFlush(category).getId();
+	}
 
-    public List<Category> findAll() {
-        return categoryRepository.findAllByOrderByIdDesc();
-    }
+	public void updateCategory(Category category, Category categoryData) {
+		if (categoryData.getName() != null) {
+			category.setName(categoryData.getName());
+		}
+		if (categoryData.getColor() != null) {
+			category.setColor(categoryData.getColor());
+		}
+		categoryRepository.saveAndFlush(category);
+	}
 
-    public CategoryService setCategoryRepository(CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
-        return this;
-    }
+	public List<Category> findAll() {
+		return categoryRepository.findAllByOrderByIdDesc();
+	}
+
+	public CategoryService setCategoryRepository(CategoryRepository categoryRepository) {
+		this.categoryRepository = categoryRepository;
+		return this;
+	}
 }

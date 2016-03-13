@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @EnableAutoConfiguration
 public class HarlynApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(HarlynApplication.class, args);
-    }
+	public static void main(String[] args) {
+		SpringApplication.run(HarlynApplication.class, args);
+	}
 }

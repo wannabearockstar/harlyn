@@ -10,96 +10,96 @@ import javax.persistence.*;
 @Entity
 @Table(name = "solutions")
 public class Solution {
-    @Id
-    @SequenceGenerator(name = "solutions_id_seq", sequenceName = "solutions_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "solutions_id_seq")
-    @Column(name = "id", updatable = false)
-    private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "problem_id")
-    private Problem problem;
+	@Id
+	@SequenceGenerator(name = "solutions_id_seq", sequenceName = "solutions_id_seq", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "solutions_id_seq")
+	@Column(name = "id", updatable = false)
+	private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "solver_id")
-    private User solver;
+	@ManyToOne
+	@JoinColumn(name = "problem_id")
+	private Problem problem;
 
-    private boolean correct;
+	@ManyToOne
+	@JoinColumn(name = "solver_id")
+	private User solver;
 
-    private boolean checked;
+	private boolean correct;
 
-    private String answer;
+	private boolean checked;
 
-    @OneToOne(mappedBy = "solution", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private SolutionFile file;
+	private String answer;
 
-    public Solution() {
-    }
+	@OneToOne(mappedBy = "solution", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private SolutionFile file;
 
-    public Solution(Problem problem, User solver) {
-        this.problem = problem;
-        this.solver = solver;
-        this.correct = false;
-        this.checked = false;
-    }
+	public Solution() {
+	}
+
+	public Solution(Problem problem, User solver) {
+		this.problem = problem;
+		this.solver = solver;
+		this.correct = false;
+		this.checked = false;
+	}
 
 
+	public Long getId() {
+		return id;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public Problem getProblem() {
+		return problem;
+	}
 
-    public Problem getProblem() {
-        return problem;
-    }
+	public Solution setProblem(Problem problem) {
+		this.problem = problem;
+		return this;
+	}
 
-    public Solution setProblem(Problem problem) {
-        this.problem = problem;
-        return this;
-    }
+	public User getSolver() {
+		return solver;
+	}
 
-    public User getSolver() {
-        return solver;
-    }
+	public Solution setSolver(User solver) {
+		this.solver = solver;
+		return this;
+	}
 
-    public Solution setSolver(User solver) {
-        this.solver = solver;
-        return this;
-    }
+	public boolean isChecked() {
+		return checked;
+	}
 
-    public boolean isChecked() {
-        return checked;
-    }
+	public Solution setChecked(boolean checked) {
+		this.checked = checked;
+		return this;
+	}
 
-    public Solution setChecked(boolean checked) {
-        this.checked = checked;
-        return this;
-    }
+	public boolean isCorrect() {
+		return correct;
+	}
 
-    public boolean isCorrect() {
-        return correct;
-    }
+	public Solution setCorrect(boolean correct) {
+		this.correct = correct;
+		return this;
+	}
 
-    public Solution setCorrect(boolean correct) {
-        this.correct = correct;
-        return this;
-    }
+	public String getAnswer() {
+		return answer;
+	}
 
-    public String getAnswer() {
-        return answer;
-    }
+	public Solution setAnswer(String answer) {
+		this.answer = answer;
+		return this;
+	}
 
-    public Solution setAnswer(String answer) {
-        this.answer = answer;
-        return this;
-    }
+	public SolutionFile getFile() {
+		return file;
+	}
 
-    public SolutionFile getFile() {
-        return file;
-    }
-
-    public Solution setFile(SolutionFile file) {
-        this.file = file;
-        return this;
-    }
+	public Solution setFile(SolutionFile file) {
+		this.file = file;
+		return this;
+	}
 }

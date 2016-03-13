@@ -42,66 +42,67 @@ import static org.mockito.Mockito.*;
 @WebAppConfiguration
 @ActiveProfiles({"test"})
 public class ConfirmCodeServiceTest {
-    @Autowired
-    PlatformTransactionManager platformTransactionManager;
-    TransactionTemplate transactionTemplate;
-    @Autowired
-    private Flyway flyway;
-    @Autowired
-    private СonfirmCodeRepository confirmCodeRepository;
-    @Mock
-    private JavaMailSender mailSender;
-    @Autowired
-    private SimpleMailMessage templateConfirmCodeMessage;
-    @Autowired
-    private VelocityEngine velocityEngine;
-    @Autowired
-    private UserRepository userRepository;
 
-    private ConfirmCodeService confirmCodeService;
+	@Autowired
+	PlatformTransactionManager platformTransactionManager;
+	TransactionTemplate transactionTemplate;
+	@Autowired
+	private Flyway flyway;
+	@Autowired
+	private СonfirmCodeRepository confirmCodeRepository;
+	@Mock
+	private JavaMailSender mailSender;
+	@Autowired
+	private SimpleMailMessage templateConfirmCodeMessage;
+	@Autowired
+	private VelocityEngine velocityEngine;
+	@Autowired
+	private UserRepository userRepository;
 
-    @Before
-    public void setUp() throws Exception {
-        flyway.clean();
-        flyway.migrate();
-        confirmCodeService = new ConfirmCodeService();
-        mailSender = mock(JavaMailSenderImpl.class);
-        confirmCodeService.setConfirmCodeRepository(confirmCodeRepository)
-                .setMailSender(mailSender)
-                .setTemplateConfirmCodeMessage(templateConfirmCodeMessage)
-                .setVelocityEngine(velocityEngine)
-                .setUserRepository(userRepository);
-        transactionTemplate = new TransactionTemplate(platformTransactionManager);
-    }
+	private ConfirmCodeService confirmCodeService;
 
-    @After
-    public void tearDown() throws Exception {
-        flyway.clean();
-    }
+	@Before
+	public void setUp() throws Exception {
+		flyway.clean();
+		flyway.migrate();
+		confirmCodeService = new ConfirmCodeService();
+		mailSender = mock(JavaMailSenderImpl.class);
+		confirmCodeService.setConfirmCodeRepository(confirmCodeRepository)
+			.setMailSender(mailSender)
+			.setTemplateConfirmCodeMessage(templateConfirmCodeMessage)
+			.setVelocityEngine(velocityEngine)
+			.setUserRepository(userRepository);
+		transactionTemplate = new TransactionTemplate(platformTransactionManager);
+	}
 
-    @Test
-    public void testCreateConfirmCode() throws Exception {
-        User user = userRepository.saveAndFlush(new User("email@emai.com", "username", "password"));
-        ConfirmCode confirmCode = confirmCodeService.createConfirmCode(user);
+	@After
+	public void tearDown() throws Exception {
+		flyway.clean();
+	}
 
-        assertEquals("username", confirmCodeRepository.findOneByCode(confirmCode.getCode()).getUser().getUsername());
-        verify(mailSender, times(1)).send(any(MimeMessagePreparator.class));
-    }
+	@Test
+	public void testCreateConfirmCode() throws Exception {
+		User user = userRepository.saveAndFlush(new User("email@emai.com", "username", "password"));
+		ConfirmCode confirmCode = confirmCodeService.createConfirmCode(user);
 
-    @Test
-    public void testConfirmUserByCode() throws Exception {
-        User user = userRepository.saveAndFlush(new User("email@emai.com", "username", "password"));
-        ConfirmCode confirmCode = confirmCodeService.createConfirmCode(user);
+		assertEquals("username", confirmCodeRepository.findOneByCode(confirmCode.getCode()).getUser().getUsername());
+		verify(mailSender, times(1)).send(any(MimeMessagePreparator.class));
+	}
 
-        assertFalse(userRepository.findUserByEmail("email@emai.com").isEnabled());
-        assertNotNull(confirmCodeRepository.findOneByCode(confirmCode.getCode()));
+	@Test
+	public void testConfirmUserByCode() throws Exception {
+		User user = userRepository.saveAndFlush(new User("email@emai.com", "username", "password"));
+		ConfirmCode confirmCode = confirmCodeService.createConfirmCode(user);
 
-        transactionTemplate.execute(status -> {
-            confirmCodeService.confirmUserByCode(confirmCode.getCode());
-            return 1;
-        });
+		assertFalse(userRepository.findUserByEmail("email@emai.com").isEnabled());
+		assertNotNull(confirmCodeRepository.findOneByCode(confirmCode.getCode()));
 
-        assertTrue(userRepository.findUserByEmail("email@emai.com").isEnabled());
-        assertNull(confirmCodeRepository.findOneByCode(confirmCode.getCode()));
-    }
+		transactionTemplate.execute(status -> {
+			confirmCodeService.confirmUserByCode(confirmCode.getCode());
+			return 1;
+		});
+
+		assertTrue(userRepository.findUserByEmail("email@emai.com").isEnabled());
+		assertNull(confirmCodeRepository.findOneByCode(confirmCode.getCode()));
+	}
 }

@@ -33,62 +33,64 @@ import java.util.Date;
  */
 @Controller
 public class ChatController {
-    @Autowired
-    private CompetitionService competitionService;
-    @Autowired
-    private CompetitionChatService competitionChatService;
-    @Autowired
-    private TeamChatService teamChatService;
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
 
-    @RequestMapping(value = "/chat/team", method = RequestMethod.GET)
-    public String teamChatPage(Model model,
-                               @RequestParam(value = "num", required = false, defaultValue = "10") int num) {
+	@Autowired
+	private CompetitionService competitionService;
+	@Autowired
+	private CompetitionChatService competitionChatService;
+	@Autowired
+	private TeamChatService teamChatService;
+	@Autowired
+	private ApplicationEventPublisher eventPublisher;
 
-        User me = (User) model.asMap().get("me");
-        model.addAttribute("messages", teamChatService.getLastMessagesByTeam(me.getTeam(), num));
-        return "chat/team";
-    }
+	@RequestMapping(value = "/chat/team", method = RequestMethod.GET)
+	public String teamChatPage(Model model,
+														 @RequestParam(value = "num", required = false, defaultValue = "10") int num) {
 
-    @RequestMapping(value = "/competition/{id}/chat", method = RequestMethod.GET)
-    public String competitionChatPage(@PathVariable("id") Long competitionId,
-                                      @RequestParam(value = "num", required = false, defaultValue = "10") int num,
-                                      Model model
-    ) {
-        Competition competition = competitionService.findById(competitionId);
-        if (competition == null) {
-            throw new CompetitionNotFoundException(competitionId);
-        }
-        User me = (User) model.asMap().get("me");
-        if (!competitionService.isTeamRegistered(competition, me.getTeam())) {
-            throw new TeamNotRegisteredForCompetitionException();
-        }
-        model.addAttribute("competition", competition);
-        model.addAttribute("messages", competitionChatService.getLastMessagesByCompetition(competition, num));
-        return "chat/competition";
-    }
+		User me = (User) model.asMap().get("me");
+		model.addAttribute("messages", teamChatService.getLastMessagesByTeam(me.getTeam(), num));
+		return "chat/team";
+	}
 
-    @MessageMapping("/team.{team_id}")
-    public void teamHandler(@Payload ChatMessage body, @DestinationVariable("team_id") Long teamId, Principal principal) throws Exception {
-        User author = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
-        TeamChatMessage teamChatMessage = new TeamChatMessage(body.getContent(), new Date(), author, author.getTeam());
-        eventPublisher.publishEvent(new MessagePublishedEvent(this, teamChatMessage));
-        teamChatService.create(teamChatMessage);
-    }
+	@RequestMapping(value = "/competition/{id}/chat", method = RequestMethod.GET)
+	public String competitionChatPage(@PathVariable("id") Long competitionId,
+																		@RequestParam(value = "num", required = false, defaultValue = "10") int num,
+																		Model model
+	) {
+		Competition competition = competitionService.findById(competitionId);
+		if (competition == null) {
+			throw new CompetitionNotFoundException(competitionId);
+		}
+		User me = (User) model.asMap().get("me");
+		if (!competitionService.isTeamRegistered(competition, me.getTeam())) {
+			throw new TeamNotRegisteredForCompetitionException();
+		}
+		model.addAttribute("competition", competition);
+		model.addAttribute("messages", competitionChatService.getLastMessagesByCompetition(competition, num));
+		return "chat/competition";
+	}
 
-    @MessageMapping("/competition.{competition_id}")
-    public void adminHandler(@Payload ChatMessage body, @DestinationVariable("competition_id") Long competitionId, Principal principal) {
-        User author = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
-        if (!author.hasRole("ROLE_ADMIN")) {
-            throw new AccessDeniedException("Only admins can publish in competition channel");
-        }
-        Competition competition = competitionService.findById(competitionId);
-        if (competition == null) {
-            throw new CompetitionNotFoundException(competitionId);
-        }
-        CompetitionChatMessage chatMessage = new CompetitionChatMessage(body.getContent(), new Date(), author, competition);
-        eventPublisher.publishEvent(new MessagePublishedEvent(this, chatMessage));
-        competitionChatService.create(chatMessage);
-    }
+	@MessageMapping("/team.{team_id}")
+	public void teamHandler(@Payload ChatMessage body, @DestinationVariable("team_id") Long teamId, Principal principal)
+		throws Exception {
+		User author = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+		TeamChatMessage teamChatMessage = new TeamChatMessage(body.getContent(), new Date(), author, author.getTeam());
+		eventPublisher.publishEvent(new MessagePublishedEvent(this, teamChatMessage));
+		teamChatService.create(teamChatMessage);
+	}
+
+	@MessageMapping("/competition.{competition_id}")
+	public void adminHandler(@Payload ChatMessage body, @DestinationVariable("competition_id") Long competitionId, Principal principal) {
+		User author = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+		if (!author.hasRole("ROLE_ADMIN")) {
+			throw new AccessDeniedException("Only admins can publish in competition channel");
+		}
+		Competition competition = competitionService.findById(competitionId);
+		if (competition == null) {
+			throw new CompetitionNotFoundException(competitionId);
+		}
+		CompetitionChatMessage chatMessage = new CompetitionChatMessage(body.getContent(), new Date(), author, competition);
+		eventPublisher.publishEvent(new MessagePublishedEvent(this, chatMessage));
+		competitionChatService.create(chatMessage);
+	}
 }

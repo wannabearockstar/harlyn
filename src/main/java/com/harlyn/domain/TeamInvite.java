@@ -9,70 +9,71 @@ import java.util.Objects;
 @Entity
 @Table(name = "team_invites")
 public class TeamInvite {
-    @Id
-    @SequenceGenerator(name = "roles_id_seq", sequenceName = "roles_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "roles_id_seq")
-    @Column(name = "id", updatable = false)
-    private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "team_id", nullable = false)
-    private Team team;
+	@Id
+	@SequenceGenerator(name = "roles_id_seq", sequenceName = "roles_id_seq", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "roles_id_seq")
+	@Column(name = "id", updatable = false)
+	private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "recipent_id", nullable = false)
-    private User recipent;
+	@ManyToOne
+	@JoinColumn(name = "team_id", nullable = false)
+	private Team team;
 
-    public TeamInvite() {
-    }
+	@ManyToOne
+	@JoinColumn(name = "recipent_id", nullable = false)
+	private User recipent;
 
-    public TeamInvite(Team team, User recipent) {
-        this.team = team;
-        this.recipent = recipent;
-    }
+	public TeamInvite() {
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public TeamInvite(Team team, User recipent) {
+		this.team = team;
+		this.recipent = recipent;
+	}
 
-    public Team getTeam() {
-        return team;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public TeamInvite setTeam(Team team) {
-        this.team = team;
-        return this;
-    }
+	public Team getTeam() {
+		return team;
+	}
 
-    public User getRecipent() {
-        return recipent;
-    }
+	public TeamInvite setTeam(Team team) {
+		this.team = team;
+		return this;
+	}
 
-    public TeamInvite setRecipent(User recipent) {
-        this.recipent = recipent;
-        return this;
-    }
+	public User getRecipent() {
+		return recipent;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || !(o instanceof User))
-            return false;
+	public TeamInvite setRecipent(User recipent) {
+		this.recipent = recipent;
+		return this;
+	}
 
-        User other = (User) o;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || !(o instanceof User))
+			return false;
 
-        if (id == null) return false;
-        if (Objects.equals(id, other.getId())) return true;
+		User other = (User) o;
 
-        return id.equals(other.getId());
-    }
+		if (id == null) return false;
+		if (Objects.equals(id, other.getId())) return true;
 
-    @Override
-    public int hashCode() {
-        if (id != null) {
-            return id.hashCode();
-        } else {
-            return super.hashCode();
-        }
-    }
+		return id.equals(other.getId());
+	}
+
+	@Override
+	public int hashCode() {
+		if (id != null) {
+			return id.hashCode();
+		} else {
+			return super.hashCode();
+		}
+	}
 }

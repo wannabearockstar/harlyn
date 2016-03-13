@@ -1,45 +1,45 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
-      layout:decorator="fragments/wrapper">
+			xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+			layout:decorator="fragments/wrapper">
 <head>
-    <title th:text="#{admin.solution.title}"></title>
+	<title th:text="#{admin.solution.title}"></title>
 </head>
 <body>
 <div layout:fragment="content" class="container">
-    <h2 th:text="#{admin.solutions.name} +'#' + ${solution.id}"></h2>
-    <div th:if="${solution.answer}">
-        <span th:text="#{admin.solutions.query}"></span>
-        <span th:text="${solution.answer}"></span>
-    </div>
-    <div th:if="${solution.file != null}">
-        <span th:text="#{admin.solutions.file}"></span>
-        <a th:href="${'/admin/solution/' + solution.id + '/file'}"
-           th:text="${solution.file.name}"
-        ></a>
-    </div>
-    <div th:unless="${solution.answer}" th:text="#{admin.solutions.no_data}"></div>
-    <div th:if="${solution.checked}">
-        <div>
-            <span th:text="#{admin.solutions.checked.status}"></span>
+	<h2 th:text="#{admin.solutions.name} +'#' + ${solution.id}"></h2>
+	<div th:if="${solution.answer}">
+		<span th:text="#{admin.solutions.query}"></span>
+		<span th:text="${solution.answer}"></span>
+	</div>
+	<div th:if="${solution.file != null}">
+		<span th:text="#{admin.solutions.file}"></span>
+		<a th:href="${'/admin/solution/' + solution.id + '/file'}"
+			 th:text="${solution.file.name}"
+		></a>
+	</div>
+	<div th:unless="${solution.answer}" th:text="#{admin.solutions.no_data}"></div>
+	<div th:if="${solution.checked}">
+		<div>
+			<span th:text="#{admin.solutions.checked.status}"></span>
         <span class="alert alert-success" th:if="${solution.correct}" th:text="#{admin.solutions.correct}">
         </span>
         <span class="alert alert-danger" th:unless="${solution.correct}" th:text="#{admin.solutions.wrong}">
         </span>
-        </div>
+		</div>
 
-    </div>
-    <div th:unless="${solution.checked}">
-        <span th:text="#{admin.solutions.not_reviewed}"></span>
-        <form method="post" th:action="${'/admin/solution/' + solution.id + '/check'}">
-            <label for="correct" th:text="#{admin.solutions.decision}"></label>
-            <select id="correct" name="correct">
-                <option value="0" th:text="#{admin.solutions.wrong}"></option>
-                <option value="1" th:text="#{admin.solutions.correct}"></option>
-            </select>
-            <input type="submit" th:value="#{admin.solutions.review}"/>
-        </form>
-    </div>
+	</div>
+	<div th:unless="${solution.checked}">
+		<span th:text="#{admin.solutions.not_reviewed}"></span>
+		<form method="post" th:action="${'/admin/solution/' + solution.id + '/check'}">
+			<label for="correct" th:text="#{admin.solutions.decision}"></label>
+			<select id="correct" name="correct">
+				<option value="0" th:text="#{admin.solutions.wrong}"></option>
+				<option value="1" th:text="#{admin.solutions.correct}"></option>
+			</select>
+			<input type="submit" th:value="#{admin.solutions.review}"/>
+		</form>
+	</div>
 </div>
 </body>
 </html>

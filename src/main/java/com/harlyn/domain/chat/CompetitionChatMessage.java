@@ -13,35 +13,36 @@ import java.util.Date;
 @Entity
 @Table(name = "competition_messages")
 public class CompetitionChatMessage extends ChatMessage {
-    @Id
-    @SequenceGenerator(name = "competition_messages_id_seq", sequenceName = "competition_messages_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "competition_messages_id_seq")
-    @Column(name = "id", updatable = false)
-    private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "competition_id")
-    @JsonIgnore
-    private Competition competition;
+	@Id
+	@SequenceGenerator(name = "competition_messages_id_seq", sequenceName = "competition_messages_id_seq", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "competition_messages_id_seq")
+	@Column(name = "id", updatable = false)
+	private Long id;
 
-    public CompetitionChatMessage() {
-    }
+	@ManyToOne
+	@JoinColumn(name = "competition_id")
+	@JsonIgnore
+	private Competition competition;
 
-    public CompetitionChatMessage(String content, Date postedAt, User author, Competition competition) {
-        super(content, postedAt, author);
-        this.competition = competition;
-    }
+	public CompetitionChatMessage() {
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public CompetitionChatMessage(String content, Date postedAt, User author, Competition competition) {
+		super(content, postedAt, author);
+		this.competition = competition;
+	}
 
-    public Competition getCompetition() {
-        return competition;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public CompetitionChatMessage setCompetition(Competition competition) {
-        this.competition = competition;
-        return this;
-    }
+	public Competition getCompetition() {
+		return competition;
+	}
+
+	public CompetitionChatMessage setCompetition(Competition competition) {
+		this.competition = competition;
+		return this;
+	}
 }

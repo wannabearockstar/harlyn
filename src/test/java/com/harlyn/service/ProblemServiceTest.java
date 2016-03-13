@@ -48,254 +48,255 @@ import static org.junit.Assert.*;
 @WebAppConfiguration
 @ActiveProfiles({"test"})
 public class ProblemServiceTest {
-    @Autowired
-    PlatformTransactionManager platformTransactionManager;
-    TransactionTemplate transactionTemplate;
-    @Autowired
-    private Flyway flyway;
 
-    @Autowired
-    private ProblemRepository problemRepository;
+	@Autowired
+	PlatformTransactionManager platformTransactionManager;
+	TransactionTemplate transactionTemplate;
+	@Autowired
+	private Flyway flyway;
 
-    @Autowired
-    private SolutionRepository solutionRepository;
+	@Autowired
+	private ProblemRepository problemRepository;
 
-    @Autowired
-    private TeamRepository teamRepository;
+	@Autowired
+	private SolutionRepository solutionRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+	@Autowired
+	private TeamRepository teamRepository;
 
-    @Autowired
-    private CompetitionRepository competitionRepository;
+	@Autowired
+	private UserRepository userRepository;
 
-    @Autowired
-    private RegisteredTeamRepository registeredTeamRepository;
+	@Autowired
+	private CompetitionRepository competitionRepository;
 
-    @Resource
-    private Map<Problem.ProblemType, ProblemHandler> problemHandlers;
+	@Autowired
+	private RegisteredTeamRepository registeredTeamRepository;
 
-    private ProblemService problemService;
+	@Resource
+	private Map<Problem.ProblemType, ProblemHandler> problemHandlers;
 
-    @Before
-    public void setUp() throws Exception {
-        flyway.clean();
-        flyway.migrate();
+	private ProblemService problemService;
 
-        problemService = new ProblemService();
-        problemService.setProblemHandlers(problemHandlers)
-                .setProblemRepository(problemRepository)
-                .setSolutionRepository(solutionRepository)
-                .setTeamRepository(teamRepository)
-                .setRegisteredTeamRepository(registeredTeamRepository);
-        transactionTemplate = new TransactionTemplate(platformTransactionManager);
-    }
+	@Before
+	public void setUp() throws Exception {
+		flyway.clean();
+		flyway.migrate();
 
-    @After
-    public void tearDown() throws Exception {
-        flyway.clean();
-    }
+		problemService = new ProblemService();
+		problemService.setProblemHandlers(problemHandlers)
+			.setProblemRepository(problemRepository)
+			.setSolutionRepository(solutionRepository)
+			.setTeamRepository(teamRepository)
+			.setRegisteredTeamRepository(registeredTeamRepository);
+		transactionTemplate = new TransactionTemplate(platformTransactionManager);
+	}
 
-    @Test
-    public void testGetById() throws Exception {
-        Competition competition = competitionRepository.saveAndFlush(new Competition("competition1"));
-        Problem problem = problemRepository.saveAndFlush(new Problem("name", "answer", 12, Problem.ProblemType.FLAG, competition));
+	@After
+	public void tearDown() throws Exception {
+		flyway.clean();
+	}
 
-        assertEquals("name", problemService.getById(problem.getId()).getName());
-        assertEquals("answer", problemService.getById(problem.getId()).getAnswer());
-        assertEquals(new Integer(12), problemService.getById(problem.getId()).getPoints());
-        assertEquals(Problem.ProblemType.FLAG, problemService.getById(problem.getId()).getProblemType());
-    }
+	@Test
+	public void testGetById() throws Exception {
+		Competition competition = competitionRepository.saveAndFlush(new Competition("competition1"));
+		Problem problem = problemRepository.saveAndFlush(new Problem("name", "answer", 12, Problem.ProblemType.FLAG, competition));
 
-    @Test
-    public void testCreateSolution() throws Exception {
-        Competition competition = competitionRepository.saveAndFlush(new Competition("competition1"));
-        Problem problem = problemRepository.saveAndFlush(new Problem("name", "answer", 12, Problem.ProblemType.FLAG, competition));
-        Team team = teamRepository.saveAndFlush(new Team("name"));
-        User solver = userRepository.saveAndFlush(new User("user@email.com", "username", "password")
-                        .setTeam(team)
-        );
-        RegisteredTeam registeredTeam = registeredTeamRepository.saveAndFlush(new RegisteredTeam(competition, team));
+		assertEquals("name", problemService.getById(problem.getId()).getName());
+		assertEquals("answer", problemService.getById(problem.getId()).getAnswer());
+		assertEquals(new Integer(12), problemService.getById(problem.getId()).getPoints());
+		assertEquals(Problem.ProblemType.FLAG, problemService.getById(problem.getId()).getProblemType());
+	}
 
-        assertEquals(new Integer(0), registeredTeam.getPoints());
+	@Test
+	public void testCreateSolution() throws Exception {
+		Competition competition = competitionRepository.saveAndFlush(new Competition("competition1"));
+		Problem problem = problemRepository.saveAndFlush(new Problem("name", "answer", 12, Problem.ProblemType.FLAG, competition));
+		Team team = teamRepository.saveAndFlush(new Team("name"));
+		User solver = userRepository.saveAndFlush(new User("user@email.com", "username", "password")
+			.setTeam(team)
+		);
+		RegisteredTeam registeredTeam = registeredTeamRepository.saveAndFlush(new RegisteredTeam(competition, team));
 
-        SubmitData invalidData = new SubmitData("wrong", null);
-        SubmitData validData = new SubmitData("answer", null);
+		assertEquals(new Integer(0), registeredTeam.getPoints());
 
-        Solution invalidSolution = solutionRepository.findOne(
-                problemService.createSolution(problem, invalidData, solver)
-        );
-        team = teamRepository.findOne(team.getId());
-        assertFalse(problemRepository.findOne(problem.getId()).getSolverTeams().contains(team));
+		SubmitData invalidData = new SubmitData("wrong", null);
+		SubmitData validData = new SubmitData("answer", null);
+
+		Solution invalidSolution = solutionRepository.findOne(
+			problemService.createSolution(problem, invalidData, solver)
+		);
+		team = teamRepository.findOne(team.getId());
+		assertFalse(problemRepository.findOne(problem.getId()).getSolverTeams().contains(team));
 
 
-        assertTrue(invalidSolution.isChecked());
-        assertFalse(invalidSolution.isCorrect());
-        assertEquals(new Integer(0), registeredTeam.getPoints());
+		assertTrue(invalidSolution.isChecked());
+		assertFalse(invalidSolution.isCorrect());
+		assertEquals(new Integer(0), registeredTeam.getPoints());
 
-        final Team updatedTeam = teamRepository.findOne(team.getId());
-        transactionTemplate.execute(status -> {
-            Solution validSolution = null;
-            try {
-                validSolution = solutionRepository.findOne(
-                        problemService.createSolution(problem, validData, solver)
-                );
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+		final Team updatedTeam = teamRepository.findOne(team.getId());
+		transactionTemplate.execute(status -> {
+			Solution validSolution = null;
+			try {
+				validSolution = solutionRepository.findOne(
+					problemService.createSolution(problem, validData, solver)
+				);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 
-            assertTrue(validSolution.isChecked());
-            assertTrue(validSolution.isCorrect());
-            assertTrue(problemRepository.findOne(problem.getId()).getSolverTeams().contains(
-                    teamRepository.findOne(updatedTeam.getId())
-            ));
-            assertTrue(teamRepository.findOne(updatedTeam.getId()).getSolvedProblems().contains(
-                    problemRepository.findOne(problem.getId())
-            ));
-            assertEquals(new Integer(12), registeredTeamRepository.findOne(registeredTeam.getId()).getPoints());
-            return 1;
-        });
-    }
+			assertTrue(validSolution.isChecked());
+			assertTrue(validSolution.isCorrect());
+			assertTrue(problemRepository.findOne(problem.getId()).getSolverTeams().contains(
+				teamRepository.findOne(updatedTeam.getId())
+			));
+			assertTrue(teamRepository.findOne(updatedTeam.getId()).getSolvedProblems().contains(
+				problemRepository.findOne(problem.getId())
+			));
+			assertEquals(new Integer(12), registeredTeamRepository.findOne(registeredTeam.getId()).getPoints());
+			return 1;
+		});
+	}
 
-    @Test
-    public void testCreateSolutionTwiceFromTheSameTeam() throws Exception {
-        Competition competition = competitionRepository.saveAndFlush(new Competition("competition1"));
-        Problem problem = problemRepository.saveAndFlush(new Problem("name", "answer", 12, Problem.ProblemType.FLAG, competition));
-        Team team = teamRepository.saveAndFlush(new Team("name"));
-        User solver = userRepository.saveAndFlush(new User("user@email.com", "username", "password")
-                        .setTeam(team)
-        );
-        User anotherSolver = userRepository.saveAndFlush(new User("us1er@email.com", "use1rname", "password")
-                        .setTeam(team)
-        );
-        RegisteredTeam registeredTeam = registeredTeamRepository.saveAndFlush(new RegisteredTeam(competition, team));
-        SubmitData validData = new SubmitData("answer", null);
-        final Team updatedTeam = teamRepository.findOne(team.getId());
-        transactionTemplate.execute(status -> {
-            Solution validSolution = null;
-            try {
-                validSolution = solutionRepository.findOne(
-                        problemService.createSolution(problem, validData, solver)
-                );
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+	@Test
+	public void testCreateSolutionTwiceFromTheSameTeam() throws Exception {
+		Competition competition = competitionRepository.saveAndFlush(new Competition("competition1"));
+		Problem problem = problemRepository.saveAndFlush(new Problem("name", "answer", 12, Problem.ProblemType.FLAG, competition));
+		Team team = teamRepository.saveAndFlush(new Team("name"));
+		User solver = userRepository.saveAndFlush(new User("user@email.com", "username", "password")
+			.setTeam(team)
+		);
+		User anotherSolver = userRepository.saveAndFlush(new User("us1er@email.com", "use1rname", "password")
+			.setTeam(team)
+		);
+		RegisteredTeam registeredTeam = registeredTeamRepository.saveAndFlush(new RegisteredTeam(competition, team));
+		SubmitData validData = new SubmitData("answer", null);
+		final Team updatedTeam = teamRepository.findOne(team.getId());
+		transactionTemplate.execute(status -> {
+			Solution validSolution = null;
+			try {
+				validSolution = solutionRepository.findOne(
+					problemService.createSolution(problem, validData, solver)
+				);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 
-            assertTrue(validSolution.isChecked());
-            assertTrue(validSolution.isCorrect());
-            assertTrue(problemRepository.findOne(problem.getId()).getSolverTeams().contains(
-                    teamRepository.findOne(updatedTeam.getId())
-            ));
-            assertEquals(new Integer(12), registeredTeamRepository.findOne(registeredTeam.getId()).getPoints());
-            return 1;
-        });
+			assertTrue(validSolution.isChecked());
+			assertTrue(validSolution.isCorrect());
+			assertTrue(problemRepository.findOne(problem.getId()).getSolverTeams().contains(
+				teamRepository.findOne(updatedTeam.getId())
+			));
+			assertEquals(new Integer(12), registeredTeamRepository.findOne(registeredTeam.getId()).getPoints());
+			return 1;
+		});
 
-        try {
-            transactionTemplate.execute(status -> {
-                try {
-                    problemService.createSolution(problem, validData, anotherSolver);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                fail("Users from the same team solved same problem");
-                return 1;
-            });
-        } catch (TeamAlreadySolveProblemException e) {
-            assertTrue(true);
-        }
-    }
+		try {
+			transactionTemplate.execute(status -> {
+				try {
+					problemService.createSolution(problem, validData, anotherSolver);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				fail("Users from the same team solved same problem");
+				return 1;
+			});
+		} catch (TeamAlreadySolveProblemException e) {
+			assertTrue(true);
+		}
+	}
 
-    @Test
-    public void testGetAviableProblems() throws Exception {
-        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
-        Date currentDate = formatter.parseDateTime("12/10/2015 14:10:30").toDate();
-        Competition competition = competitionRepository.saveAndFlush(new Competition("competition1"));
+	@Test
+	public void testGetAviableProblems() throws Exception {
+		DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
+		Date currentDate = formatter.parseDateTime("12/10/2015 14:10:30").toDate();
+		Competition competition = competitionRepository.saveAndFlush(new Competition("competition1"));
 
-        Problem problem = problemRepository.saveAndFlush(
-                new Problem("name1", "answer", 12, Problem.ProblemType.FLAG, competition)
-                        .setStartDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate())
-                        .setEndDate(formatter.parseDateTime("12/10/2015 15:00:30").toDate())
-        );
+		Problem problem = problemRepository.saveAndFlush(
+			new Problem("name1", "answer", 12, Problem.ProblemType.FLAG, competition)
+				.setStartDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate())
+				.setEndDate(formatter.parseDateTime("12/10/2015 15:00:30").toDate())
+		);
 
-        Problem problem1 = problemRepository.saveAndFlush(
-                new Problem("name2", "answer", 12, Problem.ProblemType.FLAG, competition)
-                        .setStartDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate())
-        );
+		Problem problem1 = problemRepository.saveAndFlush(
+			new Problem("name2", "answer", 12, Problem.ProblemType.FLAG, competition)
+				.setStartDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate())
+		);
 
-        Problem earlyProblem = problemRepository.saveAndFlush(
-                new Problem("name3", "answer", 12, Problem.ProblemType.FLAG, competition)
-                        .setStartDate(formatter.parseDateTime("12/10/2015 13:00:30").toDate())
-                        .setEndDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate())
-        );
+		Problem earlyProblem = problemRepository.saveAndFlush(
+			new Problem("name3", "answer", 12, Problem.ProblemType.FLAG, competition)
+				.setStartDate(formatter.parseDateTime("12/10/2015 13:00:30").toDate())
+				.setEndDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate())
+		);
 
-        Problem earlyProblem1 = problemRepository.saveAndFlush(
-                new Problem("name4", "answer", 12, Problem.ProblemType.FLAG, competition)
-                        .setEndDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate())
-        );
+		Problem earlyProblem1 = problemRepository.saveAndFlush(
+			new Problem("name4", "answer", 12, Problem.ProblemType.FLAG, competition)
+				.setEndDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate())
+		);
 
-        Problem lateProblem = problemRepository.saveAndFlush(
-                new Problem("name5", "answer", 12, Problem.ProblemType.FLAG, competition)
-                        .setStartDate(formatter.parseDateTime("12/10/2015 15:00:30").toDate())
-                        .setEndDate(formatter.parseDateTime("12/10/2015 16:00:30").toDate())
-        );
+		Problem lateProblem = problemRepository.saveAndFlush(
+			new Problem("name5", "answer", 12, Problem.ProblemType.FLAG, competition)
+				.setStartDate(formatter.parseDateTime("12/10/2015 15:00:30").toDate())
+				.setEndDate(formatter.parseDateTime("12/10/2015 16:00:30").toDate())
+		);
 
-        List<Problem> aviableProblems = problemService.getAviableProblems(currentDate);
+		List<Problem> aviableProblems = problemService.getAviableProblems(currentDate);
 
-        assertEquals(2, aviableProblems.size());
-        assertEquals("name2", aviableProblems.get(0).getName());
-        assertEquals("name1", aviableProblems.get(1).getName());
-    }
+		assertEquals(2, aviableProblems.size());
+		assertEquals("name2", aviableProblems.get(0).getName());
+		assertEquals("name1", aviableProblems.get(1).getName());
+	}
 
-    @Test
-    public void testIsProblemAvailable() throws Exception {
-        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
-        Date currentDate = formatter.parseDateTime("12/10/2015 14:10:30").toDate();
-        Competition competition = competitionRepository.saveAndFlush(new Competition("competition1"));
+	@Test
+	public void testIsProblemAvailable() throws Exception {
+		DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
+		Date currentDate = formatter.parseDateTime("12/10/2015 14:10:30").toDate();
+		Competition competition = competitionRepository.saveAndFlush(new Competition("competition1"));
 
-        Problem problem = new Problem("name1", "answer", 12, Problem.ProblemType.FLAG, competition)
-                .setStartDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate())
-                .setEndDate(formatter.parseDateTime("12/10/2015 15:00:30").toDate());
+		Problem problem = new Problem("name1", "answer", 12, Problem.ProblemType.FLAG, competition)
+			.setStartDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate())
+			.setEndDate(formatter.parseDateTime("12/10/2015 15:00:30").toDate());
 
-        Problem problem1 = new Problem("name2", "answer", 12, Problem.ProblemType.FLAG, competition)
-                .setStartDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate());
+		Problem problem1 = new Problem("name2", "answer", 12, Problem.ProblemType.FLAG, competition)
+			.setStartDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate());
 
-        Problem earlyProblem = new Problem("name3", "answer", 12, Problem.ProblemType.FLAG, competition)
-                .setStartDate(formatter.parseDateTime("12/10/2015 13:00:30").toDate())
-                .setEndDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate());
+		Problem earlyProblem = new Problem("name3", "answer", 12, Problem.ProblemType.FLAG, competition)
+			.setStartDate(formatter.parseDateTime("12/10/2015 13:00:30").toDate())
+			.setEndDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate());
 
-        Problem earlyProblem1 = new Problem("name4", "answer", 12, Problem.ProblemType.FLAG, competition)
-                .setEndDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate());
+		Problem earlyProblem1 = new Problem("name4", "answer", 12, Problem.ProblemType.FLAG, competition)
+			.setEndDate(formatter.parseDateTime("12/10/2015 14:00:30").toDate());
 
-        Problem lateProblem = new Problem("name5", "answer", 12, Problem.ProblemType.FLAG, competition)
-                .setStartDate(formatter.parseDateTime("12/10/2015 15:00:30").toDate())
-                .setEndDate(formatter.parseDateTime("12/10/2015 16:00:30").toDate());
+		Problem lateProblem = new Problem("name5", "answer", 12, Problem.ProblemType.FLAG, competition)
+			.setStartDate(formatter.parseDateTime("12/10/2015 15:00:30").toDate())
+			.setEndDate(formatter.parseDateTime("12/10/2015 16:00:30").toDate());
 
-        assertTrue(problemService.isProblemAvailable(problem, currentDate));
-        assertTrue(problemService.isProblemAvailable(problem1, currentDate));
-        assertFalse(problemService.isProblemAvailable(earlyProblem, currentDate));
-        assertFalse(problemService.isProblemAvailable(earlyProblem1, currentDate));
-        assertFalse(problemService.isProblemAvailable(lateProblem, currentDate));
-    }
+		assertTrue(problemService.isProblemAvailable(problem, currentDate));
+		assertTrue(problemService.isProblemAvailable(problem1, currentDate));
+		assertFalse(problemService.isProblemAvailable(earlyProblem, currentDate));
+		assertFalse(problemService.isProblemAvailable(earlyProblem1, currentDate));
+		assertFalse(problemService.isProblemAvailable(lateProblem, currentDate));
+	}
 
-    @Test
-    public void testIsTeamSolvedPreviousProblem() throws Exception {
-        Competition competition = competitionRepository.saveAndFlush(new Competition("competition1"));
-        Problem problem = problemRepository.saveAndFlush(new Problem("name", "answer", 12, Problem.ProblemType.FLAG, competition));
-        Problem prevProblem = problemRepository.saveAndFlush(new Problem("name1", "answer", 12, Problem.ProblemType.FLAG, competition));
-        Team team = teamRepository.saveAndFlush(new Team("name"));
-        User solver = userRepository.saveAndFlush(new User("user@email.com", "username", "password")
-                        .setTeam(team)
-        );
+	@Test
+	public void testIsTeamSolvedPreviousProblem() throws Exception {
+		Competition competition = competitionRepository.saveAndFlush(new Competition("competition1"));
+		Problem problem = problemRepository.saveAndFlush(new Problem("name", "answer", 12, Problem.ProblemType.FLAG, competition));
+		Problem prevProblem = problemRepository.saveAndFlush(new Problem("name1", "answer", 12, Problem.ProblemType.FLAG, competition));
+		Team team = teamRepository.saveAndFlush(new Team("name"));
+		User solver = userRepository.saveAndFlush(new User("user@email.com", "username", "password")
+			.setTeam(team)
+		);
 
-        assertTrue(problemService.isTeamSolvedPreviousProblem(problem, solver.getTeam()));
+		assertTrue(problemService.isTeamSolvedPreviousProblem(problem, solver.getTeam()));
 
-        problem = problemRepository.saveAndFlush(problem.setPrevProblem(prevProblem));
+		problem = problemRepository.saveAndFlush(problem.setPrevProblem(prevProblem));
 
-        assertFalse(problemService.isTeamSolvedPreviousProblem(problem, solver.getTeam()));
+		assertFalse(problemService.isTeamSolvedPreviousProblem(problem, solver.getTeam()));
 
-        team.getSolvedProblems().add(prevProblem);
-        team = teamRepository.saveAndFlush(team);
+		team.getSolvedProblems().add(prevProblem);
+		team = teamRepository.saveAndFlush(team);
 
-        assertTrue(problemService.isTeamSolvedPreviousProblem(problem, team));
-    }
+		assertTrue(problemService.isTeamSolvedPreviousProblem(problem, team));
+	}
 }

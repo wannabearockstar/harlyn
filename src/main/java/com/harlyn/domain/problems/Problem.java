@@ -4,10 +4,7 @@ import com.harlyn.domain.Team;
 import com.harlyn.domain.competitions.Competition;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by wannabe on 20.11.15.
@@ -15,209 +12,229 @@ import java.util.Set;
 @Entity
 @Table(name = "problems")
 public class Problem {
-    public static final String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
 
-    @Id
-    @SequenceGenerator(name = "problems_id_seq", sequenceName = "problems_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "problems_id_seq")
-    @Column(name = "id", updatable = false)
-    private Long id;
-    private String name;
-    private String info;
-    private String answer;
-    private Integer points;
+	public static final String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
 
-    @Column(name = "start_date", nullable = true)
-    private Date startDate;
-    @Column(name = "end_date", nullable = true)
-    private Date endDate;
+	@Id
+	@SequenceGenerator(name = "problems_id_seq", sequenceName = "problems_id_seq", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "problems_id_seq")
+	@Column(name = "id", updatable = false)
+	private Long id;
+	private String name;
+	private String info;
+	private String answer;
+	private Integer points;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "problem_type")
-    private ProblemType problemType;
+	@Column(name = "start_date", nullable = true)
+	private Date startDate;
+	@Column(name = "end_date", nullable = true)
+	private Date endDate;
 
-    @ManyToOne
-    @JoinColumn(name = "competition_id")
-    private Competition competition;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "problem_type")
+	private ProblemType problemType;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "teams_problems_solved",
-            joinColumns = {@JoinColumn(name = "problem_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "team_id", referencedColumnName = "id")}
-    )
-    private Set<Team> solverTeams = new HashSet<>();
+	@ManyToOne
+	@JoinColumn(name = "competition_id")
+	private Competition competition;
 
-    @OneToOne(mappedBy = "problem", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private ProblemFile file;
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(
+		name = "teams_problems_solved",
+		joinColumns = {@JoinColumn(name = "problem_id", referencedColumnName = "id")},
+		inverseJoinColumns = {@JoinColumn(name = "team_id", referencedColumnName = "id")}
+	)
+	private Set<Team> solverTeams = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "category_id")
-    private Category category;
+	@OneToOne(mappedBy = "problem", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private ProblemFile file;
 
-    @ManyToOne
-    @JoinColumn(name = "prev_problem_id")
-    private Problem prevProblem;
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "category_id")
+	private Category category;
 
-    public Problem() {
-    }
+	@ManyToOne
+	@JoinColumn(name = "prev_problem_id")
+	private Problem prevProblem;
 
-    public Problem(String name, String answer, Integer points, ProblemType problemType, Competition competition) {
-        this.name = name;
-        this.answer = answer;
-        this.points = points;
-        this.problemType = problemType;
-        this.competition = competition;
-    }
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "problem")
+//    @OrderBy(value = "postedAt DESC")
+	private List<Hint> hints = new ArrayList<>();
 
-    public Long getId() {
-        return id;
-    }
+	public Problem() {
+	}
 
-    public String getName() {
-        return name;
-    }
+	public Problem(String name, String answer, Integer points, ProblemType problemType, Competition competition) {
+		this.name = name;
+		this.answer = answer;
+		this.points = points;
+		this.problemType = problemType;
+		this.competition = competition;
+	}
 
-    public Problem setName(String name) {
-        this.name = name;
-        return this;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public String getInfo() {
-        return info;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public Problem setInfo(String info) {
-        this.info = info;
-        return this;
-    }
+	public Problem setName(String name) {
+		this.name = name;
+		return this;
+	}
 
-    public String getAnswer() {
-        return answer;
-    }
+	public String getInfo() {
+		return info;
+	}
 
-    public Problem setAnswer(String answer) {
-        this.answer = answer;
-        return this;
-    }
+	public Problem setInfo(String info) {
+		this.info = info;
+		return this;
+	}
 
-    public ProblemType getProblemType() {
-        return problemType;
-    }
+	public String getAnswer() {
+		return answer;
+	}
 
-    public Problem setProblemType(ProblemType problemType) {
-        this.problemType = problemType;
-        return this;
-    }
+	public Problem setAnswer(String answer) {
+		this.answer = answer;
+		return this;
+	}
 
-    public Integer getPoints() {
-        return points;
-    }
+	public ProblemType getProblemType() {
+		return problemType;
+	}
 
-    public Problem setPoints(Integer points) {
-        this.points = points;
-        return this;
-    }
+	public Problem setProblemType(ProblemType problemType) {
+		this.problemType = problemType;
+		return this;
+	}
 
-    public Set<Team> getSolverTeams() {
-        return solverTeams;
-    }
+	public Integer getPoints() {
+		return points;
+	}
 
-    public Problem setSolverTeams(Set<Team> solverTeams) {
-        this.solverTeams = solverTeams;
-        return this;
-    }
+	public Problem setPoints(Integer points) {
+		this.points = points;
+		return this;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || !(o instanceof Problem))
-            return false;
+	public Set<Team> getSolverTeams() {
+		return solverTeams;
+	}
 
-        Problem other = (Problem) o;
+	public Problem setSolverTeams(Set<Team> solverTeams) {
+		this.solverTeams = solverTeams;
+		return this;
+	}
 
-        if (id == null) return false;
-        if (Objects.equals(id, other.getId())) return true;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || !(o instanceof Problem))
+			return false;
 
-        return id.equals(other.getId());
-    }
+		Problem other = (Problem) o;
 
-    @Override
-    public int hashCode() {
-        if (id != null) {
-            return id.hashCode();
-        } else {
-            return super.hashCode();
-        }
-    }
+		if (id == null) return false;
+		if (Objects.equals(id, other.getId())) return true;
 
-    public Date getStartDate() {
-        return startDate;
-    }
+		return id.equals(other.getId());
+	}
 
-    public Problem setStartDate(Date startDate) {
-        this.startDate = startDate;
-        return this;
-    }
+	@Override
+	public int hashCode() {
+		if (id != null) {
+			return id.hashCode();
+		} else {
+			return super.hashCode();
+		}
+	}
 
-    public Date getEndDate() {
-        return endDate;
-    }
+	public Date getStartDate() {
+		return startDate;
+	}
 
-    public Problem setEndDate(Date endDate) {
-        this.endDate = endDate;
-        return this;
-    }
+	public Problem setStartDate(Date startDate) {
+		this.startDate = startDate;
+		return this;
+	}
 
-    public Competition getCompetition() {
-        return competition;
-    }
+	public Date getEndDate() {
+		return endDate;
+	}
 
-    public Problem setCompetition(Competition competition) {
-        this.competition = competition;
-        return this;
-    }
+	public Problem setEndDate(Date endDate) {
+		this.endDate = endDate;
+		return this;
+	}
 
-    public ProblemFile getFile() {
-        return file;
-    }
+	public Competition getCompetition() {
+		return competition;
+	}
 
-    public Problem setFile(ProblemFile file) {
-        this.file = file;
-        return this;
-    }
+	public Problem setCompetition(Competition competition) {
+		this.competition = competition;
+		return this;
+	}
 
-    public Category getCategory() {
-        return category;
-    }
+	public ProblemFile getFile() {
+		return file;
+	}
 
-    public Problem setCategory(Category category) {
-        this.category = category;
-        return this;
-    }
+	public Problem setFile(ProblemFile file) {
+		this.file = file;
+		return this;
+	}
 
-    public Problem getPrevProblem() {
-        return prevProblem;
-    }
+	public Category getCategory() {
+		return category;
+	}
 
-    public Problem setPrevProblem(Problem prevProblem) {
-        this.prevProblem = prevProblem;
-        return this;
-    }
+	public Problem setCategory(Category category) {
+		this.category = category;
+		return this;
+	}
 
-    public enum ProblemType {
-        FLAG("Flag compare"),
-        INFO_WEB("Manual checking of text info"),
-        INFO_EMAIL("Manual checking of text info via email");
+	public Problem getPrevProblem() {
+		return prevProblem;
+	}
 
-        private String localeName;
+	public Problem setPrevProblem(Problem prevProblem) {
+		this.prevProblem = prevProblem;
+		return this;
+	}
 
-        ProblemType(String localeName) {
-            this.localeName = localeName;
-        }
+	public List<Hint> getHints() {
+		return hints;
+	}
 
-        public String getLocaleName() {
-            return localeName;
-        }
-    }
+	public Problem setHints(List<Hint> hints) {
+		this.hints = hints;
+		return this;
+	}
+
+	public enum ProblemType {
+		FLAG("Flag compare", false),
+		INFO_WEB("Manual checking of text info", true),
+		INFO_EMAIL("Manual checking of text info via email", false);
+
+		private String localeName;
+		private boolean isFileNeeded;
+
+		ProblemType(String localeName, boolean isFileNeeded) {
+			this.localeName = localeName;
+			this.isFileNeeded = isFileNeeded;
+		}
+
+		public String getLocaleName() {
+			return localeName;
+		}
+
+		public boolean isFileNeeded() {
+			return isFileNeeded;
+		}
+	}
 }

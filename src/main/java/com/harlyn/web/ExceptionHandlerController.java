@@ -11,15 +11,16 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @ControllerAdvice
 public class ExceptionHandlerController {
-    public static final String DEFAULT_ERROR_VIEW = "utils/error/default";
-    private static final Logger logger = LoggerFactory.getLogger(ExceptionHandlerController.class);
 
-    @ExceptionHandler(value = {Exception.class, RuntimeException.class})
-    public ModelAndView defaultErrorHandler(Exception e) {
-        logger.error("Error: {}", e.getMessage());
-        e.printStackTrace();
-        ModelAndView mav = new ModelAndView(DEFAULT_ERROR_VIEW);
-        mav.addObject("message", e.getMessage());
-        return mav;
-    }
+	public static final String DEFAULT_ERROR_VIEW = "utils/error/default";
+	private static final Logger logger = LoggerFactory.getLogger(ExceptionHandlerController.class);
+
+	@ExceptionHandler(value = {Exception.class, RuntimeException.class})
+	public ModelAndView defaultErrorHandler(Exception e) {
+		logger.error("Error: {}", e.getMessage());
+		e.printStackTrace();
+		ModelAndView mav = new ModelAndView(DEFAULT_ERROR_VIEW);
+		mav.addObject("message", e.getMessage());
+		return mav;
+	}
 }

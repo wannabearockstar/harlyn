@@ -14,13 +14,14 @@ import java.util.List;
  */
 @Repository
 public interface CompetitionRepository extends JpaRepository<Competition, Long> {
-    @Query(value = "select competition " +
-            "from Competition competition " +
-            "where (competition.startDate is null and competition.endDate is null) " +
-            "or (competition.startDate is null and competition.endDate > :current_date)" +
-            "or (competition.startDate < :current_date and competition.endDate is null) " +
-            "or (competition.startDate < :current_date and competition.endDate > :current_date)" +
-            "order by competition.id desc"
-    )
-    List<Competition> findAllByCurrentDate(@Param("current_date") Date currentDate);
+
+	@Query(value = "select competition " +
+		"from Competition competition " +
+		"where (competition.startDate is null and competition.endDate is null) " +
+		"or (competition.startDate is null and competition.endDate > :current_date)" +
+		"or (competition.startDate < :current_date and competition.endDate is null) " +
+		"or (competition.startDate < :current_date and competition.endDate > :current_date)" +
+		"order by competition.id desc"
+	)
+	List<Competition> findAllByCurrentDate(@Param("current_date") Date currentDate);
 }

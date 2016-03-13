@@ -22,47 +22,50 @@ import java.util.Map;
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
-    @Override
-    public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/chat").withSockJS();
-    }
 
-    @Override
-    public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/out");
-        config.setApplicationDestinationPrefixes("/in");
-    }
+	@Override
+	public void registerStompEndpoints(StompEndpointRegistry registry) {
+		registry.addEndpoint("/chat").withSockJS();
+	}
 
-    @Override
-    public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.setInterceptors(
-                teamHandshakeInterceptor()
-        );
-    }
+	@Override
+	public void configureMessageBroker(MessageBrokerRegistry config) {
+		config.enableSimpleBroker("/out");
+		config.setApplicationDestinationPrefixes("/in");
+	}
 
-    @Bean
-    public ChannelInterceptor teamHandshakeInterceptor() {
-        return new ValidTeamHandshakeInterceptor();
-    }
+	@Override
+	public void configureClientInboundChannel(ChannelRegistration registration) {
+		registration.setInterceptors(
+			teamHandshakeInterceptor()
+		);
+	}
 
-    /**
-     * Get endpoint of socket broker to corresponding {@link ChatMessage} instance
-     * @return Endpoint, generated from {@link ChatMessage} data
-     */
-    @Bean
-    public Map<Class<? extends ChatMessage>, MessageEndpointResolver> chatEndpointResolvers() {
-        Map<Class<? extends ChatMessage>, MessageEndpointResolver> resolvers = new HashMap<>();
-        resolvers.put(CompetitionChatMessage.class,
-                message -> "/out/competition." + ((CompetitionChatMessage) message).getCompetition().getId()
-        );
-        resolvers.put(TeamChatMessage.class,
-                message -> "/out/team." + ((TeamChatMessage) message).getTeam().getId()
-        );
-        return resolvers;
-    }
+	@Bean
+	public ChannelInterceptor teamHandshakeInterceptor() {
+		return new ValidTeamHandshakeInterceptor();
+	}
 
-    @FunctionalInterface
-    public interface MessageEndpointResolver {
-        String resolveEndpoint(ChatMessage message);
-    }
+	/**
+	 * Get endpoint of socket broker to corresponding {@link ChatMessage} instance
+	 *
+	 * @return Endpoint, generated from {@link ChatMessage} data
+	 */
+	@Bean
+	public Map<Class<? extends ChatMessage>, MessageEndpointResolver> chatEndpointResolvers() {
+		Map<Class<? extends ChatMessage>, MessageEndpointResolver> resolvers = new HashMap<>();
+		resolvers.put(CompetitionChatMessage.class,
+			message -> "/out/competition." + ((CompetitionChatMessage) message).getCompetition().getId()
+		);
+		resolvers.put(TeamChatMessage.class,
+			message -> "/out/team." + ((TeamChatMessage) message).getTeam().getId()
+		);
+		return resolvers;
+	}
+
+	@FunctionalInterface
+	public interface MessageEndpointResolver {
+
+		String resolveEndpoint(ChatMessage message);
+	}
 }

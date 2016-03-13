@@ -15,22 +15,23 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping("/confirm")
 public class ConfirmController {
-    @Autowired
-    private ConfirmCodeService confirmCodeService;
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String confirmUser(@RequestParam(value ="code", required = true) String code) {
-        confirmCodeService.confirmUserByCode(code);
-        return "redirect:/confirm/final?success";
-    }
+	@Autowired
+	private ConfirmCodeService confirmCodeService;
 
-    @RequestMapping(value = "/final", method = RequestMethod.GET)
-    public String confirmPageSuccess() {
-        return "user/confirm";
-    }
+	@RequestMapping(value = "/", method = RequestMethod.GET)
+	public String confirmUser(@RequestParam(value = "code", required = true) String code) {
+		confirmCodeService.confirmUserByCode(code);
+		return "redirect:/confirm/final?success";
+	}
 
-    @ExceptionHandler(InvalidConfirmCodeException.class)
-    public String invalidConfirmCodeException(InvalidConfirmCodeException e) {
-        return "redirect:/confirm/final?error";
-    }
+	@RequestMapping(value = "/final", method = RequestMethod.GET)
+	public String confirmPageSuccess() {
+		return "user/confirm";
+	}
+
+	@ExceptionHandler(InvalidConfirmCodeException.class)
+	public String invalidConfirmCodeException(InvalidConfirmCodeException e) {
+		return "redirect:/confirm/final?error";
+	}
 }

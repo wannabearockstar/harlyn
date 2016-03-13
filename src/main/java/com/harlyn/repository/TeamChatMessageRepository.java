@@ -13,5 +13,6 @@ import java.util.List;
  */
 @Repository
 public interface TeamChatMessageRepository extends JpaRepository<TeamChatMessage, Long> {
-    List<TeamChatMessage> findAllByTeamOrderByIdDesc(Team team, Pageable pageable);
+
+	List<TeamChatMessage> findAllByTeamOrderByIdDesc(Team team, Pageable pageable);
 }

@@ -13,10 +13,11 @@ import java.util.List;
  */
 @Repository
 public interface TeamRepository extends JpaRepository<Team, Long> {
-    Team findOneByName(String name);
 
-    @Query(value = "select case when count(team) > 0 then true else false end from Team team where team.name = :name")
-    boolean teamWithNameExist(@Param("name") String name);
+	Team findOneByName(String name);
 
-    List<Team> findAllByOrderByIdDesc();
+	@Query(value = "select case when count(team) > 0 then true else false end from Team team where team.name = :name")
+	boolean teamWithNameExist(@Param("name") String name);
+
+	List<Team> findAllByOrderByIdDesc();
 }

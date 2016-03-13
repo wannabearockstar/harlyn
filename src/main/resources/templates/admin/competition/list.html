@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
-      layout:decorator="fragments/wrapper">
+			xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+			layout:decorator="fragments/wrapper">
 <head>
-    <title th:text="#{admin.competition.title}"></title>
+	<title th:text="#{admin.competition.title}"></title>
 </head>
 <body>
 
 <div layout:fragment="content" class="container">
-    <h3 th:text="#{admin.competition.list}"></h3>
-    <a th:href="@{/admin/competition/}" th:text="#{admin.competition.new}"></a>
-    <ul>
-        <li th:each="competition : ${competitions}">
-            <a th:href="${'/admin/competition/' + competition.id}" th:text="${competition.name}"></a>
-            <a th:href="${'/admin/competition/' + competition.id + '/rank/personal'}">Personal rank</a>
-        </li>
-    </ul>
+	<h3 th:text="#{admin.competition.list}"></h3>
+	<a th:href="@{/admin/competition/}" th:text="#{admin.competition.new}"></a>
+	<ul>
+		<li th:each="competition : ${competitions}">
+			<a th:href="${'/admin/competition/' + competition.id}" th:text="${competition.name}"></a>
+			<a th:href="${'/admin/competition/' + competition.id + '/rank/personal'}">Personal rank</a>
+		</li>
+	</ul>
 </div>
 </body>
 </html>

@@ -42,120 +42,121 @@ import static org.junit.Assert.assertEquals;
 @WebAppConfiguration
 @ActiveProfiles({"test"})
 public class SolutionServiceTest {
-    @Autowired
-    private Flyway flyway;
-    @Autowired
-    private SolutionRepository solutionRepository;
-    @Autowired
-    private ProblemRepository problemRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private CompetitionRepository competitionRepository;
-    @Autowired
-    private TeamRepository teamRepository;
-    @Autowired
-    private RegisteredTeamRepository registeredTeamRepository;
-    @PersistenceContext(type = PersistenceContextType.EXTENDED)
-    private EntityManager em;
-    private SolutionService solutionService;
 
-    @Before
-    public void setUp() throws Exception {
-        flyway.clean();
-        flyway.migrate();
-        solutionService = new SolutionService().setSolutionRepository(solutionRepository)
-                .setEm(em);
-    }
+	@Autowired
+	private Flyway flyway;
+	@Autowired
+	private SolutionRepository solutionRepository;
+	@Autowired
+	private ProblemRepository problemRepository;
+	@Autowired
+	private UserRepository userRepository;
+	@Autowired
+	private CompetitionRepository competitionRepository;
+	@Autowired
+	private TeamRepository teamRepository;
+	@Autowired
+	private RegisteredTeamRepository registeredTeamRepository;
+	@PersistenceContext(type = PersistenceContextType.EXTENDED)
+	private EntityManager em;
+	private SolutionService solutionService;
 
-    @After
-    public void tearDown() throws Exception {
-        flyway.clean();
-    }
+	@Before
+	public void setUp() throws Exception {
+		flyway.clean();
+		flyway.migrate();
+		solutionService = new SolutionService().setSolutionRepository(solutionRepository)
+			.setEm(em);
+	}
 
-    @Test
-    public void testGetById() throws Exception {
-        Competition competition = competitionRepository.saveAndFlush(new Competition("asd"));
-        Problem problem = problemRepository.saveAndFlush(new Problem("name", "answer", 12, Problem.ProblemType.FLAG, competition));
-        Team team = teamRepository.saveAndFlush(new Team("name"));
-        User user = userRepository.saveAndFlush(new User("email@email.com", "usrnm", "pswd", team));
-        Solution solution = solutionRepository.saveAndFlush(new Solution(problem, user));
+	@After
+	public void tearDown() throws Exception {
+		flyway.clean();
+	}
 
-        assertEquals(problem, solutionService.getById(solution.getId()).getProblem());
-        assertEquals(user, solutionService.getById(solution.getId()).getSolver());
-    }
+	@Test
+	public void testGetById() throws Exception {
+		Competition competition = competitionRepository.saveAndFlush(new Competition("asd"));
+		Problem problem = problemRepository.saveAndFlush(new Problem("name", "answer", 12, Problem.ProblemType.FLAG, competition));
+		Team team = teamRepository.saveAndFlush(new Team("name"));
+		User user = userRepository.saveAndFlush(new User("email@email.com", "usrnm", "pswd", team));
+		Solution solution = solutionRepository.saveAndFlush(new Solution(problem, user));
 
-    @Test
-    public void testGetAllSolutions() throws Exception {
-        Competition competition = competitionRepository.saveAndFlush(new Competition("asd"));
-        Problem problem = problemRepository.saveAndFlush(new Problem("name", "answer", 12, Problem.ProblemType.FLAG, competition));
-        Team team = teamRepository.saveAndFlush(new Team("name"));
-        User user = userRepository.saveAndFlush(new User("email@email.com", "usrnm", "pswd", team));
-        User another = userRepository.saveAndFlush(new User("another@email.com", "usrnm", "pswd", team));
-        solutionRepository.saveAndFlush(new Solution(problem, user));
-        solutionRepository.saveAndFlush(new Solution(problem, another));
+		assertEquals(problem, solutionService.getById(solution.getId()).getProblem());
+		assertEquals(user, solutionService.getById(solution.getId()).getSolver());
+	}
 
-        List<Solution> solutions = solutionService.getAllSolutions();
+	@Test
+	public void testGetAllSolutions() throws Exception {
+		Competition competition = competitionRepository.saveAndFlush(new Competition("asd"));
+		Problem problem = problemRepository.saveAndFlush(new Problem("name", "answer", 12, Problem.ProblemType.FLAG, competition));
+		Team team = teamRepository.saveAndFlush(new Team("name"));
+		User user = userRepository.saveAndFlush(new User("email@email.com", "usrnm", "pswd", team));
+		User another = userRepository.saveAndFlush(new User("another@email.com", "usrnm", "pswd", team));
+		solutionRepository.saveAndFlush(new Solution(problem, user));
+		solutionRepository.saveAndFlush(new Solution(problem, another));
 
-        assertEquals(2, solutions.size());
-        assertEquals(another, solutions.get(0).getSolver());
-        assertEquals(user, solutions.get(1).getSolver());
-    }
+		List<Solution> solutions = solutionService.getAllSolutions();
 
-    @Test
-    public void testGetAllUncheckedSolutions() throws Exception {
-        Competition competition = competitionRepository.saveAndFlush(new Competition("asd"));
-        Problem problem = problemRepository.saveAndFlush(new Problem("name", "answer", 12, Problem.ProblemType.FLAG, competition));
-        Team team = teamRepository.saveAndFlush(new Team("name"));
-        User user = userRepository.saveAndFlush(new User("email@email.com", "usrnm", "pswd", team));
-        User another = userRepository.saveAndFlush(new User("another@email.com", "usrnm", "pswd", team));
-        solutionRepository.saveAndFlush(new Solution(problem, user));
-        Solution willBeChecked = solutionRepository.saveAndFlush(new Solution(problem, another));
+		assertEquals(2, solutions.size());
+		assertEquals(another, solutions.get(0).getSolver());
+		assertEquals(user, solutions.get(1).getSolver());
+	}
 
-        List<Solution> solutions = solutionService.getAllUncheckedSolutions();
+	@Test
+	public void testGetAllUncheckedSolutions() throws Exception {
+		Competition competition = competitionRepository.saveAndFlush(new Competition("asd"));
+		Problem problem = problemRepository.saveAndFlush(new Problem("name", "answer", 12, Problem.ProblemType.FLAG, competition));
+		Team team = teamRepository.saveAndFlush(new Team("name"));
+		User user = userRepository.saveAndFlush(new User("email@email.com", "usrnm", "pswd", team));
+		User another = userRepository.saveAndFlush(new User("another@email.com", "usrnm", "pswd", team));
+		solutionRepository.saveAndFlush(new Solution(problem, user));
+		Solution willBeChecked = solutionRepository.saveAndFlush(new Solution(problem, another));
 
-        assertEquals(2, solutions.size());
-        assertEquals(another, solutions.get(0).getSolver());
-        assertEquals(user, solutions.get(1).getSolver());
+		List<Solution> solutions = solutionService.getAllUncheckedSolutions();
 
-        solutionRepository.saveAndFlush(willBeChecked.setChecked(true));
+		assertEquals(2, solutions.size());
+		assertEquals(another, solutions.get(0).getSolver());
+		assertEquals(user, solutions.get(1).getSolver());
 
-        solutions = solutionService.getAllUncheckedSolutions();
+		solutionRepository.saveAndFlush(willBeChecked.setChecked(true));
 
-        assertEquals(1, solutions.size());
-        assertEquals(user, solutions.get(0).getSolver());
-    }
+		solutions = solutionService.getAllUncheckedSolutions();
 
-    @Test
-    public void testGetUserSolverProblemsByCompetition() throws Exception {
-        Competition competition = competitionRepository.saveAndFlush(new Competition("asd"));
-        Competition anotherCompetition = competitionRepository.saveAndFlush(new Competition("12asd"));
-        Problem problem1 = problemRepository.saveAndFlush(new Problem("name", "answer", 12, Problem.ProblemType.FLAG, competition));
-        Problem problem2 = problemRepository.saveAndFlush(new Problem("nam1e", "answer", 15, Problem.ProblemType.FLAG, competition));
-        Problem anotherProblem = problemRepository.saveAndFlush(new Problem("nam1e", "answer", 15, Problem.ProblemType.FLAG, anotherCompetition));
-        Team team = teamRepository.saveAndFlush(new Team("name"));
-        User user = userRepository.saveAndFlush(new User("email@email.com", "usrnm", "pswd", team));
-        User another = userRepository.saveAndFlush(new User("another@email.com", "usrnm", "pswd", team));
+		assertEquals(1, solutions.size());
+		assertEquals(user, solutions.get(0).getSolver());
+	}
 
-        Solution solutionUserProblem1Correct = solutionRepository.save(new Solution(problem1, user).setCorrect(true));
-        Solution solutionUserProblem2Inorrect = solutionRepository.save(new Solution(problem2, user).setCorrect(false));
-        Solution solutionAnotherProblem1Unchecked = solutionRepository.save(new Solution(problem1, another));
-        Solution solutionAnotherProblem2Correct = solutionRepository.save(new Solution(problem2, another).setCorrect(true));
-        Solution solutionToAnotherCompetition = solutionRepository.save(new Solution(anotherProblem, another).setCorrect(true));
-        solutionRepository.flush();
-        registeredTeamRepository.saveAndFlush(new RegisteredTeam(competition, team));
+	@Test
+	public void testGetUserSolverProblemsByCompetition() throws Exception {
+		Competition competition = competitionRepository.saveAndFlush(new Competition("asd"));
+		Competition anotherCompetition = competitionRepository.saveAndFlush(new Competition("12asd"));
+		Problem problem1 = problemRepository.saveAndFlush(new Problem("name", "answer", 12, Problem.ProblemType.FLAG, competition));
+		Problem problem2 = problemRepository.saveAndFlush(new Problem("nam1e", "answer", 15, Problem.ProblemType.FLAG, competition));
+		Problem anotherProblem = problemRepository.saveAndFlush(new Problem("nam1e", "answer", 15, Problem.ProblemType.FLAG, anotherCompetition));
+		Team team = teamRepository.saveAndFlush(new Team("name"));
+		User user = userRepository.saveAndFlush(new User("email@email.com", "usrnm", "pswd", team));
+		User another = userRepository.saveAndFlush(new User("another@email.com", "usrnm", "pswd", team));
 
-        List<UserSolvedProblems> userSolvedProblems = solutionService.getUserSolverProblemsByCompetition(competition.getId());
+		Solution solutionUserProblem1Correct = solutionRepository.save(new Solution(problem1, user).setCorrect(true));
+		Solution solutionUserProblem2Inorrect = solutionRepository.save(new Solution(problem2, user).setCorrect(false));
+		Solution solutionAnotherProblem1Unchecked = solutionRepository.save(new Solution(problem1, another));
+		Solution solutionAnotherProblem2Correct = solutionRepository.save(new Solution(problem2, another).setCorrect(true));
+		Solution solutionToAnotherCompetition = solutionRepository.save(new Solution(anotherProblem, another).setCorrect(true));
+		solutionRepository.flush();
+		registeredTeamRepository.saveAndFlush(new RegisteredTeam(competition, team));
 
-        assertEquals(2, userSolvedProblems.size());
-        assertEquals(1, userSolvedProblems.get(0).getProblems().size());
-        assertEquals(problem2, userSolvedProblems.get(0).getProblems().iterator().next());
-        assertEquals(BigInteger.valueOf(15l), userSolvedProblems.get(0).getPoints());
-        assertEquals(another, userSolvedProblems.get(0).getSolver());
+		List<UserSolvedProblems> userSolvedProblems = solutionService.getUserSolverProblemsByCompetition(competition.getId());
 
-        assertEquals(1, userSolvedProblems.get(1).getProblems().size());
-        assertEquals(user, userSolvedProblems.get(1).getSolver());
-        assertEquals(problem1, userSolvedProblems.get(1).getProblems().iterator().next());
-        assertEquals(BigInteger.valueOf(12l), userSolvedProblems.get(1).getPoints());
-    }
+		assertEquals(2, userSolvedProblems.size());
+		assertEquals(1, userSolvedProblems.get(0).getProblems().size());
+		assertEquals(problem2, userSolvedProblems.get(0).getProblems().iterator().next());
+		assertEquals(BigInteger.valueOf(15l), userSolvedProblems.get(0).getPoints());
+		assertEquals(another, userSolvedProblems.get(0).getSolver());
+
+		assertEquals(1, userSolvedProblems.get(1).getProblems().size());
+		assertEquals(user, userSolvedProblems.get(1).getSolver());
+		assertEquals(problem1, userSolvedProblems.get(1).getProblems().iterator().next());
+		assertEquals(BigInteger.valueOf(12l), userSolvedProblems.get(1).getPoints());
+	}
 }

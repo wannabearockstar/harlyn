@@ -25,65 +25,66 @@ import java.util.Set;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    @Autowired
-    private CustomUserDetailsService customUserDetailsService;
-    @Autowired
-    private UserService userService;
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(customUserDetailsService).passwordEncoder(passwordEncoder());
-    }
+	@Autowired
+	private CustomUserDetailsService customUserDetailsService;
+	@Autowired
+	private UserService userService;
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-            .csrf().disable()
-            .authorizeRequests()
-                .antMatchers("/login",
-                        "/login/form**",
-                        "/registration",
-                        "/registration/form**",
-                        "/logout",
-                        "/confirm/",
-                        "/confirm/**",
-                        "/static/**"
-                ).permitAll()
-                .antMatchers("/admin","/admin/**").hasRole("ADMIN")
-                .anyRequest().authenticated()
-                .and()
-            .formLogin()
-                .loginPage("/login/form")
-                .loginProcessingUrl("/login")
-                .usernameParameter("email")
-                .passwordParameter("password")
-                .defaultSuccessUrl("/users/me")
-                .failureUrl("/login/form?error")
-                .permitAll()
-            .and()
-            .addFilterAfter(emptyTeamFilter(), AnonymousAuthenticationFilter.class)
-        ;
-    }
+	@Override
+	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+		auth.userDetailsService(customUserDetailsService).passwordEncoder(passwordEncoder());
+	}
 
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-        web
-            .ignoring()
-            .antMatchers("/resources/**")
-        ;
-    }
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		http
+			.csrf().disable()
+			.authorizeRequests()
+			.antMatchers("/login",
+				"/login/form**",
+				"/registration",
+				"/registration/form**",
+				"/logout",
+				"/confirm/",
+				"/confirm/**",
+				"/static/**"
+			).permitAll()
+			.antMatchers("/admin", "/admin/**").hasRole("ADMIN")
+			.anyRequest().authenticated()
+			.and()
+			.formLogin()
+			.loginPage("/login/form")
+			.loginProcessingUrl("/login")
+			.usernameParameter("email")
+			.passwordParameter("password")
+			.defaultSuccessUrl("/users/me")
+			.failureUrl("/login/form?error")
+			.permitAll()
+			.and()
+			.addFilterAfter(emptyTeamFilter(), AnonymousAuthenticationFilter.class)
+		;
+	}
 
-    @Bean(name = "passwordEncoder")
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder(10);
-    }
+	@Override
+	public void configure(WebSecurity web) throws Exception {
+		web
+			.ignoring()
+			.antMatchers("/resources/**")
+		;
+	}
 
-    @Bean
-    public Filter emptyTeamFilter() {
-        Set<String> allowedUrls = new HashSet<>(Arrays.asList(
-                "/",
-                "/logout"
-        ));
-        return new EmptyTeamFilter(userService, allowedUrls);
-    }
+	@Bean(name = "passwordEncoder")
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder(10);
+	}
+
+	@Bean
+	public Filter emptyTeamFilter() {
+		Set<String> allowedUrls = new HashSet<>(Arrays.asList(
+			"/",
+			"/logout"
+		));
+		return new EmptyTeamFilter(userService, allowedUrls);
+	}
 }

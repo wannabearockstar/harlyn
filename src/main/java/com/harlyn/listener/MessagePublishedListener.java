@@ -16,26 +16,27 @@ import java.util.Map;
  */
 @Component
 public class MessagePublishedListener implements ApplicationListener<MessagePublishedEvent> {
-    @Autowired
-    private SimpMessagingTemplate template;
-    @Resource
-    private Map<Class<? extends ChatMessage>, WebSocketConfig.MessageEndpointResolver> chatEndpointResolvers;
 
-    public MessagePublishedListener setTemplate(SimpMessagingTemplate template) {
-        this.template = template;
-        return this;
-    }
+	@Autowired
+	private SimpMessagingTemplate template;
+	@Resource
+	private Map<Class<? extends ChatMessage>, WebSocketConfig.MessageEndpointResolver> chatEndpointResolvers;
 
-    public MessagePublishedListener setChatEndpointResolvers(Map<Class<? extends ChatMessage>, WebSocketConfig.MessageEndpointResolver> chatEndpointResolvers) {
-        this.chatEndpointResolvers = chatEndpointResolvers;
-        return this;
-    }
+	public MessagePublishedListener setTemplate(SimpMessagingTemplate template) {
+		this.template = template;
+		return this;
+	}
 
-    @Override
-    public void onApplicationEvent(MessagePublishedEvent event) {
-        template.convertAndSend(chatEndpointResolvers.get(event.getChatMessage().getClass())
-                        .resolveEndpoint(event.getChatMessage()),
-                event.getChatMessage()
-        );
-    }
+	public MessagePublishedListener setChatEndpointResolvers(Map<Class<? extends ChatMessage>, WebSocketConfig.MessageEndpointResolver> chatEndpointResolvers) {
+		this.chatEndpointResolvers = chatEndpointResolvers;
+		return this;
+	}
+
+	@Override
+	public void onApplicationEvent(MessagePublishedEvent event) {
+		template.convertAndSend(chatEndpointResolvers.get(event.getChatMessage().getClass())
+				.resolveEndpoint(event.getChatMessage()),
+			event.getChatMessage()
+		);
+	}
 }

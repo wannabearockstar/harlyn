@@ -1,31 +1,32 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
-      layout:decorator="fragments/wrapper">
+			xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+			layout:decorator="fragments/wrapper">
 <head>
-    <title>Harlyn - competitions - teams</title>
+	<title>Harlyn - competitions - teams</title>
 </head>
 <body>
 <div layout:fragment="content" class="container">
-    <h3 th:text="${competition.name + ': team list'}">Problem list</h3>
-    <table class="table table-hover">
-        <thead>
-        <tr>
-            <th>Name</th>
-            <th>Points</th>
-            <th>Register date</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="registredTeam : ${competition.registeredTeams}">
-            <td>
-                <a th:href="@{'/team/' + ${registredTeam.team.id}}" th:text="${registredTeam.team.name}"></a>
-            </td>
-            <td th:text="${registredTeam.points}"></td>
-            <td th:text="${#dates.format(registredTeam.registerDate, T(com.harlyn.domain.problems.Problem).DATE_FORMAT)}"></td>
-        </tr>
-        </tbody>
-    </table>
+	<h3 th:text="${competition.name + ': team list'}">Problem list</h3>
+	<table class="table table-hover">
+		<thead>
+		<tr>
+			<th>Name</th>
+			<th>Points</th>
+			<th>Register date</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr th:each="registredTeam : ${competition.registeredTeams}">
+			<td>
+				<a th:href="@{'/team/' + ${registredTeam.team.id}}" th:text="${registredTeam.team.name}"></a>
+			</td>
+			<td th:text="${registredTeam.points}"></td>
+			<td
+				th:text="${#dates.format(registredTeam.registerDate, T(com.harlyn.domain.problems.Problem).DATE_FORMAT)}"></td>
+		</tr>
+		</tbody>
+	</table>
 </div>
 </body>
 </html>

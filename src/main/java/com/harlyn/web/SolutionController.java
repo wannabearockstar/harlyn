@@ -20,19 +20,20 @@ import java.util.Map;
 @Controller
 @RequestMapping(value = "/solution")
 public class SolutionController {
-    @Autowired
-    private SolutionService solutionService;
-    @Resource
-    private Map<Problem.ProblemType, Problem> problemHandlers;
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public String solutionPage(@PathVariable(value = "id") Long id, Model model) {
-        Solution solution = solutionService.getById(id);
-        if (solution == null) {
-            throw new SolutionNotFoundException();
-        }
-        model.addAttribute("solution", solution);
-        model.addAttribute("problemHandlers", problemHandlers);
-        return "solution/show";
-    }
+	@Autowired
+	private SolutionService solutionService;
+	@Resource
+	private Map<Problem.ProblemType, Problem> problemHandlers;
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	public String solutionPage(@PathVariable(value = "id") Long id, Model model) {
+		Solution solution = solutionService.getById(id);
+		if (solution == null) {
+			throw new SolutionNotFoundException();
+		}
+		model.addAttribute("solution", solution);
+		model.addAttribute("problemHandlers", problemHandlers);
+		return "solution/show";
+	}
 }

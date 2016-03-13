@@ -12,88 +12,89 @@ import java.util.Objects;
 @Entity
 @Table(name = "registered_teams")
 public class RegisteredTeam {
-    @ManyToOne
-    @JoinColumn(name = "competition_id")
-    private final Competition competition;
-    @ManyToOne
-    @JoinColumn(name = "team_id")
-    private final Team team;
-    @Id
-    @SequenceGenerator(name = "registered_teams_id_seq", sequenceName = "registered_teams_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "registered_teams_id_seq")
-    @Column(name = "id", updatable = false)
-    private Long id;
-    private Integer points;
 
-    @Column(name = "register_date")
-    private Date registerDate;
+	@ManyToOne
+	@JoinColumn(name = "competition_id")
+	private final Competition competition;
+	@ManyToOne
+	@JoinColumn(name = "team_id")
+	private final Team team;
+	@Id
+	@SequenceGenerator(name = "registered_teams_id_seq", sequenceName = "registered_teams_id_seq", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "registered_teams_id_seq")
+	@Column(name = "id", updatable = false)
+	private Long id;
+	private Integer points;
 
-    RegisteredTeam() {
-        competition = null;
-        team = null;
-    }
+	@Column(name = "register_date")
+	private Date registerDate;
 
-    public RegisteredTeam(Competition competition, Team team) {
-        this.competition = competition;
-        this.team = team;
-    }
+	RegisteredTeam() {
+		competition = null;
+		team = null;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public RegisteredTeam(Competition competition, Team team) {
+		this.competition = competition;
+		this.team = team;
+	}
 
-    public Competition getCompetition() {
-        return competition;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public Team getTeam() {
-        return team;
-    }
+	public Competition getCompetition() {
+		return competition;
+	}
 
-    public Integer getPoints() {
-        return points;
-    }
+	public Team getTeam() {
+		return team;
+	}
 
-    public RegisteredTeam setPoints(Integer points) {
-        this.points = points;
-        return this;
-    }
+	public Integer getPoints() {
+		return points;
+	}
 
-    public Date getRegisterDate() {
-        return registerDate;
-    }
+	public RegisteredTeam setPoints(Integer points) {
+		this.points = points;
+		return this;
+	}
 
-    public RegisteredTeam setRegisterDate(Date registerDate) {
-        this.registerDate = registerDate;
-        return this;
-    }
+	public Date getRegisterDate() {
+		return registerDate;
+	}
 
-    @PrePersist
-    public void initValues() {
-        registerDate = new Date();
-        points = 0;
-    }
+	public RegisteredTeam setRegisterDate(Date registerDate) {
+		this.registerDate = registerDate;
+		return this;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || !(o instanceof RegisteredTeam))
-            return false;
+	@PrePersist
+	public void initValues() {
+		registerDate = new Date();
+		points = 0;
+	}
 
-        RegisteredTeam other = (RegisteredTeam) o;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || !(o instanceof RegisteredTeam))
+			return false;
 
-        if (id == null) return false;
-        if (Objects.equals(id, other.getId())) return true;
+		RegisteredTeam other = (RegisteredTeam) o;
 
-        return id.equals(other.getId());
-    }
+		if (id == null) return false;
+		if (Objects.equals(id, other.getId())) return true;
 
-    @Override
-    public int hashCode() {
-        if (id != null) {
-            return id.hashCode();
-        } else {
-            return super.hashCode();
-        }
-    }
+		return id.equals(other.getId());
+	}
+
+	@Override
+	public int hashCode() {
+		if (id != null) {
+			return id.hashCode();
+		} else {
+			return super.hashCode();
+		}
+	}
 }

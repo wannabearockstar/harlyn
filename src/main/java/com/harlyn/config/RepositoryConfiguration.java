@@ -13,4 +13,5 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableJpaRepositories(basePackages = {"com.harlyn.repository"})
 @EnableTransactionManagement
 public class RepositoryConfiguration {
+
 }

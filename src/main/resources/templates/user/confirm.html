@@ -4,10 +4,10 @@
 </head>
 <body>
 <div th:if="${#httpServletRequest.getParameter('success')}" class="alert alert-info">
-    Your account successful confirmed. You may <a href="/login/form">login</a> now.
+	Your account successful confirmed. You may <a href="/login/form">login</a> now.
 </div>
 <div th:if="${#httpServletRequest.getParameter('error')}" class="alert alert-danger">
-    Non-existing or expired token
+	Non-existing or expired token
 </div>
 </body>
 </html>

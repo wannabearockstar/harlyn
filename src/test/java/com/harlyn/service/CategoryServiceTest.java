@@ -32,58 +32,59 @@ import static org.junit.Assert.assertEquals;
 @WebAppConfiguration
 @ActiveProfiles({"test"})
 public class CategoryServiceTest {
-    @Autowired
-    private Flyway flyway;
-    @Autowired
-    private CategoryRepository categoryRepository;
-    private CategoryService categoryService;
 
-    @Before
-    public void setUp() throws Exception {
-        flyway.clean();
-        flyway.migrate();
-        categoryService = new CategoryService()
-                .setCategoryRepository(categoryRepository);
-    }
+	@Autowired
+	private Flyway flyway;
+	@Autowired
+	private CategoryRepository categoryRepository;
+	private CategoryService categoryService;
 
-    @After
-    public void tearDown() throws Exception {
-        flyway.clean();
-    }
+	@Before
+	public void setUp() throws Exception {
+		flyway.clean();
+		flyway.migrate();
+		categoryService = new CategoryService()
+			.setCategoryRepository(categoryRepository);
+	}
 
-    @Test
-    public void testFindById() throws Exception {
-        Category category = categoryRepository.saveAndFlush(new Category("name"));
+	@After
+	public void tearDown() throws Exception {
+		flyway.clean();
+	}
 
-        assertEquals("name", categoryService.findById(category.getId()).getName());
-    }
+	@Test
+	public void testFindById() throws Exception {
+		Category category = categoryRepository.saveAndFlush(new Category("name"));
 
-    @Test
-    public void testCreateCategory() throws Exception {
-        Long categoryId = categoryService.createCategory(new Category("name"));
+		assertEquals("name", categoryService.findById(category.getId()).getName());
+	}
 
-        assertEquals("name", categoryRepository.findOne(categoryId).getName());
-    }
+	@Test
+	public void testCreateCategory() throws Exception {
+		Long categoryId = categoryService.createCategory(new Category("name"));
 
-    @Test
-    public void testUpdateCategory() throws Exception {
-        Category category = categoryRepository.saveAndFlush(new Category("name"));
-        Category categoryData = new Category("update_name");
+		assertEquals("name", categoryRepository.findOne(categoryId).getName());
+	}
 
-        categoryService.updateCategory(category, categoryData);
+	@Test
+	public void testUpdateCategory() throws Exception {
+		Category category = categoryRepository.saveAndFlush(new Category("name"));
+		Category categoryData = new Category("update_name");
 
-        assertEquals("update_name", categoryRepository.findOne(category.getId()).getName());
-    }
+		categoryService.updateCategory(category, categoryData);
 
-    @Test
-    public void testFindAll() throws Exception {
-        Category category = categoryRepository.saveAndFlush(new Category("name"));
-        Category categoryData = categoryRepository.saveAndFlush(new Category("name1"));
+		assertEquals("update_name", categoryRepository.findOne(category.getId()).getName());
+	}
 
-        List<Category> categories = categoryService.findAll();
+	@Test
+	public void testFindAll() throws Exception {
+		Category category = categoryRepository.saveAndFlush(new Category("name"));
+		Category categoryData = categoryRepository.saveAndFlush(new Category("name1"));
 
-        assertEquals(2, categories.size());
-        assertEquals("name1", categories.get(0).getName());
-        assertEquals("name", categories.get(1).getName());
-    }
+		List<Category> categories = categoryService.findAll();
+
+		assertEquals(2, categories.size());
+		assertEquals("name1", categories.get(0).getName());
+		assertEquals("name", categories.get(1).getName());
+	}
 }

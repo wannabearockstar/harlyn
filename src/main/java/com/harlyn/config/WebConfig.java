@@ -12,4 +12,5 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EnableWebMvc
 @ComponentScan
 public class WebConfig extends WebMvcAutoConfiguration {
+
 }

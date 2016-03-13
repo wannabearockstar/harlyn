@@ -12,15 +12,16 @@ import org.springframework.web.bind.annotation.ModelAttribute;
  */
 @ControllerAdvice(basePackages = "com.harlyn.web")
 public class LoadGlobalData {
-    @Autowired
-    private UserService userService;
 
-    @ModelAttribute("me")
-    public User getCurrentUser() {
-        Object userInMemory = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (userInMemory == null || !(userInMemory instanceof User)) {
-            return null;
-        }
-        return userService.getById(((User) userInMemory).getId());
-    }
+	@Autowired
+	private UserService userService;
+
+	@ModelAttribute("me")
+	public User getCurrentUser() {
+		Object userInMemory = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if (userInMemory == null || !(userInMemory instanceof User)) {
+			return null;
+		}
+		return userService.getById(((User) userInMemory).getId());
+	}
 }

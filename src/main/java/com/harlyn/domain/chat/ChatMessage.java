@@ -13,39 +13,40 @@ import java.util.Date;
  */
 @MappedSuperclass
 public class ChatMessage {
-    protected String content;
 
-    @Column(name = "posted_at")
-    protected Date postedAt;
+	protected String content;
 
-    @ManyToOne
-    @JoinColumn(name = "author_id")
-    protected User author;
+	@Column(name = "posted_at")
+	protected Date postedAt;
 
-    public ChatMessage(String content, Date postedAt, User author) {
-        this.content = content;
-        this.postedAt = postedAt;
-        this.author = author;
-    }
+	@ManyToOne
+	@JoinColumn(name = "author_id")
+	protected User author;
 
-    public ChatMessage(String content) {
-        this.content = content;
-        this.postedAt = null;
-        this.author = null;
-    }
+	public ChatMessage(String content, Date postedAt, User author) {
+		this.content = content;
+		this.postedAt = postedAt;
+		this.author = author;
+	}
 
-    public ChatMessage() {
-    }
+	public ChatMessage(String content) {
+		this.content = content;
+		this.postedAt = null;
+		this.author = null;
+	}
 
-    public String getContent() {
-        return content;
-    }
+	public ChatMessage() {
+	}
 
-    public Date getPostedAt() {
-        return postedAt;
-    }
+	public String getContent() {
+		return content;
+	}
 
-    public User getAuthor() {
-        return author;
-    }
+	public Date getPostedAt() {
+		return postedAt;
+	}
+
+	public User getAuthor() {
+		return author;
+	}
 }

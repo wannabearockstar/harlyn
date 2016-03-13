@@ -17,193 +17,194 @@ import java.util.*;
 @Entity
 @Table(name = "users")
 public class User implements UserDetails {
-    private static final String DEFAULT_ROLE = "ROLE_USER";
 
-    @Id
-    @SequenceGenerator(name = "users_id_seq", sequenceName = "users_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_id_seq")
-    @Column(name = "id", updatable = false)
-    private Long id;
+	private static final String DEFAULT_ROLE = "ROLE_USER";
 
-    @NotNull
-    @NotEmpty
-    @Email
-    @Column(unique = true, nullable = false)
-    private String email;
+	@Id
+	@SequenceGenerator(name = "users_id_seq", sequenceName = "users_id_seq", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_id_seq")
+	@Column(name = "id", updatable = false)
+	private Long id;
 
-    @NotNull
-    @NotEmpty
-    @Column(nullable = false)
-    private String username;
+	@NotNull
+	@NotEmpty
+	@Email
+	@Column(unique = true, nullable = false)
+	private String email;
 
-    @NotNull
-    @NotEmpty
-    @JsonIgnore
-    private String password;
+	@NotNull
+	@NotEmpty
+	@Column(nullable = false)
+	private String username;
 
-    @ManyToOne(targetEntity = Team.class)
-    @JoinColumn(name = "team_id")
-    @JsonIgnore
-    private Team team;
+	@NotNull
+	@NotEmpty
+	@JsonIgnore
+	private String password;
 
-    @JsonIgnore
-    private boolean enabled = false;
+	@ManyToOne(targetEntity = Team.class)
+	@JoinColumn(name = "team_id")
+	@JsonIgnore
+	private Team team;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "user_roles",
-            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")}
-    )
-    @JsonIgnore
-    private Set<Role> roles = new HashSet<>();
+	@JsonIgnore
+	private boolean enabled = false;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "recipent")
-    @JsonIgnore
-    private Set<TeamInvite> invites = new HashSet<>();
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(
+		name = "user_roles",
+		joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
+		inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")}
+	)
+	@JsonIgnore
+	private Set<Role> roles = new HashSet<>();
 
-    public User() {
-    }
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "recipent")
+	@JsonIgnore
+	private Set<TeamInvite> invites = new HashSet<>();
 
-    public User(String email, String username, String password) {
-        this.email = email;
-        this.username = username;
-        this.password = password;
-    }
+	public User() {
+	}
 
-    public User(String email, String username, String password, Team team) {
-        this.email = email;
-        this.username = username;
-        this.password = password;
-        this.team = team;
-    }
+	public User(String email, String username, String password) {
+		this.email = email;
+		this.username = username;
+		this.password = password;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public User(String email, String username, String password, Team team) {
+		this.email = email;
+		this.username = username;
+		this.password = password;
+		this.team = team;
+	}
 
-    public String getEmail() {
-        return email;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public User setEmail(String email) {
-        this.email = email;
-        return this;
-    }
+	public String getEmail() {
+		return email;
+	}
 
-    public String getUsername() {
-        return username;
-    }
+	public User setEmail(String email) {
+		this.email = email;
+		return this;
+	}
 
-    public User setUsername(String username) {
-        this.username = username;
-        return this;
-    }
+	public String getUsername() {
+		return username;
+	}
 
-    @Override
-    @JsonIgnore
-    public boolean isAccountNonExpired() {
-        return true;
-    }
+	public User setUsername(String username) {
+		this.username = username;
+		return this;
+	}
 
-    @Override
-    @JsonIgnore
-    public boolean isAccountNonLocked() {
-        return true;
-    }
+	@Override
+	@JsonIgnore
+	public boolean isAccountNonExpired() {
+		return true;
+	}
 
-    @Override
-    @JsonIgnore
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
+	@Override
+	@JsonIgnore
+	public boolean isAccountNonLocked() {
+		return true;
+	}
 
-    @Override
-    @JsonIgnore
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<GrantedAuthority> authorities = new ArrayList<>();
-        Set<Role> userRoles = this.getRoles();
-        if (userRoles != null) {
-            for (Role role : userRoles) {
-                SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.getName());
-                authorities.add(authority);
-            }
-        } else {
-            authorities.add(new SimpleGrantedAuthority(DEFAULT_ROLE));
-        }
-        return authorities;
-    }
+	@Override
+	@JsonIgnore
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
 
-    public boolean hasRole(String roleName) {
-        return roles.stream()
-                .anyMatch(role -> role.getName().equals(roleName));
-    }
+	@Override
+	@JsonIgnore
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		Collection<GrantedAuthority> authorities = new ArrayList<>();
+		Set<Role> userRoles = this.getRoles();
+		if (userRoles != null) {
+			for (Role role : userRoles) {
+				SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.getName());
+				authorities.add(authority);
+			}
+		} else {
+			authorities.add(new SimpleGrantedAuthority(DEFAULT_ROLE));
+		}
+		return authorities;
+	}
 
-    public String getPassword() {
-        return password;
-    }
+	public boolean hasRole(String roleName) {
+		return roles.stream()
+			.anyMatch(role -> role.getName().equals(roleName));
+	}
 
-    public User setPassword(String password) {
-        this.password = password;
-        return this;
-    }
+	public String getPassword() {
+		return password;
+	}
 
-    public Team getTeam() {
-        return team;
-    }
+	public User setPassword(String password) {
+		this.password = password;
+		return this;
+	}
 
-    public User setTeam(Team team) {
-        this.team = team;
-        return this;
-    }
+	public Team getTeam() {
+		return team;
+	}
 
-    public boolean isEnabled() {
-        return enabled;
-    }
+	public User setTeam(Team team) {
+		this.team = team;
+		return this;
+	}
 
-    public User setEnabled(boolean enabled) {
-        this.enabled = enabled;
-        return this;
-    }
+	public boolean isEnabled() {
+		return enabled;
+	}
 
-    public Set<Role> getRoles() {
-        return roles;
-    }
+	public User setEnabled(boolean enabled) {
+		this.enabled = enabled;
+		return this;
+	}
 
-    public User setRoles(Set<Role> roles) {
-        this.roles = roles;
-        return this;
-    }
+	public Set<Role> getRoles() {
+		return roles;
+	}
 
-    public Set<TeamInvite> getInvites() {
-        return invites;
-    }
+	public User setRoles(Set<Role> roles) {
+		this.roles = roles;
+		return this;
+	}
 
-    public User setInvites(Set<TeamInvite> invites) {
-        this.invites = invites;
-        return this;
-    }
+	public Set<TeamInvite> getInvites() {
+		return invites;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || !(o instanceof User))
-            return false;
+	public User setInvites(Set<TeamInvite> invites) {
+		this.invites = invites;
+		return this;
+	}
 
-        User other = (User) o;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || !(o instanceof User))
+			return false;
 
-        if (id == null) return false;
-        if (Objects.equals(id, other.getId())) return true;
+		User other = (User) o;
 
-        return id.equals(other.getId());
-    }
+		if (id == null) return false;
+		if (Objects.equals(id, other.getId())) return true;
 
-    @Override
-    public int hashCode() {
-        if (id != null) {
-            return id.hashCode();
-        } else {
-            return super.hashCode();
-        }
-    }
+		return id.equals(other.getId());
+	}
+
+	@Override
+	public int hashCode() {
+		if (id != null) {
+			return id.hashCode();
+		} else {
+			return super.hashCode();
+		}
+	}
 }

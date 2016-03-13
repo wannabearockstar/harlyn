@@ -13,35 +13,36 @@ import java.util.Date;
 @Entity
 @Table(name = "team_messages")
 public class TeamChatMessage extends ChatMessage {
-    @Id
-    @SequenceGenerator(name = "team_messages_id_seq", sequenceName = "team_messages_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "team_messages_id_seq")
-    @Column(name = "id", updatable = false)
-    private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "team_id")
-    @JsonIgnore
-    private Team team;
+	@Id
+	@SequenceGenerator(name = "team_messages_id_seq", sequenceName = "team_messages_id_seq", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "team_messages_id_seq")
+	@Column(name = "id", updatable = false)
+	private Long id;
 
-    public TeamChatMessage() {
-    }
+	@ManyToOne
+	@JoinColumn(name = "team_id")
+	@JsonIgnore
+	private Team team;
 
-    public TeamChatMessage(String content, Date postedAt, User author, Team team) {
-        super(content, postedAt, author);
-        this.team = team;
-    }
+	public TeamChatMessage() {
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public TeamChatMessage(String content, Date postedAt, User author, Team team) {
+		super(content, postedAt, author);
+		this.team = team;
+	}
 
-    public Team getTeam() {
-        return team;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public TeamChatMessage setTeam(Team team) {
-        this.team = team;
-        return this;
-    }
+	public Team getTeam() {
+		return team;
+	}
+
+	public TeamChatMessage setTeam(Team team) {
+		this.team = team;
+		return this;
+	}
 }

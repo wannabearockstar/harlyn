@@ -22,46 +22,47 @@ import java.util.Map;
  * Do not providing final answer about solution status, just pass solution query param by email
  */
 public class InfoEmailProblemHandler implements ProblemHandler {
-    private JavaMailSender mailSender;
-    private SimpleMailMessage templateMessage;
-    private VelocityEngine velocityEngine;
 
-    public InfoEmailProblemHandler(JavaMailSender mailSender, SimpleMailMessage templateMessage, VelocityEngine velocityEngine) {
-        this.mailSender = mailSender;
-        this.templateMessage = templateMessage;
-        this.velocityEngine = velocityEngine;
-    }
+	private JavaMailSender mailSender;
+	private SimpleMailMessage templateMessage;
+	private VelocityEngine velocityEngine;
 
-    @Override
-    public boolean isManual() {
-        return true;
-    }
+	public InfoEmailProblemHandler(JavaMailSender mailSender, SimpleMailMessage templateMessage, VelocityEngine velocityEngine) {
+		this.mailSender = mailSender;
+		this.templateMessage = templateMessage;
+		this.velocityEngine = velocityEngine;
+	}
 
-    @Override
-    public boolean checkSolution(Problem problem, SubmitData solution, User solver) {
-        MimeMessagePreparator preparator = mimeMessage -> {
-            Map<String, Object> model = new HashMap<>();
-            model.put("solution", solution);
-            model.put("problem", problem);
-            String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, "templates/mail/main_query_solution.vm", "UTF-8", model);
-            mimeMessage.setContent(text, "text/html; charset=utf-8");
-            mimeMessage.setHeader("Content-Type", "text/html; charset=UTF-8");
-            mimeMessage.setSubject(getMailSubject(problem, solution, solver), "UTF-8");
+	@Override
+	public boolean isManual() {
+		return true;
+	}
 
-            MimeMessageHelper message = new MimeMessageHelper(mimeMessage, "UTF-8");
-            message.setTo(templateMessage.getTo());
-            message.setFrom(templateMessage.getFrom());
-        };
-        mailSender.send(preparator);
-        return false;
-    }
+	@Override
+	public boolean checkSolution(Problem problem, SubmitData solution, User solver) {
+		MimeMessagePreparator preparator = mimeMessage -> {
+			Map<String, Object> model = new HashMap<>();
+			model.put("solution", solution);
+			model.put("problem", problem);
+			String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, "templates/mail/main_query_solution.vm", "UTF-8", model);
+			mimeMessage.setContent(text, "text/html; charset=utf-8");
+			mimeMessage.setHeader("Content-Type", "text/html; charset=UTF-8");
+			mimeMessage.setSubject(getMailSubject(problem, solution, solver), "UTF-8");
 
-    protected String getMailSubject(Problem problem, SubmitData solution, User solver) {
-        return String.format("Solution of problem #%d: %s. %s, team %s",
-                problem.getId(),
-                problem.getName(),
-                solver.getUsername(),
-                solver.getTeam().getName()
-                );
-    }
+			MimeMessageHelper message = new MimeMessageHelper(mimeMessage, "UTF-8");
+			message.setTo(templateMessage.getTo());
+			message.setFrom(templateMessage.getFrom());
+		};
+		mailSender.send(preparator);
+		return false;
+	}
+
+	protected String getMailSubject(Problem problem, SubmitData solution, User solver) {
+		return String.format("Solution of problem #%d: %s. %s, team %s",
+			problem.getId(),
+			problem.getName(),
+			solver.getUsername(),
+			solver.getTeam().getName()
+		);
+	}
 }

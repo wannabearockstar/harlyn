@@ -15,21 +15,22 @@ import java.util.List;
  */
 @Service
 public class CompetitionChatService {
-    @Autowired
-    private CompetitionChatMessageRepository competitionChatMessageRepository;
 
-    public CompetitionChatService setCompetitionChatMessageRepository(CompetitionChatMessageRepository competitionChatMessageRepository) {
-        this.competitionChatMessageRepository = competitionChatMessageRepository;
-        return this;
-    }
+	@Autowired
+	private CompetitionChatMessageRepository competitionChatMessageRepository;
 
-    public List<CompetitionChatMessage> getLastMessagesByCompetition(Competition competition, int limit) {
-        List<CompetitionChatMessage> competitionChatMessages = competitionChatMessageRepository.findAllByCompetitionOrderByIdDesc(competition, new PageRequest(0, limit));
-        Collections.reverse(competitionChatMessages);
-        return competitionChatMessages;
-    }
+	public CompetitionChatService setCompetitionChatMessageRepository(CompetitionChatMessageRepository competitionChatMessageRepository) {
+		this.competitionChatMessageRepository = competitionChatMessageRepository;
+		return this;
+	}
 
-    public CompetitionChatMessage create(CompetitionChatMessage competitionChatMessage) {
-        return competitionChatMessageRepository.saveAndFlush(competitionChatMessage);
-    }
+	public List<CompetitionChatMessage> getLastMessagesByCompetition(Competition competition, int limit) {
+		List<CompetitionChatMessage> competitionChatMessages = competitionChatMessageRepository.findAllByCompetitionOrderByIdDesc(competition, new PageRequest(0, limit));
+		Collections.reverse(competitionChatMessages);
+		return competitionChatMessages;
+	}
+
+	public CompetitionChatMessage create(CompetitionChatMessage competitionChatMessage) {
+		return competitionChatMessageRepository.saveAndFlush(competitionChatMessage);
+	}
 }

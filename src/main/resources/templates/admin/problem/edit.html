@@ -1,106 +1,131 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
-      layout:decorator="fragments/wrapper">
+			xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+			layout:decorator="fragments/wrapper">
 <head>
-    <title th:text="#{admin.problem.title}"></title>
+	<title th:text="#{admin.problem.title}"></title>
 </head>
 <body>
 <div layout:fragment="content" class="container">
-    <form th:action="${'/admin/problem/' + problem.id }" method="post" enctype="multipart/form-data">
-        <div class="form-group">
-            <label for="name" class="form-control" th:text="#{admin.problem.form.name}"></label>
-            <input th:value="${problem.name}" class="form-control" type="text" name="name" id="name"
-                   th:placeholder="#{admin.problem.form.name}"/>
-        </div>
-        <div class="form-group">
-            <label for="answer" class="form-control" th:text="#{admin.problem.form.answer}"></label>
-            <input disabled="disabled" th:value="${problem.answer}" class="form-control" type="text" name="answer" id="answer"
-                   th:placeholder="#{admin.problem.form.answer}" />
-        </div>
-        <div class="form-group">
-            <label for="points" class="form-control" th:text="#{admin.problem.form.points}"></label>
-            <input disabled="disabled" th:value="${problem.points}" class="form-control" type="number" name="points"
-                   id="points"/>
-        </div>
-        <div class="form-group">
-            <label class="form-control" for="info" th:text="#{admin.problem.form.info}"></label>
-            <textarea th:text="${problem.info}" class="form-control" name="info" id="info"></textarea>
-        </div>
-        <div class="form-group">
-            <label class="form-control" for="start_date" th:text="#{admin.problem.form.start_date}"></label>
-            <div id="datetimepicker_start" class="input-group date">
-                <input class="form-control" th:value="${problem.startDate != null}? ${#dates.format(problem.startDate, T(com.harlyn.domain.problems.Problem).DATE_FORMAT)} : ''" type="text"
-                       name="start_date" id="start_date"/>
+	<form th:action="${'/admin/problem/' + problem.id }" method="post" enctype="multipart/form-data">
+		<div class="form-group">
+			<label for="name" class="form-control" th:text="#{admin.problem.form.name}"></label>
+			<input th:value="${problem.name}" class="form-control" type="text" name="name" id="name"
+						 th:placeholder="#{admin.problem.form.name}"/>
+		</div>
+		<div class="form-group">
+			<label for="answer" class="form-control" th:text="#{admin.problem.form.answer}"></label>
+			<input disabled="disabled" th:value="${problem.answer}" class="form-control" type="text" name="answer" id="answer"
+						 th:placeholder="#{admin.problem.form.answer}"/>
+		</div>
+		<div class="form-group">
+			<label for="points" class="form-control" th:text="#{admin.problem.form.points}"></label>
+			<input disabled="disabled" th:value="${problem.points}" class="form-control" type="number" name="points"
+						 id="points"/>
+		</div>
+		<div class="form-group">
+			<label class="form-control" for="info" th:text="#{admin.problem.form.info}"></label>
+			<textarea th:text="${problem.info}" class="form-control" name="info" id="info"></textarea>
+		</div>
+		<div class="form-group">
+			<label class="form-control" for="start_date" th:text="#{admin.problem.form.start_date}"></label>
+			<div id="datetimepicker_start" class="input-group date">
+				<input class="form-control"
+							 th:value="${problem.startDate != null}? ${#dates.format(problem.startDate, T(com.harlyn.domain.problems.Problem).DATE_FORMAT)} : ''"
+							 type="text"
+							 name="start_date" id="start_date"/>
               <span class="input-group-addon">
                   <span class="glyphicon glyphicon-calendar"></span>
               </span>
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="form-control" for="end_date" th:text="#{admin.problem.form.end_date}"></label>
-            <div id="datetimepicker_end" class="input-group date">
-                <input class="form-control" th:value="${problem.endDate != null}? ${#dates.format(problem.endDate, T(com.harlyn.domain.problems.Problem).DATE_FORMAT)} : ''" type="text"
-                       name="end_date" id="end_date"/>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="form-control" for="end_date" th:text="#{admin.problem.form.end_date}"></label>
+			<div id="datetimepicker_end" class="input-group date">
+				<input class="form-control"
+							 th:value="${problem.endDate != null}? ${#dates.format(problem.endDate, T(com.harlyn.domain.problems.Problem).DATE_FORMAT)} : ''"
+							 type="text"
+							 name="end_date" id="end_date"/>
               <span class="input-group-addon">
                   <span class="glyphicon glyphicon-calendar"></span>
               </span>
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="form-control" for="problem_type" th:text="#{admin.problem.form.type}"></label>
-            <select disabled="disabled" name="problem_type" id="problem_type">
-                <option th:each="problem_type : ${problem_handlers_keys}"
-                        th:value="${problem_type.name()}"
-                        th:text="${problem_type.localeName}"
-                        th:selected="${problem_type == problem.problemType}"
-                        ></option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label class="form-control" for="competition" th:text="#{admin.problem.form.competition}"></label>
-            <select disabled="disabled" name="competition" id="competition">
-                <option th:each="competition : ${competitions}"
-                        th:value="${competition.id}"
-                        th:text="${competition.name}"
-                        th:selected="${competition.equals(problem.competition)}"
-                        ></option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label class="form-control" for="category" th:text="#{admin.problem.form.category}"></label>
-            <select name="category" id="category">
-                <option selected="selected" value="0">None</option>
-                <option th:each="category : ${categories}"
-                        th:value="${category.id}"
-                        th:text="${category.name}"
-                        th:selected="${category.equals(problem.category)}"
-                        ></option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label class="form-control" for="prev_problem" th:text="#{admin.problem.form.prev}"></label>
-            <select name="prev_problem" id="prev_problem">
-                <option selected="selected" value="0">None</option>
-                <option th:each="prev_problem : ${all_problems}"
-                        th:value="${prev_problem.id}"
-                        th:text="${prev_problem.name + ' - ' + prev_problem.competition.name}"
-                        th:selected="${prev_problem.equals(problem.prevProblem)}"
-                        ></option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label class="form-control" for="file" th:text="#{admin.problem.form.file}"></label>
-            <input th:value="${problem.file}? ${problem.file.name} : ''"
-                   class="form-control"
-                   name="file_name"
-                    />
-            <input class="form-control" type="file" name="file" id="file" />
-        </div>
-        <div class="form-group">
-            <input type="submit" class="btn btn-primary form-control" th:value="#{form.edit}"/>
-        </div>
-    </form>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="form-control" for="problem_type" th:text="#{admin.problem.form.type}"></label>
+			<select disabled="disabled" name="problem_type" id="problem_type">
+				<option th:each="problem_type : ${problem_handlers_keys}"
+								th:value="${problem_type.name()}"
+								th:text="${problem_type.localeName}"
+								th:selected="${problem_type == problem.problemType}"
+				></option>
+			</select>
+		</div>
+		<div class="form-group">
+			<label class="form-control" for="competition" th:text="#{admin.problem.form.competition}"></label>
+			<select disabled="disabled" name="competition" id="competition">
+				<option th:each="competition : ${competitions}"
+								th:value="${competition.id}"
+								th:text="${competition.name}"
+								th:selected="${competition.equals(problem.competition)}"
+				></option>
+			</select>
+		</div>
+		<div class="form-group">
+			<label class="form-control" for="category" th:text="#{admin.problem.form.category}"></label>
+			<select name="category" id="category">
+				<option selected="selected" value="0">None</option>
+				<option th:each="category : ${categories}"
+								th:value="${category.id}"
+								th:text="${category.name}"
+								th:selected="${category.equals(problem.category)}"
+				></option>
+			</select>
+		</div>
+		<div class="form-group">
+			<label class="form-control" for="prev_problem" th:text="#{admin.problem.form.prev}"></label>
+			<select name="prev_problem" id="prev_problem">
+				<option selected="selected" value="0">None</option>
+				<option th:each="prev_problem : ${all_problems}"
+								th:value="${prev_problem.id}"
+								th:text="${prev_problem.name + ' - ' + prev_problem.competition.name}"
+								th:selected="${prev_problem.equals(problem.prevProblem)}"
+				></option>
+			</select>
+		</div>
+		<div class="form-group">
+			<label class="form-control" for="file" th:text="#{admin.problem.form.file}"></label>
+			<input th:value="${problem.file}? ${problem.file.name} : ''"
+						 class="form-control"
+						 name="file_name"
+			/>
+			<input class="form-control" type="file" name="file" id="file"/>
+		</div>
+		<div class="form-group">
+			<input type="submit" class="btn btn-primary form-control" th:value="#{form.edit}"/>
+		</div>
+	</form>
+	<div>
+		<h3>Hints</h3>
+		<div th:each="hint : ${problem.hints}"
+				 th:text="${hint.content}"
+				 class="alert alert-warning"
+		>
+			<form th:action="${'/admin/problem/hint/' + hint.id + '/delete'}" method="POST">
+				<input type="submit" value="Delete"/>
+			</form>
+		</div>
+		<div>
+			<h4>Add new</h4>
+			<form th:action="${'/admin/problem/' + problem.id + '/hint'}" method="POST">
+				<div class="form-group">
+					<label for="hint_content">Hint content</label>
+					<textarea id="hint_content" name="content" required="required" class="form-control"></textarea>
+					<input type="submit" value="Create" class="form-control btn btn-primary"/>
+				</div>
+			</form>
+		</div>
+	</div>
 </div>
 </body>
 </html>
