@@ -217,18 +217,24 @@ public class Problem {
 	}
 
 	public enum ProblemType {
-		FLAG("Flag compare"),
-		INFO_WEB("Manual checking of text info"),
-		INFO_EMAIL("Manual checking of text info via email");
+		FLAG("Flag compare", false),
+		INFO_WEB("Manual checking of text info", true),
+		INFO_EMAIL("Manual checking of text info via email", false);
 
 		private String localeName;
+		private boolean isFileNeeded;
 
-		ProblemType(String localeName) {
+		ProblemType(String localeName, boolean isFileNeeded) {
 			this.localeName = localeName;
+			this.isFileNeeded = isFileNeeded;
 		}
 
 		public String getLocaleName() {
 			return localeName;
+		}
+
+		public boolean isFileNeeded() {
+			return isFileNeeded;
 		}
 	}
 }
