@@ -38,6 +38,7 @@ public class AdminCompetitionController {
 	@RequestMapping(value = "/", method = RequestMethod.POST)
 	public String newCompetitionAction(
 		@RequestParam(value = "name") String name,
+		@RequestParam(value = "description", required = false) Optional<String> description,
 		@RequestParam(value = "start_date", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss") Optional<Date> startDate,
 		@RequestParam(value = "end_date", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss") Optional<Date> endDate
 	) {
@@ -47,6 +48,9 @@ public class AdminCompetitionController {
 		}
 		if (endDate.isPresent()) {
 			competitionData.setEndDate(endDate.get());
+		}
+		if (description.isPresent()) {
+			competitionData.setDescription(description.get());
 		}
 		return "redirect:/admin/competition/" + competitionService.createCompetition(competitionData);
 	}
@@ -65,6 +69,7 @@ public class AdminCompetitionController {
 	public String editCompetitionAction(@PathVariable(value = "id") Long id,
 																			Model model,
 																			@RequestParam(value = "name") String name,
+																			@RequestParam(value = "description", required = false) Optional<String> description,
 																			@RequestParam(value = "start_date", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss") Optional<Date> startDate,
 																			@RequestParam(value = "end_date", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss") Optional<Date> endDate
 	) {
@@ -78,6 +83,9 @@ public class AdminCompetitionController {
 		}
 		if (endDate.isPresent()) {
 			competitionData.setEndDate(endDate.get());
+		}
+		if (description.isPresent()) {
+			competitionData.setDescription(description.get());
 		}
 		return "redirect:/admin/competition/" + competitionService.updateCompetition(competition, competitionData);
 	}

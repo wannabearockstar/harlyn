@@ -81,6 +81,7 @@ public class CompetitionService {
 
 	public Long updateCompetition(Competition competition, Competition competitionData) {
 		competition.setName(competitionData.getName())
+			.setDescription(competitionData.getDescription())
 			.setStartDate(competitionData.getStartDate())
 			.setEndDate(competitionData.getEndDate());
 		return competitionRepository.saveAndFlush(competition).getId();

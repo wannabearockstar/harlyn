@@ -8,6 +8,9 @@
 <body>
 <div layout:fragment="content" class="container">
 	<h2 th:text="${competition.name}"></h2>
+	<div th:unless="${competition.description == null}">
+		<p th:utext="${#strings.replace( #strings.escapeXml( competition.description ),T(java.lang.System).getProperty('line.separator'),'&lt;br /&gt;')}" ></p>
+	</div>
 	<div th:if="${available}">
 		<div th:unless="${registered}">
 			<form th:if="${me.equals(me.team.captain)}" method="post"

@@ -13,6 +13,10 @@
 			<input class="form-control" type="text" name="name" id="name" placeholder="Name of problem"/>
 		</div>
 		<div class="form-group">
+			<label for="description" class="form-control" th:text="#{admin.competition.form.description}"></label>
+			<textarea class="form-control" id="description" name="description"></textarea>
+		</div>
+		<div class="form-group">
 			<label class="form-control" for="start_date" th:text="#{admin.competition.form.start_date}"></label>
 			<div id="datetimepicker_start" class="input-group date">
 				<input th:data-format="${T(com.harlyn.domain.problems.Problem).DATE_FORMAT}" class="form-control" type="text"
