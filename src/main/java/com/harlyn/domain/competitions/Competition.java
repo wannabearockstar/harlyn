@@ -37,6 +37,8 @@ public class Competition {
 	@OrderBy("id DESC")
 	private Set<Problem> problems;
 
+	private String description;
+
 	public Competition() {
 	}
 
@@ -90,6 +92,15 @@ public class Competition {
 
 	public Competition setProblems(Set<Problem> problems) {
 		this.problems = problems;
+		return this;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public Competition setDescription(String description) {
+		this.description = description;
 		return this;
 	}
 
