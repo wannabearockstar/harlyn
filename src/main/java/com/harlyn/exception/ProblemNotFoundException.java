@@ -5,4 +5,7 @@ package com.harlyn.exception;
  */
 public class ProblemNotFoundException extends RuntimeException {
 
+	public ProblemNotFoundException() {
+		super("Problem not found");
+	}
 }

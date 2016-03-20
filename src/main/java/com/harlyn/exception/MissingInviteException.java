@@ -5,4 +5,7 @@ package com.harlyn.exception;
  */
 public class MissingInviteException extends RuntimeException {
 
+	public MissingInviteException() {
+		super("Missing invite");
+	}
 }

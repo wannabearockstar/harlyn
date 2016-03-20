@@ -15,7 +15,7 @@ public class ExceptionHandlerController {
 	public static final String DEFAULT_ERROR_VIEW = "utils/error/default";
 	private static final Logger logger = LoggerFactory.getLogger(ExceptionHandlerController.class);
 
-	@ExceptionHandler(value = {Exception.class, RuntimeException.class})
+	@ExceptionHandler(value = Exception.class)
 	public ModelAndView defaultErrorHandler(Exception e) {
 		logger.error("Error: {}", e.getMessage());
 		e.printStackTrace();

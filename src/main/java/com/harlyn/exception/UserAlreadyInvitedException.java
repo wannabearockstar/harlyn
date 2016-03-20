@@ -5,4 +5,7 @@ package com.harlyn.exception;
  */
 public class UserAlreadyInvitedException extends RuntimeException {
 
+	public UserAlreadyInvitedException() {
+		super("User already invited");
+	}
 }

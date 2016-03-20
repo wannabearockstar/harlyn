@@ -5,4 +5,7 @@ package com.harlyn.exception;
  */
 public class UserInvalidTeamRightsException extends RuntimeException {
 
+	public UserInvalidTeamRightsException() {
+		super("User has invalid team rights");
+	}
 }

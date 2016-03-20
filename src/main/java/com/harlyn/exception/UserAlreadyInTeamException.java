@@ -5,4 +5,7 @@ package com.harlyn.exception;
  */
 public class UserAlreadyInTeamException extends RuntimeException {
 
+	public UserAlreadyInTeamException() {
+		super("User already in team");
+	}
 }

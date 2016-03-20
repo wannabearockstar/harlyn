@@ -5,4 +5,7 @@ package com.harlyn.exception;
  */
 public class MissingUserExcpetion extends RuntimeException {
 
+	public MissingUserExcpetion() {
+		super("Missing user");
+	}
 }

@@ -5,4 +5,7 @@ package com.harlyn.exception;
  */
 public class UserWithoutTeamException extends RuntimeException {
 
+	public UserWithoutTeamException() {
+		super("User without team");
+	}
 }

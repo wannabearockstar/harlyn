@@ -5,4 +5,7 @@ package com.harlyn.exception;
  */
 public class ProblemFileNoutFoundException extends RuntimeException {
 
+	public ProblemFileNoutFoundException() {
+		super("Problem file not found");
+	}
 }
