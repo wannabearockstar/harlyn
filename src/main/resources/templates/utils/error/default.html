@@ -8,10 +8,20 @@
 <body>
 <div layout:fragment="navbar"></div>
 <div layout:fragment="content" class="container">
-	<div class="alert alert-danger" role="alert">
-		<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-		<span class="sr-only">Error:</span>
-		<span th:text="${message}"></span>
+	<div class="row">
+		<div class="col-md-2 col-md-offset-5">
+			<div class="error-template">
+				<h1>
+					Oops!</h1>
+				<div class="error-details" th:text="${message}">
+					Sorry, an error has occured, Requested page not found!
+				</div>
+				<div class="error-actions">
+					<a th:href="@{/}" class="btn btn-primary btn-lg">
+						Go To Home </a>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
 </body>
