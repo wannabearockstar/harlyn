@@ -87,7 +87,7 @@ public class CompetitionController {
 
 		model.addAttribute("competition", competition);
 		model.addAttribute("selected_category_id", categoryIdParsed);
-		model.addAttribute("categories", categoryService.findAll());
+		model.addAttribute("categories", categoryService.findAllByCompetition(competition));
 		return "competition/problems";
 	}
 

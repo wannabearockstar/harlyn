@@ -1,5 +1,6 @@
 package com.harlyn.service;
 
+import com.harlyn.domain.competitions.Competition;
 import com.harlyn.domain.problems.Category;
 import com.harlyn.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,5 +42,9 @@ public class CategoryService {
 	public CategoryService setCategoryRepository(CategoryRepository categoryRepository) {
 		this.categoryRepository = categoryRepository;
 		return this;
+	}
+
+	public List<Category> findAllByCompetition(Competition competition) {
+		return categoryRepository.findAllByCompetition(competition.getId());
 	}
 }

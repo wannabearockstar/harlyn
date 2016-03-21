@@ -8,7 +8,7 @@
 <body>
 <div layout:fragment="content" class="container">
 	<h3 th:text="${competition.name + ': problem list'}">Problem list</h3>
-	<div class="form-group">
+	<div class="form-group" th:unless="${categories.empty}">
 		<form th:action="${'/competition/' + competition.id + '/problems'}" method="get">
 			<a th:if="${selected_category_id != 0}" th:href="${'/competition/' + competition.id + '/problems'}">
 				Flush filter
