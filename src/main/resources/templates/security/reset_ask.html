@@ -1,0 +1,28 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments/wrapper :: head" lang="en">
+</head>
+<body>
+<div class="col-md-6 col-md-offset-2">
+	<div th:if="${#httpServletRequest.getParameter('password_mistmatch')}" class="alert alert-danger"> Passwords do not matches.
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-6 col-md-offset-2"><h2>Restore password</h2>
+		<form id="loginForm" method="post" th:action="@{/users/reset/ask}" class="form-horizontal"
+					role="form" style="width: 800px; margin: 0 auto;">
+			<div class="form-group">
+				<label for="email" class="col-sm-2 control-label">Email*</label>
+				<div class="col-sm-4">
+					<input type="email" id="email" name="email" class="form-control" placeholder="Email"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-4">
+					<input type="submit" class="btn btn-primary" value="Get reset link"/>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+</body>
+</html>

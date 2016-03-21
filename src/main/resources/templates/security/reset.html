@@ -1,0 +1,36 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="fragments/wrapper :: head" lang="en">
+</head>
+<body>
+<div class="col-md-6 col-md-offset-2">
+	<div th:if="${#httpServletRequest.getParameter('password_mistmatch')}" class="alert alert-danger"> Passwords do not matches.
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-6 col-md-offset-2"><h2>Restore password</h2>
+		<form id="loginForm" method="post" th:action="@{/users/reset}" class="form-horizontal"
+					role="form" style="width: 800px; margin: 0 auto;">
+			<input type="hidden" th:value="${token}" name="token" />
+			<div class="form-group">
+				<label for="password" class="col-sm-2 control-label">Password*</label>
+				<div class="col-sm-4">
+					<input type="password" id="password" name="password" class="form-control" placeholder="Password"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="password" class="col-sm-2 control-label">Password again*</label>
+
+				<div class="col-sm-4">
+					<input type="password" id="password_again" name="password_again" class="form-control" placeholder="Password again"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-4">
+					<input type="submit" class="btn btn-primary" value="Reset password"/>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+</body>
+</html>

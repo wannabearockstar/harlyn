@@ -8,10 +8,12 @@
 	</div>
 	<div th:if="${#httpServletRequest.getParameter('logout')}" class="alert alert-success"> You have been logged out.
 	</div>
+	<div th:if="${#httpServletRequest.getParameter('password_updated')}" class="alert alert-success">You may login with the new password now</div>
+	<div th:if="${#httpServletRequest.getParameter('reset')}" class="alert alert-success">Check corresponding email for password-reset link</div>
 </div>
 <div class="row">
 	<div class="col-md-6 col-md-offset-2"><h2>User Login Form</h2>
-		<a href="/registration/form">Registration</a>
+		<a th:href="@{/registration/form}">Registration</a>
 		<form id="loginForm" method="post" action="/login" class="form-horizontal"
 					role="form" style="width: 800px; margin: 0 auto;">
 			<div class="form-group">
@@ -33,6 +35,7 @@
 					<input type="submit" class="btn btn-primary" value="Login"/>
 				</div>
 			</div>
+			<a th:href="@{/users/reset/ask}">Forgot password</a>
 		</form>
 	</div>
 </div>
