@@ -4,6 +4,7 @@ import com.harlyn.domain.Team;
 import com.harlyn.domain.TeamInvite;
 import com.harlyn.domain.User;
 import com.harlyn.exception.*;
+import com.harlyn.repository.SolutionRepository;
 import com.harlyn.repository.TeamInviteRepository;
 import com.harlyn.repository.TeamRepository;
 import com.harlyn.repository.UserRepository;
@@ -25,6 +26,8 @@ public class TeamService {
 	private UserRepository userRepository;
 	@Autowired
 	private TeamInviteRepository teamInviteRepository;
+	@Autowired
+	private SolutionRepository solutionRepository;
 
 	public Team createTeam(String name, User captain) {
 		if (isTeamNameExists(name)) {
@@ -99,5 +102,14 @@ public class TeamService {
 
 	public List<Team> getAllTeams() {
 		return teamRepository.findAllByOrderByIdDesc();
+	}
+
+	public boolean userSolvedForTeam(User user) {
+		return solutionRepository.existsBySolver(user);
+	}
+
+	@Transactional
+	public void dropTeam(User user) {
+		userRepository.dropTeam(user.getId());
 	}
 }

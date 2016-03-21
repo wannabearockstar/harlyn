@@ -2,7 +2,6 @@ package com.harlyn.web;
 
 import com.harlyn.domain.User;
 import com.harlyn.event.UserChangedEvent;
-import com.harlyn.exception.MissingUserExcpetion;
 import com.harlyn.exception.UserNotFoundException;
 import com.harlyn.service.TeamService;
 import com.harlyn.service.UserService;
@@ -44,16 +43,17 @@ public class UserController {
 		return "user/show";
 	}
 
-	@RequestMapping(value = "/{id}/invite", method = RequestMethod.POST)
-	public String inviteAction(@PathVariable(value = "id") Long userId, Model model) {
-		User user = userService.getById(userId);
+	@RequestMapping(value = "/invite", method = RequestMethod.POST)
+	public String inviteAction(@RequestParam(value = "email") String email, Model model) {
+		User user = userService.getByEmail(email);
+		User me = (User) model.asMap().get("me");
 
-		if (user == null) {
-			throw new MissingUserExcpetion();
+		if (user == null || user.getTeam() != null || me.getTeam() == null) {
+			return "redirect:/users/me?invalid_user";
 		}
-		teamService.sendInvite((User) model.asMap().get("me"), user);
+		teamService.sendInvite(me, user);
 		eventPublisher.publishEvent(new UserChangedEvent(this, user));
-		return "redirect:/users/" + userId;
+		return "redirect:/users/me?user_invited";
 	}
 
 	@RequestMapping(value = "/reset/ask", method = RequestMethod.GET)
