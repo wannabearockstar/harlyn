@@ -4,14 +4,24 @@ import com.harlyn.domain.User;
 import com.harlyn.exception.NonUniqueUserDataException;
 import com.harlyn.repository.RoleRepository;
 import com.harlyn.repository.UserRepository;
+import com.harlyn.security.SessionIdentifierGenerator;
+import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.velocity.VelocityEngineUtils;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -26,6 +36,16 @@ public class UserService {
 	private PasswordEncoder passwordEncoder;
 	@Autowired
 	private RoleRepository roleRepository;
+	@Autowired
+	private SessionIdentifierGenerator sessionIdentifierGenerator;
+	@Autowired
+	private JavaMailSender mailSender;
+	@Autowired
+	private SimpleMailMessage templateConfirmCodeMessage;
+	@Autowired
+	private VelocityEngine velocityEngine;
+	@Autowired
+	private String currentHost;
 
 	public User findUserByEmail(String email) {
 		return userRepository.findUserByEmail(email);
@@ -76,4 +96,40 @@ public class UserService {
 		return userRepository.findAll();
 	}
 
+	public User getByEmail(String email) {
+		return userRepository.findOneByEmail(email);
+	}
+
+	@Transactional
+	public void sendResetLink(User user) {
+		String resetToken = sessionIdentifierGenerator.nextSessionId();
+		userRepository.updateResetToken(user.getId(), resetToken);
+		sendResetLink(user, resetToken);
+	}
+
+	private void sendResetLink(User user, String resetToken) {
+		MimeMessagePreparator preparator = mimeMessage -> {
+			Map<String, Object> model = new HashMap<>();
+			model.put("resetToken", resetToken);
+			model.put("currentHost", currentHost);
+			String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, "templates/mail/reset_password_link.vm", "UTF-8", model);
+			mimeMessage.setContent(text, "text/html; charset=utf-8");
+			mimeMessage.setHeader("Content-Type", "text/html; charset=UTF-8");
+			mimeMessage.setSubject(templateConfirmCodeMessage.getSubject(), "UTF-8");
+
+			MimeMessageHelper message = new MimeMessageHelper(mimeMessage, "UTF-8");
+			message.setTo(user.getEmail());
+			message.setFrom(templateConfirmCodeMessage.getFrom());
+		};
+		mailSender.send(preparator);
+	}
+
+	public User getByResetToken(String token) {
+		return userRepository.findOneByResetToken(token);
+	}
+
+	@Transactional
+	public void resetPassword(User user, String password) {
+		userRepository.updatePassword(user.getId(), passwordEncoder.encode(password));
+	}
 }

@@ -48,7 +48,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				"/logout",
 				"/confirm/",
 				"/confirm/**",
-				"/static/**"
+				"/static/**",
+				"/users/reset/**"
 			).permitAll()
 			.antMatchers("/admin", "/admin/**").hasRole("ADMIN")
 			.anyRequest().authenticated()

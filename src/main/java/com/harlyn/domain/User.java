@@ -63,6 +63,9 @@ public class User implements UserDetails {
 	@JsonIgnore
 	private Set<TeamInvite> invites = new HashSet<>();
 
+	@Column(name = "reset_token")
+	private String resetToken;
+
 	public User() {
 	}
 
@@ -206,5 +209,14 @@ public class User implements UserDetails {
 		} else {
 			return super.hashCode();
 		}
+	}
+
+	public String getResetToken() {
+		return resetToken;
+	}
+
+	public User setResetToken(String resetToken) {
+		this.resetToken = resetToken;
+		return this;
 	}
 }

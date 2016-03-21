@@ -25,4 +25,16 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	@Query(value = "select case when count(user) > 0 then true else false end from User user where user.username = :username")
 	boolean userExistByUsername(@Param("username") String username);
+
+	User findOneByEmail(String email);
+
+	@Modifying
+	@Query(value = "update User user set user.resetToken = :reset_token where user.id = :user_id")
+	void updateResetToken(@Param("user_id") Long userId, @Param("reset_token") String resetToken);
+
+	User findOneByResetToken(String resetToken);
+
+	@Modifying
+	@Query(value = "update User user set user.password = :password where user.id = :user_id")
+	void updatePassword(@Param("user_id") Long id, @Param("password") String password);
 }
