@@ -7,8 +7,8 @@
 	<div th:if="${errors}">
 		<div th:each="error : ${errors}" th:text="${error.defaultMessage}"></div>
 	</div>
-	<div class="col-md-6 col-md-offset-2"><h2>User Login Form</h2>
-
+	<div class="col-md-6 col-md-offset-2"><h2>User Register Form</h2>
+		<a th:href="@{/login/form}">Login</a>
 		<form id="loginForm" method="post" action="/registration" class="form-horizontal"
 					role="form" style="width: 800px; margin: 0 auto;" th:object="${user}">
 			<div class="form-group">
