@@ -43,6 +43,7 @@ public class ProblemService {
 		return problemRepository.findOne(id);
 	}
 
+	@Transactional
 	public Long createSolution(Problem problem, SubmitData data, User solver) throws IOException {
 		if (problem.getSolverTeams().contains(solver.getTeam())) {
 			throw new TeamAlreadySolveProblemException("Team already solved this problem");
@@ -60,7 +61,12 @@ public class ProblemService {
 		boolean success = problemHandler.checkSolution(problem, data, solver);
 		if (!problemHandler.isManual()) {
 			if (success) {
+				RegisteredTeam registeredTeam = registeredTeamRepository.findOneByCompetitionAndTeam(problem.getCompetition(), solution.getSolver().getTeam());
+				if (registeredTeam == null) {
+					throw new TeamNotRegisteredForCompetitionException();
+				}
 				solveProblem(problem, solution);
+				registeredTeamRepository.updateLastSuccess(registeredTeam.getId(), new Date());
 			} else {
 				failSolution(solution);
 			}

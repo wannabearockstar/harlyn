@@ -30,7 +30,7 @@ public class Competition {
 	private Date endDate;
 
 	@OneToMany(mappedBy = "competition", fetch = FetchType.EAGER)
-	@OrderBy(value = "points DESC")
+	@OrderBy(value = "points DESC, lastSuccessSubmissionDate ASC")
 	private Set<RegisteredTeam> registeredTeams = new HashSet<>();
 
 	@OneToMany(mappedBy = "competition", fetch = FetchType.EAGER)

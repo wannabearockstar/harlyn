@@ -56,16 +56,6 @@ public class CompetitionController {
 		return "redirect:/competition/" + id;
 	}
 
-	@RequestMapping(value = "/{id}/teams", method = RequestMethod.GET)
-	public String teamRankPage(@PathVariable(value = "id") Long id, Model model) {
-		Competition competition = competitionService.findById(id);
-		if (competition == null) {
-			throw new CompetitionNotFoundException(id);
-		}
-		model.addAttribute("competition", competition);
-		return "competition/teams";
-	}
-
 	@RequestMapping(value = "/{id}/problems", method = RequestMethod.GET)
 	public String problemsPage(@PathVariable(value = "id") Long id, Model model,
 														 @RequestParam(value = "category", required = false, defaultValue = "0") String categoryId

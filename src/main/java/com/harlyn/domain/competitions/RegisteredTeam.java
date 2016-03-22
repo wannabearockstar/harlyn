@@ -26,8 +26,8 @@ public class RegisteredTeam {
 	private Long id;
 	private Integer points;
 
-	@Column(name = "register_date")
-	private Date registerDate;
+	@Column(name = "last_success_submission_date")
+	private Date lastSuccessSubmissionDate;
 
 	RegisteredTeam() {
 		competition = null;
@@ -60,18 +60,17 @@ public class RegisteredTeam {
 		return this;
 	}
 
-	public Date getRegisterDate() {
-		return registerDate;
+	public Date getLastSuccessSubmissionDate() {
+		return lastSuccessSubmissionDate;
 	}
 
-	public RegisteredTeam setRegisterDate(Date registerDate) {
-		this.registerDate = registerDate;
+	public RegisteredTeam setLastSuccessSubmissionDate(Date lastSuccessSubmissionDate) {
+		this.lastSuccessSubmissionDate = lastSuccessSubmissionDate;
 		return this;
 	}
 
 	@PrePersist
 	public void initValues() {
-		registerDate = new Date();
 		points = 0;
 	}
 

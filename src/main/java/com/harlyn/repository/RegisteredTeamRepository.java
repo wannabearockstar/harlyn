@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Date;
+
 /**
  * Created by wannabe on 02.12.15.
  */
@@ -21,4 +23,8 @@ public interface RegisteredTeamRepository extends JpaRepository<RegisteredTeam, 
 
 	@Query(value = "select case when count (registered_team) > 0 then true else false end from RegisteredTeam registered_team where registered_team.competition = :competition and registered_team.team = :team")
 	boolean existsByCompetitionAndTeam(@Param("competition") Competition competition, @Param("team") Team team);
+
+	@Modifying
+	@Query(value = "update RegisteredTeam registered_team set registered_team.lastSuccessSubmissionDate = :date where registered_team.id = :id")
+	void updateLastSuccess(@Param("id") Long id, @Param("date") Date date);
 }

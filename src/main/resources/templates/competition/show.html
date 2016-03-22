@@ -7,35 +7,61 @@
 </head>
 <body>
 <div layout:fragment="content" class="container">
-	<h2 th:text="${competition.name}"></h2>
-	<div th:unless="${competition.description == null}">
-		<p th:utext="${#strings.replace( #strings.escapeXml( competition.description ),T(java.lang.System).getProperty('line.separator'),'&lt;br /&gt;')}" ></p>
-	</div>
-	<div th:if="${available}">
-		<div th:unless="${registered}">
-			<form th:if="${me.equals(me.team.captain)}" method="post"
-						th:action="${'/competition/' + competition.id + '/register'}">
-				<input class="form-control" type="submit" value="Register your team"/>
-			</form>
-			<div th:unless="${me.equals(me.team.captain)}" class="alert alert-danger">
-				Only captain can register teams on competitions
+	<div>
+		<h2 th:text="${competition.name}"></h2>
+		<div th:unless="${competition.description == null}">
+			<p th:utext="${#strings.replace( #strings.escapeXml( competition.description ),T(java.lang.System).getProperty('line.separator'),'&lt;br /&gt;')}" ></p>
+		</div>
+		<div th:if="${available}">
+			<div th:unless="${registered}">
+				<form th:if="${me.equals(me.team.captain)}" method="post"
+							th:action="${'/competition/' + competition.id + '/register'}">
+					<input class="form-control" type="submit" value="Register your team"/>
+				</form>
+				<div th:unless="${me.equals(me.team.captain)}" class="alert alert-danger">
+					Only captain can register teams on competitions
+				</div>
+			</div>
+			<div th:if="${registered}" class="alert alert-success">
+				You already register for this competition
 			</div>
 		</div>
-		<div th:if="${registered}" class="alert alert-success">
-			You already register for this competition
+		<div th:unless="${available}" class="alert alert-warning">
+			Competition do not available anymore.
+		</div>
+		<div th:if="${registered}">
+			<a th:href="${'/competition/' + competition.id}">Competition page</a>
+		</div>
+		<div th:if="${registered}">
+			<a th:href="${'/competition/' + competition.id + '/problems'}">Problems</a>
+		</div>
+		<div th:if="${registered}">
+			<a th:href="${'/competition/' + competition.id + '/chat'}">Chat</a>
 		</div>
 	</div>
-	<div th:unless="${available}" class="alert alert-warning">
-		Competition do not available anymore.
-	</div>
-	<div th:if="${registered}">
-		<a th:href="${'/competition/' + competition.id + '/problems'}">Problems</a>
-	</div>
-	<div th:if="${registered}">
-		<a th:href="${'/competition/' + competition.id + '/chat'}">Chat</a>
-	</div>
-	<div>
-		<a th:href="${'/competition/' + competition.id + '/teams'}">Teams</a>
+
+	<div id="scoreboard">
+		<table class="table table-hover">
+			<thead>
+			<tr>
+				<th>Name</th>
+				<th>Points</th>
+				<th>Last success</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr th:each="registredTeam : ${competition.registeredTeams}">
+				<td>
+					<a th:href="@{'/team/' + ${registredTeam.team.id}}" th:text="${registredTeam.team.name}"></a>
+				</td>
+				<td th:text="${registredTeam.points}"></td>
+				<td th:if="${registredTeam.lastSuccessSubmissionDate == null}">None</td>
+				<td
+					th:unless="${registredTeam.lastSuccessSubmissionDate == null}"
+					th:text="${#dates.format(registredTeam.lastSuccessSubmissionDate, T(com.harlyn.domain.problems.Problem).DATE_FORMAT)}"></td>
+			</tr>
+			</tbody>
+		</table>
 	</div>
 </div>
 </body>

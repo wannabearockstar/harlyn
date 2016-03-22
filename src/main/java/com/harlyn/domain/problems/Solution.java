@@ -3,6 +3,7 @@ package com.harlyn.domain.problems;
 import com.harlyn.domain.User;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * Created by wannabe on 20.11.15.
@@ -31,6 +32,9 @@ public class Solution {
 
 	private String answer;
 
+	@Column(name = "posted_at")
+	private Date postedAt;
+
 	@OneToOne(mappedBy = "solution", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private SolutionFile file;
 
@@ -42,6 +46,11 @@ public class Solution {
 		this.solver = solver;
 		this.correct = false;
 		this.checked = false;
+	}
+
+	@PrePersist
+	public void initValues() {
+		postedAt = new Date();
 	}
 
 
@@ -100,6 +109,15 @@ public class Solution {
 
 	public Solution setFile(SolutionFile file) {
 		this.file = file;
+		return this;
+	}
+
+	public Date getPostedAt() {
+		return postedAt;
+	}
+
+	public Solution setPostedAt(Date postedAt) {
+		this.postedAt = postedAt;
 		return this;
 	}
 }
