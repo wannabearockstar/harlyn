@@ -2,13 +2,16 @@ package com.harlyn.service;
 
 import com.harlyn.domain.Team;
 import com.harlyn.domain.User;
+import com.harlyn.domain.chat.CompetitionLeaderboardChatMessage;
 import com.harlyn.domain.competitions.RegisteredTeam;
 import com.harlyn.domain.problems.*;
 import com.harlyn.domain.problems.handlers.ProblemHandler;
+import com.harlyn.event.ProblemSolvedEvent;
 import com.harlyn.exception.TeamAlreadySolveProblemException;
 import com.harlyn.exception.TeamNotRegisteredForCompetitionException;
 import com.harlyn.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +41,8 @@ public class ProblemService {
 	private FileService fileService;
 	@Autowired
 	private HintRepository hintRepository;
+	@Autowired
+	private ApplicationEventPublisher eventPublisher;
 
 	public Problem getById(Long id) {
 		return problemRepository.findOne(id);
@@ -107,6 +112,9 @@ public class ProblemService {
 		teamRepository.flush();
 		solutionRepository.flush();
 		problemRepository.flush();
+
+		eventPublisher.publishEvent(new ProblemSolvedEvent(this, new CompetitionLeaderboardChatMessage("", new Date(), null,
+			problem.getCompetition())));
 	}
 
 	public ProblemService setProblemRepository(ProblemRepository problemRepository) {
@@ -126,6 +134,11 @@ public class ProblemService {
 
 	public ProblemService setProblemHandlers(Map<Problem.ProblemType, ProblemHandler> problemHandlers) {
 		this.problemHandlers = problemHandlers;
+		return this;
+	}
+
+	public ProblemService setEventPublisher(ApplicationEventPublisher eventPublisher) {
+		this.eventPublisher = eventPublisher;
 		return this;
 	}
 

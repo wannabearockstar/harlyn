@@ -1,0 +1,28 @@
+<table class='table table-hover'>
+	<thead>
+	<tr>
+		<th>Name</th>
+		<th>Points</th>
+		<th>Last success</th>
+	</tr>
+	</thead>
+	<tbody>
+		#foreach ($registredTeam in $competition.registeredTeams)
+		<tr>
+			<td>
+				<a href="http://${currentHost}/team/${registredTeam.team.id}">
+					${registredTeam.team.name}
+				</a>
+			</td>
+			<td>${registredTeam.points}</td>
+			#if ($registredTeam.lastSuccessSubmissionDate)
+				<td>${date.format($dateFormat, $registredTeam.lastSuccessSubmissionDate)}</td>
+			#else
+				<td>
+					None
+				</td>
+			#end
+		</tr>
+		#end
+	</tbody>
+</table>

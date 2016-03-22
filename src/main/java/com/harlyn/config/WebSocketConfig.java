@@ -2,6 +2,7 @@ package com.harlyn.config;
 
 import com.harlyn.domain.chat.ChatMessage;
 import com.harlyn.domain.chat.CompetitionChatMessage;
+import com.harlyn.domain.chat.CompetitionLeaderboardChatMessage;
 import com.harlyn.domain.chat.TeamChatMessage;
 import com.harlyn.security.ValidTeamHandshakeInterceptor;
 import org.springframework.context.annotation.Bean;
@@ -59,6 +60,9 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
 		);
 		resolvers.put(TeamChatMessage.class,
 			message -> "/out/team." + ((TeamChatMessage) message).getTeam().getId()
+		);
+		resolvers.put(CompetitionLeaderboardChatMessage.class,
+			message -> "/out/leaderboard." + ((CompetitionLeaderboardChatMessage) message).getCompetition().getId()
 		);
 		return resolvers;
 	}

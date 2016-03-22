@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -37,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
 /**
  * Created by wannabe on 20.11.15.
@@ -88,7 +90,8 @@ public class ProblemServiceTest {
 			.setProblemRepository(problemRepository)
 			.setSolutionRepository(solutionRepository)
 			.setTeamRepository(teamRepository)
-			.setRegisteredTeamRepository(registeredTeamRepository);
+			.setRegisteredTeamRepository(registeredTeamRepository)
+			.setEventPublisher(mock(ApplicationEventPublisher.class));
 		transactionTemplate = new TransactionTemplate(platformTransactionManager);
 	}
 
