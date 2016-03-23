@@ -7,6 +7,7 @@ import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,4 +36,14 @@ public class CompetitionChatService {
 		competitionChatMessage.setContent(Jsoup.parse(competitionChatMessage.getContent()).text());
 		return competitionChatMessageRepository.saveAndFlush(competitionChatMessage);
 	}
+
+	public CompetitionChatMessage getById(Long id) {
+		return competitionChatMessageRepository.getOne(id);
+	}
+
+	@Transactional
+	public void purgeMessage(Long id) {
+		competitionChatMessageRepository.setBlankContent(id);
+	}
+
 }

@@ -21,6 +21,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.validation.ConstraintViolationException;
 import java.util.Objects;
@@ -37,6 +39,9 @@ import static org.junit.Assert.*;
 @WebAppConfiguration
 @ActiveProfiles({"test"})
 public class UserServiceTest {
+	@Autowired
+	PlatformTransactionManager platformTransactionManager;
+	TransactionTemplate transactionTemplate;
 
 	@Autowired
 	private UserRepository userRepository;
@@ -61,6 +66,7 @@ public class UserServiceTest {
 			.setPasswordEncoder(passwordEncoder)
 			.setRoleRepository(roleRepository)
 		;
+		transactionTemplate = new TransactionTemplate(platformTransactionManager);
 	}
 
 	@Test
@@ -146,5 +152,24 @@ public class UserServiceTest {
 
 		userService.createUser(new User("admin@email.com", "admin", "password"), true);
 		assertTrue(userRepository.findUserByEmail("admin@email.com").hasRole("ROLE_ADMIN"));
+	}
+
+	@Test
+	public void testBanUser() throws Exception {
+		//given
+		User user = userService.createUser(new User("email@email.com", "username", "password"), false);
+		//when
+		user = userRepository.findOne(user.getId());
+		//then
+		assertFalse(user.isBannedInChat());
+		//when
+		final User finalUser = user;
+		transactionTemplate.execute(s -> {
+			userService.banUser(finalUser);
+			return 1;
+		});
+		user = userRepository.findOne(user.getId());
+		//then
+		assertTrue(user.isBannedInChat());
 	}
 }

@@ -21,11 +21,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by wannabe on 14.12.15.
@@ -38,6 +41,9 @@ import static org.junit.Assert.assertEquals;
 @ActiveProfiles({"test"})
 public class CompetitionChatServiceTest {
 
+	@Autowired
+	PlatformTransactionManager platformTransactionManager;
+	TransactionTemplate transactionTemplate;
 	@Autowired
 	private Flyway flyway;
 	@Autowired
@@ -52,7 +58,9 @@ public class CompetitionChatServiceTest {
 	public void setUp() throws Exception {
 		flyway.clean();
 		flyway.migrate();
-		competitionChatService = new CompetitionChatService().setCompetitionChatMessageRepository(competitionChatMessageRepository);
+		competitionChatService = new CompetitionChatService()
+			.setCompetitionChatMessageRepository(competitionChatMessageRepository);
+		transactionTemplate = new TransactionTemplate(platformTransactionManager);
 	}
 
 	@After
@@ -78,5 +86,27 @@ public class CompetitionChatServiceTest {
 		assertEquals("c2", competitionChatMessages.get(0).getContent());
 		assertEquals("c3", competitionChatMessages.get(1).getContent());
 		assertEquals("c5", competitionChatMessages.get(2).getContent());
+	}
+
+	@Test
+	public void testPurgeMessage() throws Exception {
+		//given
+		User user = userRepository.saveAndFlush(new User("email@email.com", "usrnm", "password"));
+		Competition competition = competitionRepository.saveAndFlush(new Competition("name"));
+		CompetitionChatMessage ccm = competitionChatMessageRepository.saveAndFlush(new CompetitionChatMessage("content", new Date(), user, competition));
+		//when
+		ccm = competitionChatMessageRepository.findOne(ccm.getId());
+		//then
+		assertEquals("content", ccm.getContent());
+		//when
+		final CompetitionChatMessage finalCcm = ccm;
+		transactionTemplate.execute(status -> {
+			competitionChatService.purgeMessage(finalCcm.getId());
+			return 1;
+		});
+		ccm = competitionChatMessageRepository.findOne(ccm.getId());
+		//then
+		assertTrue(ccm.getContent().isEmpty());
+
 	}
 }

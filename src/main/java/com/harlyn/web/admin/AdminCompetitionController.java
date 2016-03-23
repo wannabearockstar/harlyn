@@ -1,8 +1,11 @@
 package com.harlyn.web.admin;
 
 import com.harlyn.domain.UserSolvedProblems;
+import com.harlyn.domain.chat.CompetitionChatMessage;
 import com.harlyn.domain.competitions.Competition;
+import com.harlyn.exception.ChatMessageNotFoundException;
 import com.harlyn.exception.CompetitionNotFoundException;
+import com.harlyn.service.CompetitionChatService;
 import com.harlyn.service.CompetitionService;
 import com.harlyn.service.SolutionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +32,8 @@ public class AdminCompetitionController {
 	private CompetitionService competitionService;
 	@Autowired
 	private SolutionService solutionService;
+	@Autowired
+	private CompetitionChatService chatService;
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String newCompetitionPage(Model model) {
@@ -106,5 +111,22 @@ public class AdminCompetitionController {
 		model.addAttribute("rank_data", userSolvedProblemses);
 		model.addAttribute("competition", competition);
 		return "admin/competition/rank/personal";
+	}
+
+	@RequestMapping(value = "/{competition_id}/chat/{message_id}/purge", method = RequestMethod.POST)
+	public String purgeMessage(
+		@PathVariable(value = "competition_id") Long competitionId,
+		@PathVariable(value = "message_id") Long messageId
+	) {
+		Competition competition = competitionService.findById(competitionId);
+		if (competition == null) {
+			throw new CompetitionNotFoundException(competitionId);
+		}
+		CompetitionChatMessage chatMessage = chatService.getById(messageId);
+		if (chatMessage == null) {
+			throw new ChatMessageNotFoundException();
+		}
+		chatService.purgeMessage(messageId);
+		return "redirect:/admin/competition/" + competition.getId();
 	}
 }

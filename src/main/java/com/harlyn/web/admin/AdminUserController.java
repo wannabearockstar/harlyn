@@ -1,9 +1,12 @@
 package com.harlyn.web.admin;
 
+import com.harlyn.domain.User;
+import com.harlyn.exception.UserNotFoundException;
 import com.harlyn.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -21,5 +24,15 @@ public class AdminUserController {
 	public String listUsersPage(Model model) {
 		model.addAttribute("users", userService.getAllUsers());
 		return "admin/user/list";
+	}
+	
+	@RequestMapping(value = "/{id}/ban/chat", method = RequestMethod.POST)
+	public String banUserInChat(@PathVariable("id") Long id) {
+		User user = userService.getById(id);
+		if (user == null) {
+			throw new UserNotFoundException();
+		}
+		userService.banUser(user);
+		return "redirect:/admin/user/";
 	}
 }

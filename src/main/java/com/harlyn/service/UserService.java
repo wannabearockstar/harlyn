@@ -132,4 +132,9 @@ public class UserService {
 	public void resetPassword(User user, String password) {
 		userRepository.updatePassword(user.getId(), passwordEncoder.encode(password));
 	}
+
+	@Transactional
+	public void banUser(User user) {
+		userRepository.setBannedTrue(user.getId());
+	}
 }

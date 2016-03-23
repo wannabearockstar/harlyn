@@ -50,6 +50,10 @@ public class User implements UserDetails {
 	@JsonIgnore
 	private boolean enabled = false;
 
+	@JsonIgnore
+	@Column(name = "banned_in_chat")
+	private boolean bannedInChat = false;
+
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(
 		name = "user_roles",
@@ -218,6 +222,15 @@ public class User implements UserDetails {
 
 	public User setResetToken(String resetToken) {
 		this.resetToken = resetToken;
+		return this;
+	}
+
+	public boolean isBannedInChat() {
+		return bannedInChat;
+	}
+
+	public User setBannedInChat(boolean bannedInChat) {
+		this.bannedInChat = bannedInChat;
 		return this;
 	}
 }
