@@ -13,6 +13,7 @@ import com.harlyn.service.CompetitionService;
 import com.harlyn.service.TeamChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
+import java.util.Collection;
 import java.util.Date;
 
 /**
@@ -75,8 +77,7 @@ public class ChatController {
 		throws Exception {
 		User author = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
 		TeamChatMessage teamChatMessage = new TeamChatMessage(body.getContent(), new Date(), author, author.getTeam());
-		eventPublisher.publishEvent(new MessagePublishedEvent(this, teamChatMessage));
-		teamChatService.create(teamChatMessage);
+		eventPublisher.publishEvent(new MessagePublishedEvent(this, teamChatService.create(teamChatMessage)));
 	}
 
 	@MessageMapping("/competition.{competition_id}")
@@ -90,7 +91,18 @@ public class ChatController {
 			throw new CompetitionNotFoundException(competitionId);
 		}
 		CompetitionChatMessage chatMessage = new CompetitionChatMessage(body.getContent(), new Date(), author, competition);
-		eventPublisher.publishEvent(new MessagePublishedEvent(this, chatMessage));
-		competitionChatService.create(chatMessage);
+		eventPublisher.publishEvent(new MessagePublishedEvent(this, competitionChatService.create(chatMessage)));
+	}
+
+	@RequestMapping(value = "/competition/{id}/chat/last", method = RequestMethod.GET)
+	public ResponseEntity<Collection<? extends ChatMessage>> getLastMessages(
+		@PathVariable("id") Long competitionId,
+		@RequestParam(value = "num", required = false, defaultValue = "100") int num
+	) {
+		Competition competition = competitionService.findById(competitionId);
+		if (competition == null) {
+			throw new CompetitionNotFoundException(competitionId);
+		}
+		return ResponseEntity.ok(competitionChatService.getLastMessagesByCompetition(competition, num));
 	}
 }

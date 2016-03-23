@@ -42,6 +42,11 @@ public class ChatMessage {
 		return content;
 	}
 
+	public ChatMessage setContent(String content) {
+		this.content = content;
+		return this;
+	}
+
 	public Date getPostedAt() {
 		return postedAt;
 	}

@@ -64,6 +64,7 @@ public class User implements UserDetails {
 	private Set<TeamInvite> invites = new HashSet<>();
 
 	@Column(name = "reset_token")
+	@JsonIgnore
 	private String resetToken;
 
 	public User() {

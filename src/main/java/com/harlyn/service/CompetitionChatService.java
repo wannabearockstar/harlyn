@@ -3,6 +3,7 @@ package com.harlyn.service;
 import com.harlyn.domain.chat.CompetitionChatMessage;
 import com.harlyn.domain.competitions.Competition;
 import com.harlyn.repository.CompetitionChatMessageRepository;
+import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,7 @@ public class CompetitionChatService {
 	}
 
 	public CompetitionChatMessage create(CompetitionChatMessage competitionChatMessage) {
+		competitionChatMessage.setContent(Jsoup.parse(competitionChatMessage.getContent()).text());
 		return competitionChatMessageRepository.saveAndFlush(competitionChatMessage);
 	}
 }

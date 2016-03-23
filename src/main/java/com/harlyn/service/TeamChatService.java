@@ -3,6 +3,7 @@ package com.harlyn.service;
 import com.harlyn.domain.Team;
 import com.harlyn.domain.chat.TeamChatMessage;
 import com.harlyn.repository.TeamChatMessageRepository;
+import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,7 @@ public class TeamChatService {
 	}
 
 	public TeamChatMessage create(TeamChatMessage teamChatMessage) {
+		teamChatMessage.setContent(Jsoup.parse(teamChatMessage.getContent()).text());
 		return teamChatMessageRepository.saveAndFlush(teamChatMessage);
 	}
 }

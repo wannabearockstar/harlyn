@@ -100,6 +100,7 @@ public class ProblemController {
 		}
 		Date currentDate = new Date();
 		model.addAttribute("problem", problem);
+		model.addAttribute("competition", problem.getCompetition());
 		model.addAttribute("available", competitionService.isCompetitionAvailable(problem.getCompetition(), currentDate)
 			&& problemService.isProblemAvailable(problem, currentDate)
 		);
