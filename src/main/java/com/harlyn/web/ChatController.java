@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -83,10 +82,6 @@ public class ChatController {
 	@MessageMapping("/competition.{competition_id}")
 	public void adminHandler(@Payload ChatMessage body, @DestinationVariable("competition_id") Long competitionId, Principal principal) {
 		User author = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
-		//// TODO: 23.03.16 убрать проверку на админа
-		if (!author.hasRole("ROLE_ADMIN")) {
-			throw new AccessDeniedException("Only admins can publish in competition channel");
-		}
 		if (author.isBannedInChat()) {
 			return;
 		}
