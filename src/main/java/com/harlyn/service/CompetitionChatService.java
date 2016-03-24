@@ -43,7 +43,7 @@ public class CompetitionChatService {
 
 	@Transactional
 	public void purgeMessage(Long id) {
-		competitionChatMessageRepository.setBlankContent(id);
+		competitionChatMessageRepository.delete(id);
 	}
 
 }

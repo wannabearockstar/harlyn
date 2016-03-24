@@ -27,9 +27,10 @@
 		$('#datetimepicker_end').datetimepicker({
 			format: 'DD/MM/YYYY HH:mm:ss'
 		});
-		$("#collapse").on("click", function() {
+		$("#collapse").on("click", function () {
 			$(".collapse").toggle(1);
-		})
+		});
+
 	});
 </script>
 <script type="text/javascript" th:if="${me != null and competition != null}">
@@ -50,6 +51,9 @@
 			});
 			stompClient.subscribe('/out/competition.' + $("#competition_id").val(), function (chatMessage) {
 				showMessage(JSON.parse(chatMessage.body));
+			});
+			stompClient.subscribe('/out/competition.purge', function (chatMessage) {
+				purgeMessage(JSON.parse(chatMessage.body));
 			});
 		});
 
@@ -75,7 +79,11 @@
 
 	function showMessage(payload) {
 		var tpl = _.template($("#chat-message").html());
-		$("#competition-chat").append(tpl(payload));
+		$("#competition-chat").append(tpl({message: payload, is_admin: $("#is_admin").val()}));
+	}
+	function purgeMessage(id) {
+		$("#message-" + id).remove();
+		$("#border-" + id).remove();
 	}
 
 	function repaintLeaderboard(payload) {
@@ -83,34 +91,56 @@
 	}
 	$(function () {
 		$.ajax({
-			url: "/competition/" + $("#competition_id").val() + "/chat/last",
-			type: "GET"
-		})
-			.done(function(data) {
+				url: "/competition/" + $("#competition_id").val() + "/chat/last",
+				type: "GET"
+			})
+			.done(function (data) {
 				for (var i = 0; i < data.length; i++) {
 					showMessage(data[i]);
 				}
 			})
+
 	});
+
+	function adminHandler (e) {
+		e.preventDefault();
+		var url = e.currentTarget.href;
+		$.ajax({
+				type: 'POST',
+				url: url
+			})
+			.done(function (e) {
+				alert(e);
+			})
+		;
+	}
 	/*]]>*/
 </script>
 <script type="text/template" id="chat-message">
 	<![CDATA[
 	<!-- guard comment to prevent browsers from considering the previous and next lines as part of a comment -->
-	<div class="row">
+	<div class="row" id="message-<%= message.id %>">
 		<div class="col-lg-12">
 			<div class="media">
 				<div class="media-body">
-					<h4 class="media-heading">
-						<%= author.username %>
-						<span class="small pull-right"></span>
-					</h4>
-					<p><%= content %></p>
+					<% if (message.author.is_admin) { %>
+					<h4 class="media-heading text-danger">
+						<% } else { %>
+						<h4 class="media-heading">
+							<% } %>
+							<%= message.author.username %>
+							<span class="small pull-right"></span>
+						</h4>
+						<% if (is_admin) { %>
+						<a onclick="adminHandler(event)" class="admin-option" href="/admin/user/<%= message.author.id %>/ban/chat">Ban user</a>
+						<a onclick="adminHandler(event)" class="admin-option" href="/admin/competition/chat/<%= message.id %>/purge">Purge message</a>
+						<% } %>
+						<p id="message-content-"><%= message.content %></p>
 				</div>
 			</div>
 		</div>
 	</div>
-	<hr/>
+	<hr id="border-<%= message.id %>" />
 	<!-- ]]> -->
 </script>
 <body onload="connect()">
@@ -162,6 +192,7 @@
 <div class="bootstrap snippet footer navbar-fixed-bottom" layout:fragment="chat">
 	<div th:if="${me != null and competition != null}" class="row">
 		<input type="hidden" id="competition_id" th:value="${competition.id}"/>
+		<input type="hidden" id="is_admin" th:value="${me.isAdmin()}"/>
 		<div class="col-md-3 pull-right" style="margin-right: 15px;">
 			<div class="portlet portlet-default">
 				<div id="collapse" class="portlet-heading" style="cursor: pointer;">
@@ -176,7 +207,8 @@
 				</div>
 				<div class="panel-collapse collapse in" style="display: none;">
 					<div>
-						<div id="competition-chat" class="portlet-body chat-widget" style="overflow-y: auto; width: auto; height: 300px;">
+						<div id="competition-chat" class="portlet-body chat-widget"
+								 style="overflow-y: auto; width: auto; height: 300px;">
 							<!--empty-->
 						</div>
 					</div>

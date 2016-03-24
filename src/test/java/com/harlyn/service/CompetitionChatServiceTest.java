@@ -28,7 +28,7 @@ import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
 
 /**
  * Created by wannabe on 14.12.15.
@@ -104,9 +104,8 @@ public class CompetitionChatServiceTest {
 			competitionChatService.purgeMessage(finalCcm.getId());
 			return 1;
 		});
-		ccm = competitionChatMessageRepository.findOne(ccm.getId());
 		//then
-		assertTrue(ccm.getContent().isEmpty());
+		assertNull(competitionChatMessageRepository.findOne(ccm.getId()));
 
 	}
 }

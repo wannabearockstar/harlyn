@@ -3,13 +3,16 @@ package com.harlyn.web.admin;
 import com.harlyn.domain.UserSolvedProblems;
 import com.harlyn.domain.chat.CompetitionChatMessage;
 import com.harlyn.domain.competitions.Competition;
+import com.harlyn.event.MessagePurgedEvent;
 import com.harlyn.exception.ChatMessageNotFoundException;
 import com.harlyn.exception.CompetitionNotFoundException;
 import com.harlyn.service.CompetitionChatService;
 import com.harlyn.service.CompetitionService;
 import com.harlyn.service.SolutionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,6 +37,8 @@ public class AdminCompetitionController {
 	private SolutionService solutionService;
 	@Autowired
 	private CompetitionChatService chatService;
+	@Autowired
+	private ApplicationEventPublisher eventPublisher;
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String newCompetitionPage(Model model) {
@@ -113,20 +118,16 @@ public class AdminCompetitionController {
 		return "admin/competition/rank/personal";
 	}
 
-	@RequestMapping(value = "/{competition_id}/chat/{message_id}/purge", method = RequestMethod.POST)
-	public String purgeMessage(
-		@PathVariable(value = "competition_id") Long competitionId,
+	@RequestMapping(value = "/chat/{message_id}/purge", method = RequestMethod.POST)
+	public ResponseEntity<String> purgeMessage(
 		@PathVariable(value = "message_id") Long messageId
 	) {
-		Competition competition = competitionService.findById(competitionId);
-		if (competition == null) {
-			throw new CompetitionNotFoundException(competitionId);
-		}
 		CompetitionChatMessage chatMessage = chatService.getById(messageId);
 		if (chatMessage == null) {
 			throw new ChatMessageNotFoundException();
 		}
 		chatService.purgeMessage(messageId);
-		return "redirect:/admin/competition/" + competition.getId();
+		eventPublisher.publishEvent(new MessagePurgedEvent(this, messageId));
+		return ResponseEntity.ok("Purged!");
 	}
 }
