@@ -11,6 +11,7 @@ import com.harlyn.exception.TeamNotRegisteredForCompetitionException;
 import com.harlyn.service.CompetitionChatService;
 import com.harlyn.service.CompetitionService;
 import com.harlyn.service.TeamChatService;
+import com.harlyn.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
@@ -43,6 +44,8 @@ public class ChatController {
 	private TeamChatService teamChatService;
 	@Autowired
 	private ApplicationEventPublisher eventPublisher;
+	@Autowired
+	private UserService userService;
 
 	@RequestMapping(value = "/chat/team", method = RequestMethod.GET)
 	public String teamChatPage(Model model,
@@ -82,6 +85,9 @@ public class ChatController {
 	@MessageMapping("/competition.{competition_id}")
 	public void adminHandler(@Payload ChatMessage body, @DestinationVariable("competition_id") Long competitionId, Principal principal) {
 		User author = (User) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+		//reload for visibility of banned field
+		// FIXME: 24.03.16
+		author = userService.getById(author.getId());
 		if (author.isBannedInChat()) {
 			return;
 		}

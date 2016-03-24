@@ -1,9 +1,11 @@
 package com.harlyn.web.admin;
 
 import com.harlyn.domain.User;
+import com.harlyn.event.UserChangedEvent;
 import com.harlyn.exception.UserNotFoundException;
 import com.harlyn.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +21,8 @@ public class AdminUserController {
 
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private ApplicationEventPublisher eventPublisher;
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String listUsersPage(Model model) {
@@ -33,6 +37,7 @@ public class AdminUserController {
 			throw new UserNotFoundException();
 		}
 		userService.banUser(user);
+		eventPublisher.publishEvent(new UserChangedEvent(this, user));
 		return "redirect:/admin/user/";
 	}
 }
