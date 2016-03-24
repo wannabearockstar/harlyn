@@ -106,6 +106,5 @@ public class CompetitionChatServiceTest {
 		});
 		//then
 		assertNull(competitionChatMessageRepository.findOne(ccm.getId()));
-
 	}
 }
