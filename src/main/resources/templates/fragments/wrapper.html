@@ -30,7 +30,7 @@
 		$("#collapse").on("click", function () {
 			$(".collapse").toggle(1);
 		});
-
+		scrollDown(document.getElementById("competition-chat"));
 	});
 </script>
 <script type="text/javascript" th:if="${me != null and competition != null}">
@@ -59,6 +59,10 @@
 
 	}
 
+	function scrollDown(elem) {
+		elem.scrollTop = elem.scrollHeight;
+	}
+
 	function disconnect() {
 		if (stompClient != null) {
 			stompClient.disconnect();
@@ -80,6 +84,7 @@
 	function showMessage(payload) {
 		var tpl = _.template($("#chat-message").html());
 		$("#competition-chat").append(tpl({message: payload, is_admin: $("#is_admin").val()}));
+		scrollDown(document.getElementById("competition-chat"));
 	}
 	function purgeMessage(id) {
 		$("#message-" + id).remove();
