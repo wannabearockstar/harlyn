@@ -81,7 +81,7 @@ public class UserServiceTest {
 	@Test
 	@FlywayTest
 	public void testCreateUser() throws Exception {
-		userService.createUser(new User("test@email.com", "username", "password"), false);
+		userService.createUser(new User("test@email.com", "username", "password"));
 		assertEquals("username", userRepository.findUserByEmail("test@email.com").getUsername());
 		assertTrue(passwordEncoder.matches("password", userRepository.findUserByEmail("test@email.com").getPassword()));
 	}
@@ -89,7 +89,7 @@ public class UserServiceTest {
 	@Test
 	@FlywayTest
 	public void testValidateUniqueData() throws Exception {
-		userService.createUser(new User("test@email.com", "username", "password"), false);
+		userService.createUser(new User("test@email.com", "username", "password"));
 		try {
 			userService.validateUniqueData(new User("test@email.com", "username1", "password"));
 		} catch (NonUniqueUserDataException e) {
@@ -117,28 +117,28 @@ public class UserServiceTest {
 	@Test
 	public void testCreateUserWithInvalidData() throws Exception {
 		try {
-			userService.createUser(new User("", "username", "password"), false);
+			userService.createUser(new User("", "username", "password"));
 			fail("Create user with invalid data");
 		} catch (ConstraintViolationException e) {
 			assertTrue(true);
 		}
 
 		try {
-			userService.createUser(new User("s", "", "password"), false);
+			userService.createUser(new User("s", "", "password"));
 			fail("Create user with invalid data");
 		} catch (ConstraintViolationException e) {
 			assertTrue(true);
 		}
 
 		try {
-			userService.createUser(new User("d", "username", ""), false);
+			userService.createUser(new User("d", "username", ""));
 			fail("Create user with invalid data");
 		} catch (ConstraintViolationException e) {
 			assertTrue(true);
 		}
 
 		try {
-			userService.createUser(new User("d", "username", null), false);
+			userService.createUser(new User("d", "username", null));
 			fail("Create user with invalid data");
 		} catch (ConstraintViolationException e) {
 			assertTrue(true);
@@ -147,17 +147,14 @@ public class UserServiceTest {
 
 	@Test
 	public void testCreateAdmin() throws Exception {
-		userService.createUser(new User("test@email.com", "username", "password"), false);
+		userService.createUser(new User("test@email.com", "username", "password"));
 		assertFalse(userRepository.findUserByEmail("test@email.com").hasRole("ROLE_ADMIN"));
-
-		userService.createUser(new User("admin@email.com", "admin", "password"), true);
-		assertTrue(userRepository.findUserByEmail("admin@email.com").hasRole("ROLE_ADMIN"));
 	}
 
 	@Test
 	public void testBanUser() throws Exception {
 		//given
-		User user = userService.createUser(new User("email@email.com", "username", "password"), false);
+		User user = userService.createUser(new User("email@email.com", "username", "password"));
 		//when
 		user = userRepository.findOne(user.getId());
 		//then

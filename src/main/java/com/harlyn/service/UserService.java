@@ -35,8 +35,6 @@ public class UserService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	@Autowired
-	private RoleRepository roleRepository;
-	@Autowired
 	private SessionIdentifierGenerator sessionIdentifierGenerator;
 	@Autowired
 	private JavaMailSender mailSender;
@@ -51,15 +49,12 @@ public class UserService {
 		return userRepository.findUserByEmail(email);
 	}
 
-	public User createUser(User user, boolean isAdmin) {
+	public User createUser(User user) {
 		Set<ConstraintViolation<User>> errors = Validation.buildDefaultValidatorFactory().getValidator().validate(user);
 		if (!errors.isEmpty()) {
 			throw new ConstraintViolationException(errors);
 		}
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
-		if (isAdmin) {
-			user.getRoles().add(roleRepository.findOneByName("ROLE_ADMIN"));
-		}
 		return userRepository.saveAndFlush(user);
 	}
 
@@ -84,7 +79,6 @@ public class UserService {
 	}
 
 	public UserService setRoleRepository(RoleRepository roleRepository) {
-		this.roleRepository = roleRepository;
 		return this;
 	}
 

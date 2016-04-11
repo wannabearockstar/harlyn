@@ -13,7 +13,6 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
@@ -45,8 +44,7 @@ public class SecurityController {
 	@RequestMapping(value = "/registration", method = RequestMethod.POST)
 	public String registration(Model model,
 														 @Valid User user,
-														 BindingResult bindingResult,
-														 @RequestParam(value = "admin", defaultValue = "false") boolean isAdmin
+														 BindingResult bindingResult
 	) {
 		if (bindingResult.hasErrors()) {
 			model.addAttribute("errors", bindingResult.getAllErrors());
@@ -54,7 +52,7 @@ public class SecurityController {
 			return "security/registration";
 		}
 		userService.validateUniqueData(user);
-		User userCreated = userService.createUser(user, isAdmin);
+		User userCreated = userService.createUser(user);
 		eventPublisher.publishEvent(new UserCreatedEvent(this, userCreated));
 		return "redirect:/login/form?register";
 	}
