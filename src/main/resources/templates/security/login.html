@@ -10,6 +10,7 @@
 	</div>
 	<div th:if="${#httpServletRequest.getParameter('password_updated')}" class="alert alert-success">You may login with the new password now</div>
 	<div th:if="${#httpServletRequest.getParameter('reset')}" class="alert alert-success">Check corresponding email for password-reset link</div>
+	<div th:if="${#httpServletRequest.getParameter('register')}" class="alert alert-info">Check corresponding email for verifying link before logging in</div>
 </div>
 <div class="row">
 	<div class="col-md-6 col-md-offset-2"><h2>User Login Form</h2>
