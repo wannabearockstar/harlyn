@@ -2,9 +2,14 @@ package com.harlyn.domain.problems;
 
 import com.harlyn.domain.Team;
 import com.harlyn.domain.competitions.Competition;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Created by wannabe on 20.11.15.
@@ -47,9 +52,10 @@ public class Problem {
 	private Set<Team> solverTeams = new HashSet<>();
 
 	@OneToOne(mappedBy = "problem", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@Fetch(FetchMode.JOIN)
 	private ProblemFile file;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "category_id")
 	private Category category;
 
@@ -57,9 +63,9 @@ public class Problem {
 	@JoinColumn(name = "prev_problem_id")
 	private Problem prevProblem;
 
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "problem")
-//    @OrderBy(value = "postedAt DESC")
-	private List<Hint> hints = new ArrayList<>();
+	@OneToMany(mappedBy = "problem")
+	@OrderBy(value = "postedAt DESC")
+	private Set<Hint> hints = new HashSet<>();
 
 	public Problem() {
 	}
@@ -207,11 +213,11 @@ public class Problem {
 		return this;
 	}
 
-	public List<Hint> getHints() {
+	public Set<Hint> getHints() {
 		return hints;
 	}
 
-	public Problem setHints(List<Hint> hints) {
+	public Problem setHints(Set<Hint> hints) {
 		this.hints = hints;
 		return this;
 	}

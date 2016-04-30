@@ -1,6 +1,8 @@
 package com.harlyn.domain.competitions;
 
 import com.harlyn.domain.problems.Problem;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -31,11 +33,12 @@ public class Competition {
 
 	@OneToMany(mappedBy = "competition", fetch = FetchType.EAGER)
 	@OrderBy(value = "points DESC, lastSuccessSubmissionDate ASC")
+	@Fetch(FetchMode.JOIN)
 	private Set<RegisteredTeam> registeredTeams = new HashSet<>();
 
-	@OneToMany(mappedBy = "competition", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "competition")
 	@OrderBy("id DESC")
-	private Set<Problem> problems;
+	private Set<Problem> problems = new HashSet<>();
 
 	private String description;
 
