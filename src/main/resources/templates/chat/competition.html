@@ -26,10 +26,12 @@
 		}
 
 		function send() {
-			stompClient.send("/in/competition." + $("#competition_id").val(), {}, JSON.stringify({
-				content: $("#content").val()
-			}));
-			$("#content").val("");
+			if ($("#content").val()) {
+				stompClient.send("/in/competition." + $("#competition_id").val(), {}, JSON.stringify({
+					content: $("#content").val()
+				}));
+				$("#content").val("");
+			}
 		}
 
 		function showMessage(payload) {
@@ -57,7 +59,7 @@
 	<div th:if="${me.hasRole('ROLE_ADMIN')}">
 		<div class="form-group">
 			<label class="form-control" for="content">Message</label>
-			<textarea class="form-control" id="content"></textarea>
+			<textarea class="form-control" id="content" maxlength="140"></textarea>
 		</div>
 		<div class="form-group">
 			<button class="form-control btn btn-primary" id="send" onclick="send();">Send</button>
