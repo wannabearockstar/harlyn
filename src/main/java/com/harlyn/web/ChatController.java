@@ -102,7 +102,7 @@ public class ChatController {
 	@RequestMapping(value = "/competition/{id}/chat/last", method = RequestMethod.GET)
 	public ResponseEntity<Collection<? extends ChatMessage>> getLastMessages(
 		@PathVariable("id") Long competitionId,
-		@RequestParam(value = "num", required = false, defaultValue = "100") int num
+		@RequestParam(value = "num", required = false, defaultValue = "200") int num
 	) {
 		Competition competition = competitionService.findById(competitionId);
 		if (competition == null) {
