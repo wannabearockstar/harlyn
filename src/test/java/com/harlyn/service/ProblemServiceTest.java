@@ -129,15 +129,15 @@ public class ProblemServiceTest {
 		Solution invalidSolution = solutionRepository.findOne(
 			problemService.createSolution(problem, invalidData, solver)
 		);
-		team = teamRepository.findOne(team.getId());
-		assertFalse(problemRepository.findOne(problem.getId()).getSolverTeams().contains(team));
+		team = teamRepository.getById(team.getId());
+		assertFalse(problemRepository.findOneById(problem.getId()).getSolverTeams().contains(team));
 
 
 		assertTrue(invalidSolution.isChecked());
 		assertFalse(invalidSolution.isCorrect());
 		assertEquals(new Integer(0), registeredTeam.getPoints());
 
-		final Team updatedTeam = teamRepository.findOne(team.getId());
+		final Team updatedTeam = teamRepository.getById(team.getId());
 		transactionTemplate.execute(status -> {
 			Solution validSolution = null;
 			try {
@@ -151,9 +151,9 @@ public class ProblemServiceTest {
 			assertTrue(validSolution.isChecked());
 			assertTrue(validSolution.isCorrect());
 			assertTrue(problemRepository.findOne(problem.getId()).getSolverTeams().contains(
-				teamRepository.findOne(updatedTeam.getId())
+				teamRepository.getById(updatedTeam.getId())
 			));
-			assertTrue(teamRepository.findOne(updatedTeam.getId()).getSolvedProblems().contains(
+			assertTrue(teamRepository.getById(updatedTeam.getId()).getSolvedProblems().contains(
 				problemRepository.findOne(problem.getId())
 			));
 			assertEquals(new Integer(12), registeredTeamRepository.findOne(registeredTeam.getId()).getPoints());

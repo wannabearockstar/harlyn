@@ -30,7 +30,7 @@ public class SolutionService {
 	private SolutionRepository solutionRepository;
 
 	public Solution getById(Long id) {
-		return solutionRepository.findOne(id);
+		return solutionRepository.getById(id);
 	}
 
 	public List<Solution> getAllSolutions() {

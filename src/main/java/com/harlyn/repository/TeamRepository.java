@@ -1,6 +1,7 @@
 package com.harlyn.repository;
 
 import com.harlyn.domain.Team;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,4 +21,7 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
 	boolean teamWithNameExist(@Param("name") String name);
 
 	List<Team> findAllByOrderByIdDesc();
+
+	@EntityGraph(value = "fullTeam", type = EntityGraph.EntityGraphType.LOAD)
+	Team getById(Long teamId);
 }

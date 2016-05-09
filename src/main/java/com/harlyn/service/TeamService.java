@@ -84,7 +84,7 @@ public class TeamService {
 	}
 
 	public Team getById(Long teamId) {
-		return teamRepository.findOne(teamId);
+		return teamRepository.getById(teamId);
 	}
 
 	public TeamService setUserRepository(UserRepository userRepository) {

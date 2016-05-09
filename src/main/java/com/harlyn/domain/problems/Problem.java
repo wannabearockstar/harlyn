@@ -2,8 +2,6 @@ package com.harlyn.domain.problems;
 
 import com.harlyn.domain.Team;
 import com.harlyn.domain.competitions.Competition;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -16,6 +14,29 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "problems")
+@NamedEntityGraphs({
+	@NamedEntityGraph(name = "fullProblem",
+		attributeNodes = {
+			@NamedAttributeNode(value = "solverTeams", subgraph = "fullTeam"),
+			@NamedAttributeNode(value = "problemType"),
+			@NamedAttributeNode(value = "file"),
+			@NamedAttributeNode(value = "hints")
+		},
+		subgraphs = @NamedSubgraph(name = "fullTeam", attributeNodes = {
+			@NamedAttributeNode(value = "users"),
+			@NamedAttributeNode(value = "solvedProblems", subgraph = "fullProblem"),
+			@NamedAttributeNode(value = "registeredTeams")
+		})
+	),
+	@NamedEntityGraph(name = "problemWithoutUsers",
+		attributeNodes = {
+			@NamedAttributeNode(value = "solverTeams"),
+			@NamedAttributeNode(value = "problemType"),
+			@NamedAttributeNode(value = "file"),
+			@NamedAttributeNode(value = "hints")
+		}
+	)
+})
 public class Problem {
 
 	public static final String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
@@ -43,7 +64,7 @@ public class Problem {
 	@JoinColumn(name = "competition_id")
 	private Competition competition;
 
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany
 	@JoinTable(
 		name = "teams_problems_solved",
 		joinColumns = {@JoinColumn(name = "problem_id", referencedColumnName = "id")},
@@ -51,8 +72,7 @@ public class Problem {
 	)
 	private Set<Team> solverTeams = new HashSet<>();
 
-	@OneToOne(mappedBy = "problem", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@Fetch(FetchMode.JOIN)
+	@OneToOne(mappedBy = "problem", cascade = CascadeType.ALL)
 	private ProblemFile file;
 
 	@ManyToOne

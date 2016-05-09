@@ -10,6 +10,12 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "solutions")
+@NamedEntityGraph(name = "fullSolution", attributeNodes = {
+	@NamedAttributeNode(value = "problem", subgraph = "problemSolved"),
+	@NamedAttributeNode(value = "solver", subgraph = "fullUser"),
+}, subclassSubgraphs = @NamedSubgraph(name = "problemSolved", attributeNodes = {
+	@NamedAttributeNode(value = "solverTeams")
+}))
 public class Solution {
 
 	@Id

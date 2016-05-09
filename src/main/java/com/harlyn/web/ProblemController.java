@@ -56,7 +56,7 @@ public class ProblemController {
 															 @RequestParam(value = "file", required = false) MultipartFile fileParam,
 															 Model model
 	) {
-		Problem problem = problemService.getById(id);
+		Problem problem = problemService.getByIdFull(id);
 		if (problem == null) {
 			throw new ProblemNotFoundException();
 		}

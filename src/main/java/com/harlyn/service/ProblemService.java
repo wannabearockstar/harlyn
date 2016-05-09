@@ -45,7 +45,7 @@ public class ProblemService {
 	private ApplicationEventPublisher eventPublisher;
 
 	public Problem getById(Long id) {
-		return problemRepository.findOne(id);
+		return problemRepository.getById(id);
 	}
 
 	@Transactional
@@ -215,5 +215,9 @@ public class ProblemService {
 
 	public void deleteHint(Long id) {
 		hintRepository.delete(id);
+	}
+
+	public Problem getByIdFull(Long id) {
+		return problemRepository.findOneById(id);
 	}
 }

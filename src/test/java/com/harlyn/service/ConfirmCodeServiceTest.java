@@ -94,7 +94,7 @@ public class ConfirmCodeServiceTest {
 		User user = userRepository.saveAndFlush(new User("email@emai.com", "username", "password"));
 		ConfirmCode confirmCode = confirmCodeService.createConfirmCode(user);
 
-		assertFalse(userRepository.findUserByEmail("email@emai.com").isEnabled());
+		assertFalse(userRepository.findOneByEmail("email@emai.com").isEnabled());
 		assertNotNull(confirmCodeRepository.findOneByCode(confirmCode.getCode()));
 
 		transactionTemplate.execute(status -> {
@@ -102,7 +102,7 @@ public class ConfirmCodeServiceTest {
 			return 1;
 		});
 
-		assertTrue(userRepository.findUserByEmail("email@emai.com").isEnabled());
+		assertTrue(userRepository.findOneByEmail("email@emai.com").isEnabled());
 		assertNull(confirmCodeRepository.findOneByCode(confirmCode.getCode()));
 	}
 }

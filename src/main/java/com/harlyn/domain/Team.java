@@ -2,8 +2,6 @@ package com.harlyn.domain;
 
 import com.harlyn.domain.competitions.RegisteredTeam;
 import com.harlyn.domain.problems.Problem;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
@@ -17,6 +15,18 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "teams")
+@NamedEntityGraphs(value = {
+	@NamedEntityGraph(name = "fullTeam", attributeNodes = {
+		@NamedAttributeNode(value = "users", subgraph = "fullUser"),
+		@NamedAttributeNode(value = "solvedProblems"),
+		@NamedAttributeNode(value = "registeredTeams")
+	}),
+	@NamedEntityGraph(name = "userTeams", attributeNodes = {
+		@NamedAttributeNode(value = "users", subgraph = "fullUser"),
+	})
+})
+
+
 public class Team {
 
 	@Id
@@ -29,15 +39,14 @@ public class Team {
 	@NotEmpty
 	private String name;
 
-	@OneToMany(mappedBy = "team", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-	@Fetch(FetchMode.JOIN)
+	@OneToMany(mappedBy = "team", cascade = CascadeType.PERSIST)
 	private Set<User> users = new HashSet<>();
 
 	@OneToOne(targetEntity = User.class)
 	@JoinColumn(name = "captain_id")
 	private User captain;
 
-	@ManyToMany(fetch = FetchType.EAGER, mappedBy = "solverTeams")
+	@ManyToMany(mappedBy = "solverTeams")
 	private Set<Problem> solvedProblems = new HashSet<>();
 
 	@OneToMany(mappedBy = "team", cascade = CascadeType.PERSIST)

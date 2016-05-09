@@ -17,6 +17,10 @@ import java.util.*;
  */
 @Entity
 @Table(name = "users")
+@NamedEntityGraph(name = "fullUser", attributeNodes = {
+	@NamedAttributeNode("roles"),
+	@NamedAttributeNode("invites"),
+})
 public class User implements UserDetails {
 
 	private static final String DEFAULT_ROLE = "ROLE_USER";
@@ -55,7 +59,7 @@ public class User implements UserDetails {
 	@Column(name = "banned_in_chat")
 	private boolean bannedInChat = false;
 
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany
 	@JoinTable(
 		name = "user_roles",
 		joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},

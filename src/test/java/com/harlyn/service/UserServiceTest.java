@@ -82,8 +82,8 @@ public class UserServiceTest {
 	@FlywayTest
 	public void testCreateUser() throws Exception {
 		userService.createUser(new User("test@email.com", "username", "password"));
-		assertEquals("username", userRepository.findUserByEmail("test@email.com").getUsername());
-		assertTrue(passwordEncoder.matches("password", userRepository.findUserByEmail("test@email.com").getPassword()));
+		assertEquals("username", userRepository.findOneByEmail("test@email.com").getUsername());
+		assertTrue(passwordEncoder.matches("password", userRepository.findOneByEmail("test@email.com").getPassword()));
 	}
 
 	@Test
@@ -148,7 +148,7 @@ public class UserServiceTest {
 	@Test
 	public void testCreateAdmin() throws Exception {
 		userService.createUser(new User("test@email.com", "username", "password"));
-		assertFalse(userRepository.findUserByEmail("test@email.com").hasRole("ROLE_ADMIN"));
+		assertFalse(userRepository.findOneByEmail("test@email.com").hasRole("ROLE_ADMIN"));
 	}
 
 	@Test

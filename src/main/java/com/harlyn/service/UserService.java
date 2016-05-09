@@ -46,7 +46,7 @@ public class UserService {
 	private String currentHost;
 
 	public User findUserByEmail(String email) {
-		return userRepository.findUserByEmail(email);
+		return userRepository.findOneByEmail(email);
 	}
 
 	public User createUser(User user) {

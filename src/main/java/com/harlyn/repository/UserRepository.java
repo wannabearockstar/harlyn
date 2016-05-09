@@ -1,6 +1,7 @@
 package com.harlyn.repository;
 
 import com.harlyn.domain.User;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -13,9 +14,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-	@Query("select user from User user where user.email = :email")
-	User findUserByEmail(@Param("email") String email);
-
 	@Modifying
 	@Query(value = "update User user set user.enabled = true where user.id = :user_id")
 	void enableUserById(@Param("user_id") Long id);
@@ -26,12 +24,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	@Query(value = "select case when count(user) > 0 then true else false end from User user where user.username = :username")
 	boolean userExistByUsername(@Param("username") String username);
 
+	@EntityGraph(value = "fullUser", type = EntityGraph.EntityGraphType.LOAD)
 	User findOneByEmail(String email);
 
 	@Modifying
 	@Query(value = "update User user set user.resetToken = :reset_token where user.id = :user_id")
 	void updateResetToken(@Param("user_id") Long userId, @Param("reset_token") String resetToken);
 
+	@EntityGraph(value = "fullUser", type = EntityGraph.EntityGraphType.LOAD)
 	User findOneByResetToken(String resetToken);
 
 	@Modifying
