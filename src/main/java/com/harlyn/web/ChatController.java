@@ -27,6 +27,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Date;
 
@@ -94,6 +97,19 @@ public class ChatController {
 		Competition competition = competitionService.findById(competitionId);
 		if (competition == null) {
 			throw new CompetitionNotFoundException(competitionId);
+		}
+		// FIXME: 09.05.16 hotfixes
+		body.setContent(body.getContent().trim());
+		body.setContent(body.getContent().substring(0, Math.min(body.getContent().length(), 140)));
+		if (body.getContent().isEmpty()) {
+			return;
+		}
+		ChatMessage lastMessageByAuthor = competitionChatService.getLastMessageByAuthor(author);
+		if (!author.isAdmin() && lastMessageByAuthor != null && ChronoUnit.MINUTES.between(
+			lastMessageByAuthor.getPostedAt().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime(),
+			LocalDateTime.now()) < 1L
+			) {
+			return;
 		}
 		CompetitionChatMessage chatMessage = new CompetitionChatMessage(body.getContent(), new Date(), author, competition);
 		eventPublisher.publishEvent(new MessagePublishedEvent(this, competitionChatService.create(chatMessage)));

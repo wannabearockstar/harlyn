@@ -1,5 +1,6 @@
 package com.harlyn.repository;
 
+import com.harlyn.domain.User;
 import com.harlyn.domain.chat.CompetitionChatMessage;
 import com.harlyn.domain.competitions.Competition;
 import org.springframework.data.domain.Pageable;
@@ -16,4 +17,5 @@ public interface CompetitionChatMessageRepository extends JpaRepository<Competit
 
 	List<CompetitionChatMessage> findAllByCompetitionOrderByIdDesc(Competition competition, Pageable pageable);
 
+	List<CompetitionChatMessage> findByAuthorOrderByPostedAtDesc(User author);
 }

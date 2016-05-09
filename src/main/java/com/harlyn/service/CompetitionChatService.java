@@ -1,5 +1,7 @@
 package com.harlyn.service;
 
+import com.harlyn.domain.User;
+import com.harlyn.domain.chat.ChatMessage;
 import com.harlyn.domain.chat.CompetitionChatMessage;
 import com.harlyn.domain.competitions.Competition;
 import com.harlyn.repository.CompetitionChatMessageRepository;
@@ -46,4 +48,8 @@ public class CompetitionChatService {
 		competitionChatMessageRepository.delete(id);
 	}
 
+	public ChatMessage getLastMessageByAuthor(User author) {
+		return competitionChatMessageRepository.findByAuthorOrderByPostedAtDesc(author).stream()
+			.findFirst().orElse(null);
+	}
 }
