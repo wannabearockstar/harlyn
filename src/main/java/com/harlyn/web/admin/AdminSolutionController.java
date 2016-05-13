@@ -69,6 +69,7 @@ public class AdminSolutionController {
 		if (solution.isChecked()) {
 			throw new SolutionAlreadyCheckedException();
 		}
+		solution.setProblem(problemService.getByIdFull(solution.getProblem().getId()));
 		if (correct) {
 			problemService.solveProblem(solution.getProblem(), solution);
 		} else {
