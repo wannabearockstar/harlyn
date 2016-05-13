@@ -180,7 +180,8 @@
 					</li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
-					<li th:if="${me != null}"><a th:href="@{/users/me}" th:text="${me.username}"></a></li>
+					<li th:if="${me != null and me.team == null}"><a th:href="@{/users/me}" th:text="Invites"></a></li>
+					<li th:if="${me != null and me.team != null}"><a th:href="${'/team/'+me.team.id}" th:text="${me.team.name}"></a></li>
 					<li th:if="${me != null}"><a th:href="@{/logout}" th:text="#{main.navbar.logout}"></a></li>
 				</ul>
 			</div>

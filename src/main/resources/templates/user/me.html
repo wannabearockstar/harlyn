@@ -7,27 +7,29 @@
 </head>
 <body>
 <div layout:fragment="content" class="container">
-	<div class="col-md-6 col-md-offset-2">
+	<div class="row">
 		<div th:if="${#httpServletRequest.getParameter('user_invited')}" class="alert alert-success">User invited</div>
 		<div th:if="${#httpServletRequest.getParameter('invalid_user')}" class="alert alert-danger">Cant invite this user</div>
 	</div>
-	<div th:text="${me.username}"></div>
-	<form th:if="${me.team} == null" class="form-group" th:action="${'/team/'}" method="post">
-		<label for="name">Create team</label>
-		<input type="text" class="form-control" name="name" required="required" id="name"/>
-		<input class="form-control btn btn-primary" type="submit" value="Create"/>
-	</form>
-	<a th:unless="${me.team} == null" th:href="${'/team/' + me.team.id}" th:text="${me.team.name}"></a>
-	<div th:unless="${me.invites.empty or me.team != null}">
-		<span>Team invites</span>
-		<ul>
-			<li th:each="invite : ${me.invites}">
-				<form th:action="${'/team/' + invite.team.id + '/invite/accept'}" method="post">
-					<h3 th:text="${invite.team.name}"></h3>
-					<input class="form-control btn btn-primary" style="max-width: 50%" type="submit" th:value="Accept"/>
-				</form>
-			</li>
-		</ul>
+	<div class="row">
+		<span th:text="${me.username}"></span>
+		<form th:if="${me.team} == null" class="form-group" th:action="${'/team/'}" method="post">
+			<label for="name">Create team</label>
+			<input type="text" class="form-control" name="name" required="required" id="name"/>
+			<input class="form-control btn btn-primary" type="submit" value="Create"/>
+		</form>
+		<a th:unless="${me.team} == null" th:href="${'/team/' + me.team.id}" th:text="${me.team.name}"></a>
+		<div th:unless="${me.invites.empty or me.team != null}">
+			<span>Team invites</span>
+			<ul>
+				<li th:each="invite : ${me.invites}">
+					<form th:action="${'/team/' + invite.team.id + '/invite/accept'}" method="post">
+						<h3 th:text="${invite.team.name}"></h3>
+						<input class="form-control btn btn-primary" style="max-width: 50%" type="submit" th:value="Accept"/>
+					</form>
+				</li>
+			</ul>
+		</div>
 	</div>
 </div>
 </body>
