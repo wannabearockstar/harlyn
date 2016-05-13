@@ -27,6 +27,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	@EntityGraph(value = "fullUser", type = EntityGraph.EntityGraphType.LOAD)
 	User findOneByEmail(String email);
 
+	@Override
+	@EntityGraph(value = "fullUser", type = EntityGraph.EntityGraphType.LOAD)
+	User findOne(Long aLong);
+
 	@Modifying
 	@Query(value = "update User user set user.resetToken = :reset_token where user.id = :user_id")
 	void updateResetToken(@Param("user_id") Long userId, @Param("reset_token") String resetToken);
