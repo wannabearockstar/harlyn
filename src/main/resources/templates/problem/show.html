@@ -36,10 +36,6 @@
 				<label for="query">Input answer</label>
 				<textarea class="form-control" rows="4" name="query" placeholder="Input answer" id="query"></textarea>
 			</div>
-			<div class="form-group" th:if="${problem.problemType.fileNeeded}">
-				<label for="file">If required, attach file</label>
-				<input class="form-control" id="file" type="file" name="file" value="Attach file"/>
-			</div>
 			<input class="form-control btn btn-primary" type="submit" value="Submit answer"/>
 		</form>
 	</div>

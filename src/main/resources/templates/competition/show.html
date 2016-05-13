@@ -11,6 +11,12 @@
 <div layout:fragment="content" class="container">
 	<input type="hidden" id="competition_id" name="competition_id" th:value="${competition.id}" />
 	<div>
+		<div th:if="${registered}">
+			<a th:href="${'/competition/' + competition.id}">Competition page</a>
+		</div>
+		<div th:if="${registered}">
+			<a th:href="${'/competition/' + competition.id + '/problems'}">Problems</a>
+		</div>
 		<h2 th:text="${competition.name}"></h2>
 		<div th:unless="${competition.description == null}">
 			<p th:utext="${#strings.replace( #strings.escapeXml( competition.description ),T(java.lang.System).getProperty('line.separator'),'&lt;br /&gt;')}" ></p>
@@ -31,12 +37,6 @@
 		</div>
 		<div th:unless="${available}" class="alert alert-warning">
 			Competition do not available anymore.
-		</div>
-		<div th:if="${registered}">
-			<a th:href="${'/competition/' + competition.id}">Competition page</a>
-		</div>
-		<div th:if="${registered}">
-			<a th:href="${'/competition/' + competition.id + '/problems'}">Problems</a>
 		</div>
 	</div>
 
