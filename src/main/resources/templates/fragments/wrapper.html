@@ -136,7 +136,7 @@
 							<%= message.author.username %>
 							<span class="small pull-right"></span>
 						</h4>
-						<% if (is_admin) { %>
+						<% if (is_admin == '1') { %>
 						<a onclick="adminHandler(event)" class="admin-option" href="/admin/user/<%= message.author.id %>/ban/chat">Ban user</a>
 						<a onclick="adminHandler(event)" class="admin-option" href="/admin/competition/chat/<%= message.id %>/purge">Purge message</a>
 						<% } %>
@@ -195,7 +195,8 @@
 <div class="bootstrap snippet footer navbar-fixed-bottom" layout:fragment="chat">
 	<div th:if="${me != null and competition != null}" class="row">
 		<input type="hidden" id="competition_id" th:value="${competition.id}"/>
-		<input type="hidden" id="is_admin" th:value="${me.isAdmin()}"/>
+		<input th:if="${me.admin}" type="hidden" id="is_admin" value="1"/>
+		<input th:unless="${me.admin}" type="hidden" id="is_admin" value="0"/>
 		<div class="col-md-3 pull-right" style="margin-right: 15px;">
 			<div class="portlet portlet-default">
 				<div id="collapse" class="portlet-heading" style="cursor: pointer;">
@@ -221,6 +222,7 @@
 								<textarea id="input-content" class="form-control" placeholder="Enter message..."></textarea>
 							</div>
 							<div class="form-group">
+								<span style="color: gray">Message rate: 1 min</span>
 								<button type="button" onclick="send()" class="btn btn-default pull-right">Send</button>
 								<div class="clearfix"></div>
 							</div>
